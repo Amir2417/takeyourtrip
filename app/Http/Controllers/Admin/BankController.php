@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Exception;
+use App\Models\Admin\Bank;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+
+class BankController extends Controller
+{
+    /**
+     * Method for view bank page
+     * @return view
+     */
+    public function index(){
+        $page_title     = "All Banks";
+        $banks          = Bank::orderBy('id','desc')->get();
+        
+        return view('admin.sections.bank.index',compact(
+            'page_title',
+            'banks',
+        ));
+    }
+    /**
+     * Method for view create bank page
+     * @return view
+     */
+    public function create(){
+        $page_title     = "Bank Create";
+        
+        return view('admin.sections.bank.create',compact(
+            'page_title',
+        ));
+    }
+    /**
+     * Method for store bank information
+     * @param \Illuminate\Http\Request $request 
+     */
+    public function store(Request $request){
+        $validator                  = Validator::make($request->all(),[
+            'bank_name'             => 'required',
+            'desc'                  => 'nullable',
+            'label'                 => 'nullable|array',
+            'label.*'               => 'nullable|string|max:50',
+            'input_type'            => 'nullable|array',
+            'input_type.*'          => 'nullable|string|max:20',
+            'min_char'              => 'nullable|array',
+            'min_char.*'            => 'nullable|numeric',
+            'max_char'              => 'nullable|array',
+            'max_char.*'            => 'nullable|numeric',
+            'field_necessity'       => 'nullable|array',
+            'field_necessity.*'     => 'nullable|string|max:20',
+            'file_extensions'       => 'nullable|array',
+            'file_extensions.*'     => 'nullable|string|max:255',
+            'file_max_size'         => 'nullable|array',
+            'file_max_size.*'       => 'nullable|numeric',
+        ]);
+        if($validator->fails()) return back()->withErrors($validator)->withInput($request->all());
+        $validated                  = $validator->validate();
+        if(Bank::where('bank_name',$validated['bank_name'])->exists()){
+            throw ValidationException::withMessages([
+                'name'  => "Bank Already Exists",
+            ]);
+        }
+        $validated['slug']              = Str::slug($request->bank_name);
+        $validated['desc']              = $validated['desc'];
+        $validated['input_fields']      = decorate_input_fields($validated);
+        
+        $validated = Arr::except($validated,['label','input_type','min_char','max_char','field_necessity','file_extensions','file_max_size']);
+        try{
+            Bank::create($validated);
+        }catch(Exception $e){
+            return back()->with(['error' => ['Something went wrong! Please try again.']]);
+        }
+        return redirect()->route('admin.bank.index')->with(['success' => ['Bank created successfully.']]);
+    }
+    /**
+     * Method for view bank edit page
+     * @return view
+     */
+    public function edit($slug){
+        $page_title     = "Bank Edit";
+        $bank           = Bank::where('slug',$slug)->first();
+        if(!$bank) return back()->with(['error' => ['Sorry! Bank not found.']]);
+
+        return view('admin.sections.bank.edit',compact(
+            'page_title',
+            'bank'
+        ));
+    }
+    /**
+     * Method for update bank information
+     * @param $slug
+     * @param \Illuminate\Http\Request $request
+     */
+
+}

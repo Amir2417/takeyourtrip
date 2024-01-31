@@ -53,6 +53,11 @@
                             'title'     => "PayLink Api",
                             'route'     => "admin.gateway.api.index",
                             'icon'      => "menu-icon las la-code",
+                        ],
+                        [
+                            'title'     => "Bank",
+                            'route'     => "admin.bank.index",
+                            'icon'      => "menu-icon las la-university",
                         ]
                     ]
                 ])
