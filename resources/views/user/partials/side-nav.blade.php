@@ -19,6 +19,12 @@
                             <span class="menu-title">{{ __("Dashboard") }}</span>
                         </a>
                     </li>
+                    <li class="sidebar-menu-item">
+                        <a href="{{ setRoute('user.bank.account.index') }}">
+                            <i class="menu-icon fas fa-th-large"></i>
+                            <span class="menu-title">{{ __("Bank Account") }}</span>
+                        </a>
+                    </li>
                     @if(module_access('send-money',$module)->status)
                     <li class="sidebar-menu-item">
                         <a href="{{ setRoute('user.send.money.index') }}">

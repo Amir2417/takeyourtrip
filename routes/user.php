@@ -11,6 +11,7 @@ use Pusher\PushNotifications\PushNotifications;
 use App\Http\Controllers\User\BillPayController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\AddMoneyController;
+use App\Http\Controllers\User\BankAccountController;
 use App\Http\Controllers\User\MoneyOutController;
 use App\Http\Controllers\User\SecurityController;
 use App\Http\Controllers\User\DashboardController;
@@ -57,8 +58,15 @@ Route::prefix("user")->name("user.")->group(function(){
             });
         });
     });
-     //Send Money
-     Route::middleware('module:send-money')->group(function(){
+    //bank account
+    Route::controller(BankAccountController::class)->prefix('bank-account')->name('bank.account.')->group(function(){
+        Route::get('/','index')->name('index');
+        Route::get('create','create')->name('create');
+        Route::post('store','store')->name('store');
+        Route::delete('delete','delete')->name('delete');
+    });
+    //Send Money
+    Route::middleware('module:send-money')->group(function(){
         Route::controller(SendMoneyController::class)->prefix('send-money')->name('send.money.')->group(function(){
             Route::get('/','index')->name('index');
             Route::post('confirmed','confirmed')->name('confirmed');
