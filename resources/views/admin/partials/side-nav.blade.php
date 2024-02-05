@@ -58,7 +58,34 @@
                             'title'     => "Bank",
                             'route'     => "admin.bank.index",
                             'icon'      => "menu-icon las la-university",
-                        ]
+                        ], 
+                        
+                    ]
+                ])
+                @include('admin.components.side-nav.link-group',[
+                    'group_title'       => "User Bank Account",
+                    'group_links'       => [
+                        'dropdown'      => [
+                            [
+                                'title'     => "Bank Account",
+                                'icon'      => "menu-icon las la-user-circle",
+                                'links'     => [
+                                    [
+                                        'title'     => "Pending Account",
+                                        'route'     => "admin.bank.account.pending",
+                                    ],
+                                    [
+                                        'title'     => "Approved Account",
+                                        'route'     => "admin.bank.account.approve",
+                                    ],
+                                    [
+                                        'title'     => "Rejected Account",
+                                        'route'     => "admin.bank.account.reject",
+                                    ],
+                                ],
+                            ]
+                        ],
+
                     ]
                 ])
 
@@ -255,10 +282,6 @@
                                         'title'     => "Email Unverified",
                                         'route'     => "admin.users.email.unverified",
                                     ],
-                                    // [
-                                    //     'title'     => "Sms Unverified",
-                                    //     'route'     => "admin.users.sms.unverified",
-                                    // ],
                                     [
                                         'title'     => "KYC Unverified",
                                         'route'     => "admin.users.kyc.unverified",
@@ -277,36 +300,7 @@
                                     ]
                                 ],
                             ],
-                            // [
-                            //     'title'     => "Agent Care",
-                            //     'icon'      => "menu-icon las la-user-edit",
-                            //     'links'     => [
-                            //         [
-                            //             'title'     => "Active Agents",
-                            //             'route'     => "admin.agents.active",
-                            //         ],
-                            //         [
-                            //             'title'     => "Email Unverified",
-                            //             'route'     => "admin.agents.email.unverified",
-                            //         ],
-                            //         [
-                            //             'title'     => "KYC Unverified",
-                            //             'route'     => "admin.agents.kyc.unverified",
-                            //         ],
-                            //         [
-                            //             'title'     => "All Agents",
-                            //             'route'     => "admin.agents.index",
-                            //         ],
-                            //         [
-                            //             'title'     => "Email To Agents",
-                            //             'route'     => "admin.agents.email.agents",
-                            //         ],
-                            //         [
-                            //             'title'     => "Banned Agents",
-                            //             'route'     => "admin.agents.banned",
-                            //         ]
-                            //     ],
-                            // ],
+                            
                             [
                                 'title'     => "Merchant Care",
                                 'icon'      => "menu-icon las la-user-edit",
@@ -319,10 +313,7 @@
                                         'title'     => "Email Unverified",
                                         'route'     => "admin.users.email.unverified",
                                     ],
-                                    // [
-                                    //     'title'     => "Sms Unverified",
-                                    //     'route'     => "admin.merchants.sms.unverified",
-                                    // ],
+                                    
                                     [
                                         'title'     => "KYC Unverified",
                                         'route'     => "admin.merchants.kyc.unverified",
@@ -437,10 +428,6 @@
                                         'title'     => "Email Method",
                                         'route'     => "admin.setup.email.config",
                                     ],
-                                    // [
-                                    //     'title'     => "Default Template",
-                                    //     'route'     => "admin.setup.email.template.default",
-                                    // ]
                                 ],
                             ]
                         ],

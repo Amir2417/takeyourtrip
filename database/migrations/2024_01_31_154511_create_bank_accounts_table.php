@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('bank_id');
             $table->text('credentials');
+            $table->text("reject_reason")->nullable();
             $table->tinyInteger('status')->default(1)->comment("1: Pending, 2: Approved, 3: Rejected");
             $table->timestamps();
 

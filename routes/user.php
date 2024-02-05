@@ -63,7 +63,7 @@ Route::prefix("user")->name("user.")->group(function(){
         Route::get('/','index')->name('index');
         Route::get('create','create')->name('create');
         Route::post('store','store')->name('store');
-        Route::delete('delete','delete')->name('delete');
+        Route::post('delete/{id}','delete')->name('delete');
     });
     //Send Money
     Route::middleware('module:send-money')->group(function(){

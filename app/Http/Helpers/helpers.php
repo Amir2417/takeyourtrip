@@ -1,6 +1,7 @@
 <?php
 
 use App\Constants\AdminRoleConst;
+use App\Constants\BankAccountConst;
 use App\Constants\ExtensionConst;
 use App\Constants\GlobalConst;
 use App\Constants\LanguageConst;
@@ -1520,6 +1521,9 @@ function extension_const() {
 
 function global_const() {
     return GlobalConst::class;
+}
+function bank_account_const() {
+    return BankAccountConst::class;
 }
 
 function imageExtenstions() {

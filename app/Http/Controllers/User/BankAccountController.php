@@ -50,5 +50,17 @@ class BankAccountController extends Controller
         }
         return back()->with(['success' => ['Bank Account created successfully.']]);
     }
-    
+    /**
+     * Method for bank account delete
+     */
+    public function delete(Request $request,$id){
+        $bank_account   = BankAccount::where('id',$id)->first();
+        if(!$bank_account) return back()->with(['error' => ['Sorry! Data not found.']]);
+        try{
+            $bank_account->delete();
+        }catch(Exception $e){
+            return back()->with(['error' => ['Something went wrong! Please try again.']]);
+        }
+        return back()->with(['success' => ['Bank account deleted successfully.']]);
+    }
 }

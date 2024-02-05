@@ -43,6 +43,7 @@ use App\Http\Controllers\Admin\PaymentGatewaysController;
 use App\Http\Controllers\Admin\PushNotificationController;
 use App\Http\Controllers\Admin\SetupMobileTopupController;
 use App\Http\Controllers\Admin\AppOnboardScreensController;
+use App\Http\Controllers\Admin\BankAccountVerificationController;
 use App\Http\Controllers\Admin\PaymentGatewayCurrencyController;
 
 // All Admin Route Is Here
@@ -98,6 +99,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('update/{slug}','update')->name('update');
         Route::put('status/update','statusUpdate')->name('status.update');
         Route::delete('delete','delete')->name('delete');
+    });
+
+    //bank account verification 
+    Route::controller(BankAccountVerificationController::class)->prefix('bank-account')->name('bank.account.')->group(function(){
+        Route::get('pending','pending')->name('pending');
+        Route::get('details/{id}','details')->name('details');
+        Route::get('approve','approve')->name('approve');
+        Route::get('reject','reject')->name('reject');
+        Route::post('status-approved/{id}','statusApproved')->name('status.approve');
+        Route::post('status-reject/{id}','statusReject')->name('status.reject');
     });
 
     // Remittance Logs
