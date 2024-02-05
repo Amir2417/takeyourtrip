@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('bank_id');
             $table->text('credentials');
-            $table->tinyInteger('status')->default(0)->comment("1: Pending, 2: Approved, 3: Rejected");
+            $table->tinyInteger('status')->default(1)->comment("1: Pending, 2: Approved, 3: Rejected");
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

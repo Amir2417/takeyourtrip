@@ -28,7 +28,7 @@
             <div class="row justify-content-center mb-10-none">
                 <div class="col-xl-12 col-lg-12 form-group">
                     @include('admin.components.form.input',[
-                        'label'     => __("Bank NAme")."*",
+                        'label'     => __("Bank Name")."*",
                         'name'      => "bank_name",
                         'value'     => old("bank_name",$bank->bank_name),
                     ])
