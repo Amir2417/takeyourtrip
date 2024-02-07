@@ -15,11 +15,15 @@ return new class extends Migration
     {
         Schema::create('send_money_gateways', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger("admin_id");
             $table->string('slug')->unique();
             $table->string('name');
+            $table->string('image')->nullable();
             $table->text('credentials');
             $table->boolean('status')->default(true);
             $table->timestamps();
+
+            $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

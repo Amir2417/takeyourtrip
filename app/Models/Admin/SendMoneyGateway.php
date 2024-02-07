@@ -13,8 +13,10 @@ class SendMoneyGateway extends Model
 
     protected $casts    = [
         'id'            => 'integer',
+        'admin_id'      => 'integer',
         'slug'          => 'string',
         'name'          => 'string',
+        'image'         => 'string',
         'credentials'   => 'object',
         'status'        => 'integer'
     ];
