@@ -41,7 +41,7 @@ Route::controller(SiteController::class)->group(function(){
 
 
 });
-Route::post('/handle-payment-confirmation', [SendMoneyController::class, 'handlePaymentConfirmation']);
+
 
 Route::controller(DeveloperController::class)->prefix('developer')->name('developer.')->group(function(){
     Route::get('/','index')->name('index');

@@ -345,4 +345,14 @@ class SendMoneyController extends Controller
         }
     }
     
+    private function processPayment($paymentToken)
+    {
+        
+        $success = true;
+        $error = null;
+
+       
+        return ['success' => $success, 'error' => $error];
+    }
+    
 }

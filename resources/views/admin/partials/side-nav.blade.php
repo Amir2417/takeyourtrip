@@ -89,6 +89,19 @@
                     ]
                 ])
 
+                @include('admin.components.side-nav.link-group',[
+                    'group_title'       => "Send Money Gateway",
+                    'group_links'       => [
+                        [
+                            'title'     => "Automatic",
+                            'route'     => "admin.send.money.gateway.index",
+                            'icon'      => "menu-icon las la-share-alt",
+                        ],
+                        
+                        
+                    ]
+                ])
+
                 {{-- Section Transaction & Logs --}}
                 @include('admin.components.side-nav.link-group',[
                     'group_title'       => "Transactions & Logs",
@@ -619,7 +632,6 @@
                             setRoute('admin.payment.gateway.view',['money-out','automatic']),
                             setRoute('admin.payment.gateway.view',['money-out','manual']),
                         ]
-
                     @endphp
                     <li class="sidebar-menu-item sidebar-dropdown @if (in_array($current_url,$payment_money_out_childs)) active @endif">
                         <a href="javascript:void(0)">

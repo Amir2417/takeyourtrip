@@ -45,6 +45,7 @@ use App\Http\Controllers\Admin\SetupMobileTopupController;
 use App\Http\Controllers\Admin\AppOnboardScreensController;
 use App\Http\Controllers\Admin\BankAccountVerificationController;
 use App\Http\Controllers\Admin\PaymentGatewayCurrencyController;
+use App\Http\Controllers\Admin\SendMoneyGatewayController;
 
 // All Admin Route Is Here
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -109,6 +110,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('reject','reject')->name('reject');
         Route::post('status-approved/{id}','statusApproved')->name('status.approve');
         Route::post('status-reject/{id}','statusReject')->name('status.reject');
+    });
+
+    //send money gateway
+    Route::controller(SendMoneyGatewayController::class)->prefix('send-money-gateway')->name('send.money.gateway.')->group(function(){
+        Route::get('/','index')->name('index');
+        Route::get('edit/{slug}','edit')->name('edit');
+        Route::put('status/update', 'statusUpdate')->name('status.update');
     });
 
     // Remittance Logs

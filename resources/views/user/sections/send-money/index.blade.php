@@ -428,6 +428,7 @@
 </script>
 
 <script>
+    var handlePaymentRoute = "{{ setRoute('user.send.money.handle.payment.confirm') }}";
     const base64url = (str) => btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
     const paymentDataRequest = {
@@ -474,10 +475,12 @@
         paymentsClient.loadPaymentData(paymentDataRequestWithParameters)
             .then((paymentData) => {
                 console.log(paymentData);
-                fetch('/handle-payment-confirmation', {
+                
+                fetch(handlePaymentRoute, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     body: JSON.stringify({ paymentToken: paymentData.paymentMethodData.tokenizationData.token })
                 })
