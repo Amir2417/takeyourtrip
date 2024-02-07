@@ -10594,3 +10594,41 @@ input[type=number] {
   font-size: 18px;
   color: red;
 }
+
+.apple-payment .btn{
+  padding: 10px 30px;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+
+}
+.apple-payment .btn img{
+  width: 50px;
+  height: 25px;
+}
+.google-payment .btn{
+  padding: 10px 30px;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+}
+.google-payment .btn img{
+  width: 50px;
+  height: 25px;
+}
+
+.hide-input {
+  display: none;
+}
+
+.hide-input:checked ~ label {
+  background: rgba(27, 189, 228, 0.1);
+  position: relative;
+  border-color: var(--primary-color);
+}
+
+.hide-input:checked ~ label::before {
+  display: block;
+}
+
+.hide-input:checked ~ label sup {
+  color: var(--primary-color);
+}

@@ -22,12 +22,14 @@ class BankAccountController extends Controller
         $page_title                 = __("Bank Account");
         $bank_account_approved      = BankAccount::auth()->where('status',BankAccountConst::APPROVED)->first();
         $bank_account_pending       = BankAccount::auth()->where('status',BankAccountConst::PENDING)->first();
+        $bank_account_reject        = BankAccount::auth()->where('status',BankAccountConst::REJECTED)->first();
         $banks                      = Bank::where('status',true)->orderBy('id','desc')->get();
 
         return view('user.sections.bank-account.index',compact(
             'page_title',
             'bank_account_approved',
             'bank_account_pending',
+            'bank_account_reject',
             'banks'
         ));
     }
@@ -53,8 +55,8 @@ class BankAccountController extends Controller
     /**
      * Method for bank account delete
      */
-    public function delete(Request $request,$id){
-        $bank_account   = BankAccount::where('id',$id)->first();
+    public function delete($id){
+        $bank_account   = BankAccount::auth()->where('id',$id)->first();
         if(!$bank_account) return back()->with(['error' => ['Sorry! Data not found.']]);
         try{
             $bank_account->delete();

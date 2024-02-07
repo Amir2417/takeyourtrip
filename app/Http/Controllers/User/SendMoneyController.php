@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Constants\NotificationConst;
-use App\Constants\PaymentGatewayConst;
-use App\Http\Controllers\Controller;
-use App\Models\Admin\BasicSettings;
-use App\Models\Admin\Currency;
-use App\Models\Admin\TransactionSetting;
-use App\Models\Transaction;
-use App\Models\User;
-use App\Models\UserNotification;
-use App\Models\UserWallet;
-use App\Notifications\User\SendMoney\ReceiverMail;
-use App\Notifications\User\SendMoney\SenderMail;
 use Exception;
+use App\Models\User;
+use App\Models\UserWallet;
+use App\Models\Transaction;
+use Illuminate\Support\Str;
+use Jenssegers\Agent\Agent;
 use Illuminate\Http\Request;
+use App\Models\Admin\Currency;
+use App\Models\UserNotification;
 use Illuminate\Support\Facades\DB;
-use App\Events\User\NotificationEvent as UserNotificationEvent;
+use App\Models\Admin\BasicSettings;
+use App\Constants\NotificationConst;
+use App\Http\Controllers\Controller;
+use App\Constants\PaymentGatewayConst;
 use App\Models\Admin\AdminNotification;
+use App\Models\Admin\TransactionSetting;
+use App\Notifications\User\SendMoney\SenderMail;
+use App\Notifications\User\SendMoney\ReceiverMail;
+use App\Events\User\NotificationEvent as UserNotificationEvent;
 
 class SendMoneyController extends Controller
 {
@@ -32,7 +34,15 @@ class SendMoneyController extends Controller
         $page_title = __("Send Money");
         $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->first();
         $transactions = Transaction::auth()->senMoney()->latest()->take(10)->get();
-        return view('user.sections.send-money.index',compact("page_title",'sendMoneyCharge','transactions'));
+        $agent = new Agent();
+        $os = Str::lower($agent->platform());
+
+        return view('user.sections.send-money.index',compact(
+            "page_title",
+            'sendMoneyCharge',
+            'transactions',
+            'os'
+        ));
     }
     public function checkUser(Request $request){
         $email = $request->email;
@@ -45,6 +55,7 @@ class SendMoneyController extends Controller
         return response($exist);
     }
     public function confirmed(Request $request){
+        dd($request->all());
         $request->validate([
             'amount' => 'required|numeric|gt:0',
             'email' => 'required|email'

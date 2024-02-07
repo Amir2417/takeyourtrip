@@ -79,6 +79,15 @@
                         </div>
                         </div>
                     </div>
+
+                    @elseif(isset($bank_account_reject))
+                    <div class="card-body">
+                        <div class="row"> 
+                            <div class="col-xl-12 col-lg-12 col-md-12 form-group">
+                                <p>{{ __("Your bank account is rejected due to ") }} "{{ $bank_account_reject->reject_reason }}".</p>
+                            </div>
+                        </div>
+                    </div>
                     @else
                     <div class="card-body">
                         <form class="card-form add-recipient-item" action="{{ setRoute('user.bank.account.store') }}" method="POST" enctype="multipart/form-data">

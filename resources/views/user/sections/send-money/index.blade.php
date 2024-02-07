@@ -37,19 +37,6 @@
                                         <code class="d-block text-center"><span class="fees-show">--</span> <span class="limit-show">--</span></code>
                                     </div>
                                 </div>
-                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
-                                    <label>{{ __("Email Address") }} ({{ __("User") }})<span class="text--base">*</span></label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text copytext">{{ __("Email") }}</span>
-                                        </div>
-                                        <input type="email" name="email" class="form--control checkUser" id="username" placeholder="Enter Email" value="{{ old('email') }}" />
-                                    </div>
-                                    <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
-                                    <label class="exist text-start"></label>
-
-                                </div>
-
                                 <div class="col-xxl-6 col-xl-12 col-lg-6 form-group">
                                     <label>{{ __("Amount") }}<span>*</span></label>
                                     <div class="input-group">
@@ -60,10 +47,66 @@
                                     </div>
                                     <code class="d-block mt-10 text-end text--warning balance-show">{{ __("Available Balance") }} {{ authWalletBalance() }} {{ get_default_currency_code() }}</code>
                                 </div>
-
-                                <div class="col-xl-12 col-lg-12">
-                                    <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
+                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
+                                    <label>{{ __("Receiver Email Address") }} ({{ __("User") }})<span class="text--base">*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text copytext">{{ __("Email") }}</span>
+                                        </div>
+                                        <input type="email" name="email" class="form--control checkUser" id="username" placeholder="Enter Email" value="{{ old('email') }}" />
+                                    </div>
+                                    <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
+                                    <label class="exist text-start"></label>
                                 </div>
+                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
+                                    <label>{{ __("Sender Email Address to receive invoice (Optional)") }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">{{ __("Email") }}</span>
+                                        </div>
+                                        <input type="email" name="email" class="form--control" placeholder="Enter Email" value="{{ auth()->user()->email }}" />
+                                    </div>
+                                </div>
+                                <div class="payment-area d-flex justify-content-between mb-5 align-items-center">
+                                    @if ($os == 'windows' || $os == 'androidos')
+                                        <div class="google-payment">
+                                            <button type="submit" class="btn" onclick="setPaymentMethod(1)">
+                                                <input type="hidden" class="payment-method" name="payment_method">
+                                                <img src="{{ asset('public/backend/images/payment-gateways/seeder/google-pay.png') }}">
+                                            </button>
+                                        </div>
+                                        <div class="or-area">
+                                            <span>Or</span>
+                                        </div>
+                                        <div class="google-payment">
+                                            <button type="submit" class="btn" onclick="setPaymentMethod(3)">
+                                                <input type="hidden" class="payment-method" name="payment_method">
+                                                <img src="{{ asset('public/backend/images/payment-gateways/seeder/paypal.webp') }}">
+                                            </button>
+                                        </div>
+                                    @else
+                                        <div class="apple-payment">
+                                            <button type="submit" class="btn" onclick="setPaymentMethod(2)">
+                                                <input type="hidden" class="payment-method" name="payment_method">
+                                                <img src="{{ asset('public/backend/images/payment-gateways/seeder/apple-pay.png') }}">
+                                            </button>
+                                        </div>
+                                        <div class="or-area">
+                                            <span>Or</span>
+                                        </div>
+                                        <div class="google-payment">
+                                            <button type="submit" class="btn" onclick="setPaymentMethod(3)">
+                                                <input type="hidden" class="payment-method" name="payment_method">
+                                                <img src="{{ asset('public/backend/images/payment-gateways/seeder/paypal.webp') }}">
+                                            </button>
+                                        </div>
+                                    @endif
+
+                                    
+                                </div>
+                                {{-- <div class="col-xl-12 col-lg-12">
+                                    <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
+                                </div> --}}
                             </div>
                         </form>
                     </div>
@@ -178,6 +221,13 @@
 @push('script')
 <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 <script>
+    function setPaymentMethod(method) {
+        console.log(method);
+        $('.payment-method').val(method);
+        
+    }
+</script>
+<script>
 //  'use strict'
     (function ($) {
         $('.scan').click(function(){
@@ -186,7 +236,6 @@
                 var route = '{{url('user/qr/scan/')}}'+'/'+content
                 $.get(route, function( data ) {
                     if(data.error){
-                        // alert(data.error)
                         throwMessage('error',[data.error]);
                     } else {
                         $("#username").val(data);
