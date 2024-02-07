@@ -321,4 +321,28 @@ class SendMoneyController extends Controller
             throw new Exception(__("Something went wrong! Please try again."));
         }
     }
+    /**
+     * Handle the payment confirmation from Google Pay.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function handlePaymentConfirmation(Request $request)
+    {
+       
+        $request->validate([
+            'paymentToken' => 'required',
+        ]);
+    
+        $paymentToken = $request->input('paymentToken');
+        
+        $paymentGatewayResponse = $this->processPayment($paymentToken);
+       
+        if ($paymentGatewayResponse['success']) {
+            return response()->json(['message' => 'Payment successful']);
+        } else {
+            return response()->json(['message' => 'Payment failed', 'error' => $paymentGatewayResponse['error']], 400);
+        }
+    }
+    
 }

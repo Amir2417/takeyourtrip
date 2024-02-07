@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\User\AddMoneyController as UserAddMoneyController;
-use App\Http\Controllers\DeveloperController;
-use App\Http\Controllers\SiteController;
-use App\Http\Controllers\User\AddMoneyController;
-use App\Http\Controllers\User\PaymentLinkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SiteController;
+use App\Http\Controllers\DeveloperController;
+use App\Http\Controllers\User\AddMoneyController;
+use App\Http\Controllers\User\SendMoneyController;
+use App\Http\Controllers\User\PaymentLinkController;
+use App\Http\Controllers\Api\User\AddMoneyController as UserAddMoneyController;
 
 
 /*
@@ -38,7 +39,9 @@ Route::controller(SiteController::class)->group(function(){
     Route::post('newsletter','newsletterSubmit')->name('newsletter.submit');
     Route::get('/user/success','pagaditoSuccess')->name('success');
 
+
 });
+Route::post('/handle-payment-confirmation', [SendMoneyController::class, 'handlePaymentConfirmation']);
 
 Route::controller(DeveloperController::class)->prefix('developer')->name('developer.')->group(function(){
     Route::get('/','index')->name('index');

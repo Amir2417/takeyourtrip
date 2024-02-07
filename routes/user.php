@@ -71,6 +71,7 @@ Route::prefix("user")->name("user.")->group(function(){
             Route::get('/','index')->name('index');
             Route::post('confirmed','confirmed')->name('confirmed');
             Route::post('user/exist','checkUser')->name('check.exist');
+            
         });
     });
      //Receive Money

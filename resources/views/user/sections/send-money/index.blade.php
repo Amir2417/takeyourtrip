@@ -1,7 +1,7 @@
 @extends('user.layouts.master')
 
 @push('css')
-
+<script src="https://pay.google.com/gp/p/js/pay.js"></script>
 @endpush
 
 @section('breadcrumb')
@@ -29,7 +29,7 @@
                         <h5 class="title">{{ __(@$page_title) }}</h5>
                     </div>
                     <div class="dash-payment-body">
-                        <form class="card-form" action="{{ setRoute('user.send.money.confirmed') }}" method="POST">
+                        {{-- <form class="card-form" action="{{ setRoute('user.send.money.confirmed') }}" method="POST"> --}}
                             @csrf
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 form-group text-center">
@@ -69,7 +69,7 @@
                                 </div>
                                 <div class="payment-area d-flex justify-content-between mb-5 align-items-center">
                                     @if ($os == 'windows' || $os == 'androidos')
-                                        <div class="google-payment">
+                                        <div class="google-payment" id="google-pay-button">
                                             <button type="submit" class="btn" onclick="setPaymentMethod(1)">
                                                 <input type="hidden" class="payment-method" name="payment_method">
                                                 <img src="{{ asset('public/backend/images/payment-gateways/seeder/google-pay.png') }}">
@@ -222,7 +222,6 @@
 <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 <script>
     function setPaymentMethod(method) {
-        console.log(method);
         $('.payment-method').val(method);
         
     }
@@ -427,5 +426,82 @@
         }
 
 </script>
+
+<script>
+    const base64url = (str) => btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+    const paymentDataRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [{
+            type: 'CARD',
+            parameters: {
+                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                allowedCardNetworks: ['VISA', 'MASTERCARD']
+            },
+            tokenizationSpecification: {
+                type: 'PAYMENT_GATEWAY',
+                parameters: {
+                    gateway: 'stripe',
+                    "stripe:version": "2018-10-31",
+                    "stripe:publishableKey":"pk_test_51NECrlJXLo7QTdMco2E4YxHSeoBnDvKmmi0CZl3hxjGgH1JwgcLVUF3ZR0yFraoRgT7hf0LtOReFADhShAZqTNuB003PnBSlGP"
+                }
+            }
+        }],
+        merchantInfo: {
+            merchantId: 'BCR2DN4TXWR5LIAH',
+            merchantName: 'AppDevs'
+        },
+        transactionInfo: {
+            totalPriceStatus: 'FINAL',
+            totalPriceLabel: 'Total',
+            totalPrice: '100.00',
+            currencyCode: 'USD',
+            countryCode: 'US'
+        }
+    };
+
+    const paymentsClient = new google.payments.api.PaymentsClient({
+        environment: 'TEST' 
+    });
+
+    
+
+    document.getElementById('google-pay-button').addEventListener('click', () => {
+        const paymentDataRequestWithParameters = Object.assign({}, paymentDataRequest);
+        paymentDataRequestWithParameters.transactionInfo.totalPrice = '100.00';
+        console.log(paymentDataRequestWithParameters);
+        paymentsClient.loadPaymentData(paymentDataRequestWithParameters)
+            .then((paymentData) => {
+                console.log(paymentData);
+                fetch('/handle-payment-confirmation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ paymentToken: paymentData.paymentMethodData.tokenizationData.token })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    
+                    console.log(data);
+                })
+                .catch(error => {
+                
+                    console.log(error);
+                });
+            })
+            .catch((error) => {
+            
+                console.log(error);
+            });
+    });
+    function processPayment(paymentData) {
+        console.log(paymentData);
+        paymentToken = paymentData.paymentMethodData.tokenizationData.token;
+    }
+
+</script>
+
 
 @endpush
