@@ -29,7 +29,8 @@ class SendMoneyGatewayController extends Controller
     public function edit($slug){
         $page_title     = "Send Money Gateway Edit";
         $data           = SendMoneyGateway::where('slug',$slug)->first();
-        
+        if(!$data) return back()->with(['error' => ['Sorry! Data not found.']]);
+
         return view('admin.sections.send-money.edit',compact(
             'page_title',
             'data'

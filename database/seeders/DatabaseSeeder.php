@@ -32,6 +32,7 @@ use Database\Seeders\Admin\ModuleSettingSeeder;
 use Database\Seeders\Admin\OnboardScreenSeeder;
 use Database\Seeders\Admin\PaymentGatewaySeeder;
 use Database\Seeders\Admin\BillPayCategorySeeder;
+use Database\Seeders\Admin\SendMoneyGatewaySeeder;
 use Database\Seeders\Merchant\ApiCredentialsSeeder;
 use Database\Seeders\Merchant\MerchantWalletSeeder;
 use Database\Seeders\Admin\TransactionSettingSeeder;
@@ -77,6 +78,7 @@ class DatabaseSeeder extends Seeder
             ModuleSettingSeeder::class,
             GatewayApiSeeder::class,
             BankSeeder::class,
+            SendMoneyGatewaySeeder::class,
             //user
             UserSeeder::class,
             UserWalletSeeder::class,
