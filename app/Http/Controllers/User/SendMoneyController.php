@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Jenssegers\Agent\Agent;
 use Illuminate\Http\Request;
+use App\Http\Helpers\Response;
 use App\Models\Admin\Currency;
 use App\Models\UserNotification;
 use Illuminate\Support\Facades\DB;
@@ -16,14 +17,18 @@ use App\Models\Admin\BasicSettings;
 use App\Constants\NotificationConst;
 use App\Http\Controllers\Controller;
 use App\Constants\PaymentGatewayConst;
+use App\Models\Admin\SendMoneyGateway;
 use App\Models\Admin\AdminNotification;
 use App\Models\Admin\TransactionSetting;
+use App\Traits\SendMoney\GooglePayTrait;
+use Illuminate\Support\Facades\Validator;
 use App\Notifications\User\SendMoney\SenderMail;
 use App\Notifications\User\SendMoney\ReceiverMail;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
 
 class SendMoneyController extends Controller
 {
+    use GooglePayTrait;
     protected  $trx_id;
 
     public function __construct()
@@ -31,16 +36,20 @@ class SendMoneyController extends Controller
         $this->trx_id = 'SM'.getTrxNum();
     }
     public function index() {
-        $page_title = __("Send Money");
-        $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->first();
-        $transactions = Transaction::auth()->senMoney()->latest()->take(10)->get();
-        $agent = new Agent();
-        $os = Str::lower($agent->platform());
+        $page_title         = __("Send Money");
+        $sendMoneyCharge    = TransactionSetting::where('slug','transfer')->where('status',1)->first();
+        $transactions       = Transaction::auth()->senMoney()->latest()->take(10)->get();
+        $google_pay_gateway = SendMoneyGateway::where('slug',global_const()::GOOGLE_PAY)->where('status',true)->first();
+        $paypal_gateway     = SendMoneyGateway::where('slug',global_const()::PAYPAL)->where('status',true)->first();
+        $agent              = new Agent();
+        $os                 = Str::lower($agent->platform());
 
         return view('user.sections.send-money.index',compact(
             "page_title",
             'sendMoneyCharge',
             'transactions',
+            'google_pay_gateway',
+            'paypal_gateway',
             'os'
         ));
     }
@@ -329,30 +338,57 @@ class SendMoneyController extends Controller
      */
     public function handlePaymentConfirmation(Request $request)
     {
-       
-        $request->validate([
-            'paymentToken' => 'required',
+        $validator    = Validator::make($request->all(),[
+            'amount'            => 'required',
+            'receiverEmail'     => 'required',
+            'senderEmail'       => 'nullable',
+            'paymentMethod'     => 'required',
+            'currency'          => 'required',
         ]);
-    
-        $paymentToken = $request->input('paymentToken');
-        
-        $paymentGatewayResponse = $this->processPayment($paymentToken);
-       
-        if ($paymentGatewayResponse['success']) {
-            return response()->json(['message' => 'Payment successful']);
-        } else {
-            return response()->json(['message' => 'Payment failed', 'error' => $paymentGatewayResponse['error']], 400);
+        if($validator->fails()) {
+            return Response::error($validator->errors()->all());
         }
+
+        $payment_gateway    = SendMoneyGateway::where('id',$request->paymentMethod)->first();
+        $amount             = $request->amount;
+        $currency           = $request->currency;
+        $receiver_email     = $request->receiverEmail;
+        $sender_email       = $request->senderEmail;
+        $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->first();
+        
+
+        $baseCurrency = Currency::default();
+        $rate = $baseCurrency->rate;
+        if(!$baseCurrency){
+            return Response::error(['Default Currency not found!'],[],404);
+        }
+        
+
+        $minLimit =  $sendMoneyCharge->min_limit *  $rate;
+        $maxLimit =  $sendMoneyCharge->max_limit *  $rate;
+        if($amount < $minLimit || $amount > $maxLimit) {
+            return Response::error(['Please follow the transaction limit'],[],404);
+        }
+        //charge calculations
+        $fixedCharge = $sendMoneyCharge->fixed_charge *  $rate;
+        $percent_charge = ($request->amount / 100) * $sendMoneyCharge->percent_charge;
+        $total_charge = $fixedCharge + $percent_charge;
+        $payable = $total_charge + $amount;
+        $recipient = $amount;
+        $output     = [
+            'payment_gateway'    => $payment_gateway,
+            'amount'             => floatval($amount),
+            'total_charge'       => $total_charge,
+            'percent_charge'     => $percent_charge,
+            'fixed_charge'       => $fixedCharge,
+            'payable'            => $payable,
+            'currency'           => $currency,
+            'sender_email'       => $sender_email,
+            'receiver_email'     => $receiver_email,
+        ];
+        $this->googlePayInit($output);
     }
     
-    private function processPayment($paymentToken)
-    {
-        
-        $success = true;
-        $error = null;
-
-       
-        return ['success' => $success, 'error' => $error];
-    }
+    
     
 }

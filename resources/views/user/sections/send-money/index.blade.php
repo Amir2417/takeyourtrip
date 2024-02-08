@@ -40,7 +40,7 @@
                                 <div class="col-xxl-6 col-xl-12 col-lg-6 form-group">
                                     <label>{{ __("Amount") }}<span>*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form--control" required placeholder="Enter Amount" name="amount" value="{{ old("amount") }}">
+                                        <input type="number" class="form--control amount" required placeholder="Enter Amount" name="amount" value="{{ old("amount") }}">
                                         <select class="form--control nice-select currency" name="currency">
                                             <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                         </select>
@@ -53,7 +53,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text copytext">{{ __("Email") }}</span>
                                         </div>
-                                        <input type="email" name="email" class="form--control checkUser" id="username" placeholder="Enter Email" value="{{ old('email') }}" />
+                                        <input type="email" name="email" class="form--control receiver-email" id="username" placeholder="Enter Email" value="{{ old('email') }}" />
                                     </div>
                                     <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
                                     <label class="exist text-start"></label>
@@ -64,15 +64,15 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ __("Email") }}</span>
                                         </div>
-                                        <input type="email" name="email" class="form--control" placeholder="Enter Email" value="{{ auth()->user()->email }}" />
+                                        <input type="email" name="email" class="form--control sender-email" placeholder="Enter Email" value="{{ auth()->user()->email }}" />
                                     </div>
                                 </div>
                                 <div class="payment-area d-flex justify-content-between mb-5 align-items-center">
                                     @if ($os == 'windows' || $os == 'androidos')
                                         <div class="google-payment" id="google-pay-button">
-                                            <button type="submit" class="btn" onclick="setPaymentMethod(1)">
+                                            <button type="submit" class="btn" onclick="setPaymentMethod({{ $google_pay_gateway->id }})">
                                                 <input type="hidden" class="payment-method" name="payment_method">
-                                                <img src="{{ asset('public/backend/images/payment-gateways/seeder/google-pay.png') }}">
+                                                <img src="{{ get_image(@$google_pay_gateway->image,'send-money-gateway') }}">
                                             </button>
                                         </div>
                                         <div class="or-area">
@@ -81,7 +81,7 @@
                                         <div class="google-payment">
                                             <button type="submit" class="btn" onclick="setPaymentMethod(3)">
                                                 <input type="hidden" class="payment-method" name="payment_method">
-                                                <img src="{{ asset('public/backend/images/payment-gateways/seeder/paypal.webp') }}">
+                                                <img src="{{ get_image(@$paypal_gateway->image,'send-money-gateway') }}">
                                             </button>
                                         </div>
                                     @else
@@ -97,7 +97,7 @@
                                         <div class="google-payment">
                                             <button type="submit" class="btn" onclick="setPaymentMethod(3)">
                                                 <input type="hidden" class="payment-method" name="payment_method">
-                                                <img src="{{ asset('public/backend/images/payment-gateways/seeder/paypal.webp') }}">
+                                                <img src="{{ get_image(@$paypal_gateway->image,'send-money-gateway') }}">
                                             </button>
                                         </div>
                                     @endif
@@ -429,80 +429,19 @@
 
 <script>
     var handlePaymentRoute = "{{ setRoute('user.send.money.handle.payment.confirm') }}";
-    const base64url = (str) => btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
-    const paymentDataRequest = {
-        apiVersion: 2,
-        apiVersionMinor: 0,
-        allowedPaymentMethods: [{
-            type: 'CARD',
-            parameters: {
-                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                allowedCardNetworks: ['VISA', 'MASTERCARD']
-            },
-            tokenizationSpecification: {
-                type: 'PAYMENT_GATEWAY',
-                parameters: {
-                    gateway: 'stripe',
-                    "stripe:version": "2018-10-31",
-                    "stripe:publishableKey":"pk_test_51NECrlJXLo7QTdMco2E4YxHSeoBnDvKmmi0CZl3hxjGgH1JwgcLVUF3ZR0yFraoRgT7hf0LtOReFADhShAZqTNuB003PnBSlGP"
-                }
-            }
-        }],
-        merchantInfo: {
-            merchantId: 'BCR2DN4TXWR5LIAH',
-            merchantName: 'AppDevs'
-        },
-        transactionInfo: {
-            totalPriceStatus: 'FINAL',
-            totalPriceLabel: 'Total',
-            totalPrice: '100.00',
-            currencyCode: 'USD',
-            countryCode: 'US'
-        }
-    };
+    $('#google-pay-button').on('click',function(){
+        var amount          = $('.amount').val();
+        var receiverEmail   = $('.receiver-email').val();
+        var senderEmail     = $('.sender-email').val();
+        var paymentMethod   = $('.payment-method').val();
+        var currency        = $('.currency').val();
 
-    const paymentsClient = new google.payments.api.PaymentsClient({
-        environment: 'TEST' 
+        $.post(handlePaymentRoute,{amount:amount,receiverEmail:receiverEmail,senderEmail:senderEmail,paymentMethod:paymentMethod,currency:currency,_token:"{{ csrf_token() }}"},function(response){
+            console.log(response);
+        });
     });
-
     
-
-    document.getElementById('google-pay-button').addEventListener('click', () => {
-        const paymentDataRequestWithParameters = Object.assign({}, paymentDataRequest);
-        paymentDataRequestWithParameters.transactionInfo.totalPrice = '100.00';
-        console.log(paymentDataRequestWithParameters);
-        paymentsClient.loadPaymentData(paymentDataRequestWithParameters)
-            .then((paymentData) => {
-                console.log(paymentData);
-                
-                fetch(handlePaymentRoute, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    body: JSON.stringify({ paymentToken: paymentData.paymentMethodData.tokenizationData.token })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    
-                    console.log(data);
-                })
-                .catch(error => {
-                
-                    console.log(error);
-                });
-            })
-            .catch((error) => {
-            
-                console.log(error);
-            });
-    });
-    function processPayment(paymentData) {
-        console.log(paymentData);
-        paymentToken = paymentData.paymentMethodData.tokenizationData.token;
-    }
 
 </script>
 
