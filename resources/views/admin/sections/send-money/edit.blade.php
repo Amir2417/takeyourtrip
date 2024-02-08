@@ -28,9 +28,22 @@
                 @method("PUT")
                 <div class="row mb-10-none">
                     <div class="col-xl-12 col-lg-12 form-group">
+                        <label for="card-image">{{ __("Image") }}</label>
+                        <div class="col-12 col-sm-6 m-auto">
+                            @include('admin.components.form.input-file',[
+                                'label'             => false,
+                                'class'             => "file-holder m-auto",
+                                'old_files_path'    => files_asset_path('send-money-gateway'),
+                                'name'              => "image",
+                                'old_files'         => old('image',@$data->image)
+                            ])
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 form-group">
                         <label>{{ __("Name*") }}</label>
                         <div class="input-group append">
                             <span class="input-group-text"><i class="las la-key"></i></span>
+                            <input type="hidden" class="form--control" name="slug" value="{{ @$data->slug }}">
                             <input type="text" class="form--control" name="name" value="{{ @$data->name }}">
                         </div>
                     </div>
@@ -75,19 +88,6 @@
                         </div>
                     </div>
                     @endif
-                    <div class="col-xl-12 col-lg-12 form-group">
-                        <label for="card-image">{{ __("Image") }}</label>
-                        <div class="col-12 col-sm-6 m-auto">
-                            @include('admin.components.form.input-file',[
-                                'label'         => false,
-                                'class'         => "file-holder m-auto",
-                                'old_files_path'    => files_asset_path('send-money-gateway'),
-                                'name'          => "image",
-                                'old_files'         => old('image',@$data->image)
-                            ])
-                        </div>
-                    </div>
-
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",

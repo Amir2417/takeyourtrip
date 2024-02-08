@@ -53,7 +53,6 @@
                                         'class'         => "edit-modal-button",
                                         'permission'    => "admin.send.money.gateway.edit",
                                     ])
-                                    <button class="btn btn--base btn--danger delete-modal-button" ><i class="las la-trash-alt"></i></button>
                                 </td>
                             </tr>
                         @empty
@@ -66,3 +65,11 @@
         </div>
     </div>
 @endsection
+@push('script')
+    <script>
+        $(document).ready(function(){
+            // Switcher
+            switcherAjax("{{ setRoute('admin.send.money.gateway.status.update') }}");
+        })
+    </script>
+@endpush

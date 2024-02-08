@@ -23,6 +23,8 @@ class GlobalConst {
     const FIAT = "FIAT";
     const CRYPTO = "CRYPTO";
 
+    const GOOGLE_PAY = "Google Pay";
+    const APPLE_PAY  = "Apple Pay";
 
     const TRANSFER  = "transfer";
     const EXCHANGE  = "exchange";

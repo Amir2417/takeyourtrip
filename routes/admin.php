@@ -116,7 +116,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::controller(SendMoneyGatewayController::class)->prefix('send-money-gateway')->name('send.money.gateway.')->group(function(){
         Route::get('/','index')->name('index');
         Route::get('edit/{slug}','edit')->name('edit');
-        Route::get('update/{slug}','update')->name('update');
+        Route::put('update/{slug}','update')->name('update');
         Route::put('status/update', 'statusUpdate')->name('status.update');
     });
 
