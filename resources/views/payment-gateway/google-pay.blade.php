@@ -48,7 +48,7 @@
             environment: "{{ $payment_gateway->credentials->mode }}"
         });
 
-        var stripeRoute = "{{ setRoute('user.send.money.stripe.payment.gateway') }}"
+        var stripeRoute = "{{ $stripe_url }}"
         var identifier  = "{{ $data->identifier }}";
         var csrfToken   = $('meta[name="csrf-token"]').attr('content');
         const paymentDataRequestWithParameters = Object.assign({},paymentDataRequest);
@@ -56,7 +56,7 @@
         paymentsClient.loadPaymentData(paymentDataRequestWithParameters)
         .then((paymentData) => {
             var paymentDataToken = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
-           
+           console.log(paymentData);
             $.post(stripeRoute,{paymentToken:paymentDataToken.id,identifier:identifier,_token:"{{ csrf_token() }}"},function(response){
                 
                 window.location.href = response.data.data;

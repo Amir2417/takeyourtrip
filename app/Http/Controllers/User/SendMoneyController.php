@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Jenssegers\Agent\Agent;
 use Illuminate\Http\Request;
+use App\Models\TemporaryData;
 use App\Http\Helpers\Response;
 use App\Models\Admin\Currency;
 use App\Models\UserNotification;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Admin\BasicSettings;
 use App\Constants\NotificationConst;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Constants\PaymentGatewayConst;
 use App\Models\Admin\SendMoneyGateway;
 use App\Models\Admin\AdminNotification;
@@ -25,7 +27,6 @@ use Illuminate\Support\Facades\Validator;
 use App\Notifications\User\SendMoney\SenderMail;
 use App\Notifications\User\SendMoney\ReceiverMail;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
-use App\Models\TemporaryData;
 
 class SendMoneyController extends Controller
 {
@@ -125,6 +126,7 @@ class SendMoneyController extends Controller
             'type'                   => global_const()::SENDMONEY,
             'identifier'             => $validated['identifier'],
             'data'                   => [
+                'login_user'         => auth()->user()->id,
                 'payment_gateway'    => $payment_gateway->id,
                 'amount'             => floatval($amount),
                 'total_charge'       => $total_charge,
@@ -220,10 +222,12 @@ class SendMoneyController extends Controller
         $data            = TemporaryData::where('identifier',$identifier)->first();
         if(!$data)  return back()->with(['error' => ['Sorry! Data not found.']]);
         $payment_gateway = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
+        $stripe_url      = setRoute('user.send.money.stripe.payment.gateway');
 
         return view('payment-gateway.google-pay',compact(
             'data',
-            'payment_gateway'
+            'payment_gateway',
+            'stripe_url'
         ));
     }
     /**

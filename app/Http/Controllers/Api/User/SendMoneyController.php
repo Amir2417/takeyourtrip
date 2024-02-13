@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\User;
 
+
 use Exception;
 use App\Models\User;
 use App\Models\UserQrCode;
@@ -10,6 +11,7 @@ use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\TemporaryData;
+use App\Http\Helpers\Response;
 use App\Models\Admin\Currency;
 use App\Models\UserNotification;
 use App\Http\Helpers\Api\Helpers;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Admin\BasicSettings;
 use App\Constants\NotificationConst;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Constants\PaymentGatewayConst;
 use App\Models\Admin\SendMoneyGateway;
 use App\Models\Admin\AdminNotification;
@@ -166,7 +169,8 @@ class SendMoneyController extends Controller
             'amount'            => 'required|numeric|gt:0',
             'email'             => 'required|email',
             'payment_method'    => 'required',
-            'sender_email'      => 'nullable'
+            'sender_email'      => 'nullable',
+            'currency'          => 'required'
         ]);
         if($validator->fails()){
             $error =  ['error'=>$validator->errors()->all()];
@@ -237,6 +241,7 @@ class SendMoneyController extends Controller
             'type'                   => global_const()::SENDMONEY,
             'identifier'             => $validated['identifier'],
             'data'                   => [
+                'login_user'         => auth()->user()->id,
                 'payment_gateway'    => $payment_gateway->id,
                 'amount'             => floatval($amount),
                 'total_charge'       => $total_charge,
@@ -250,15 +255,17 @@ class SendMoneyController extends Controller
             ],  
         ];
         try{
-            $temporary_data = TemporaryData::create($data);
-            $this->redirectUrl($temporary_data->identifier);
-            
+            $temporary_data = TemporaryData::create($data);  
         }catch(Exception $e){
             $error = ['error'=>[__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
         }
+        $data       = [
+            'temporary_data' => $temporary_data,
+            'redirect_url'   => setRoute('api.user.send.money.redirect.url',$temporary_data->identifier)
+        ];
         $message  = ['success' => ['Send Money Data stored successfully.']];
-        return Helpers::onlysuccess($message);
+        return Helpers::success($data,$message,200);
     }
     /**
      * Method for redirect url
@@ -267,176 +274,151 @@ class SendMoneyController extends Controller
      */
     public function redirectUrl($identifier){
         $data            = TemporaryData::where('identifier',$identifier)->first();
+        $login_user      = User::where('id',$data->data->login_user)->first();
+        $user = Auth::loginUsingId($login_user->id);
+       
         if(!$data){
             $error       = ['error' => [__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
         }
         $payment_gateway = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
+        $stripe_url      = setRoute('api.user.send.money.stripe.payment.gateway');
+
         
         return view('payment-gateway.google-pay',compact(
             'data',
-            'payment_gateway'
+            'payment_gateway',
+            'stripe_url'
         ));
     }
 
-     //sender transaction
-     public function insertSender($trx_id,$user,$userWallet,$amount,$recipient,$payable,$receiver) {
+    /**
+     * Method for stripe payment gateway 
+     * @param $identifier
+     */
+    public function stripePaymentGateway(Request $request){
+        $basic_setting      = BasicSettings::first();
+        $validator          = Validator::make($request->all(),[
+            'identifier'    => 'required|string',
+            'paymentToken'   => 'required'
+        ]);
+
+        if($validator->fails()) {
+            return Response::error($validator->errors()->all());
+        }
+
+        $validated          = $validator->validated();
+        $data               = TemporaryData::where('identifier',$validated['identifier'])->first();
+        $payment_gateway    = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
+        $payment_token      = $request->paymentToken;
+        $user               = auth()->user();
+       
+        $stripe             = new \Stripe\StripeClient($payment_gateway->credentials->stripe_secret_key);
+       
+        $response           =  $stripe->charges->create([
+            'amount'        => $data->data->payable * 100,
+            'currency'      => 'usd',
+            'source'        => 'tok_visa',
+        ]);
+       
+        if($response->status == 'succeeded'){
+           
+            try{
+                $trx_id = $this->trx_id;
+                $sender = $this->insertSender($trx_id,$data);
+
+                if($sender){
+                    
+                    $this->insertSenderCharges($data,$sender);
+                    // if( $basic_setting->email_notification == true){
+                    //     $notifyDataSender = [
+                    //         'trx_id'  => $trx_id,
+                    //         'title'  => "Send Money to @" . @$data->data->receiver_email,
+                    //         'request_amount'  => getAmount($data->data->amount,4).' '.get_default_currency_code(),
+                    //         'payable'   =>  getAmount($data->data->payable,4).' ' .get_default_currency_code(),
+                    //         'charges'   => getAmount($data->data->total_charge, 2).' ' .get_default_currency_code(),
+                    //         'received_amount'  => getAmount( $data->data->will_get, 2).' ' .get_default_currency_code(),
+                    //         'status'  => "Success",
+                    //     ];
+                    //     //sender notifications
+                    //     // $user->notify(new SenderMail($user,(object)$notifyDataSender));
+                    // }
+                }
+                $route  = route("user.send.money.index");
+               
+                return Response::success(['Send Money Successful'],['data' => $route],200);
+            }catch(Exception $e) {
+                return Response::error(__("Something went wrong! Please try again."),404);
+                
+            }
+        }else{
+            return Response::error(__("Something went wrong! Please try again."),404);
+        }
+    }
+    //sender transaction
+    public function insertSender($trx_id,$data) {
         $trx_id = $trx_id;
-        $authWallet = $userWallet;
-        $afterCharge = ($authWallet->balance - $payable);
+        $user   = auth()->user();
         $details =[
-            'recipient_amount' => $recipient,
-            'receiver' => $receiver,
+            'data' => $data->data,
+            'recipient_amount' => $data->data->will_get
         ];
         DB::beginTransaction();
         try{
             $id = DB::table("transactions")->insertGetId([
                 'user_id'                       => $user->id,
-                'user_wallet_id'                => $authWallet->id,
+                'user_wallet_id'                => null,
                 'payment_gateway_currency_id'   => null,
+                'send_money_gateway_id'         => $data->data->payment_gateway,
                 'type'                          => PaymentGatewayConst::TYPETRANSFERMONEY,
                 'trx_id'                        => $trx_id,
-                'request_amount'                => $amount,
-                'payable'                       => $payable,
-                'available_balance'             => $afterCharge,
-                'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPETRANSFERMONEY," ")) . " To " .$receiver->fullname,
+                'request_amount'                => $data->data->amount,
+                'payable'                       => $data->data->payable,
+                'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPETRANSFERMONEY," ")) . " To " .$data->data->receiver_email,
                 'details'                       => json_encode($details),
                 'attribute'                      =>PaymentGatewayConst::SEND,
                 'status'                        => true,
                 'created_at'                    => now(),
             ]);
-            $this->updateSenderWalletBalance($authWallet,$afterCharge);
 
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
-            $error = ['error'=>[__("Something went wrong! Please try again.")]];
-            return Helpers::error($error);
+            throw new Exception(__("Something went wrong! Please try again."));
         }
         return $id;
     }
-    public function updateSenderWalletBalance($authWalle,$afterCharge) {
-        $authWalle->update([
-            'balance'   => $afterCharge,
-        ]);
-    }
-    public function insertSenderCharges($fixedCharge,$percent_charge, $total_charge, $amount,$user,$id,$receiver) {
+    public function insertSenderCharges($data,$id) {
+        $user = auth()->user();
         DB::beginTransaction();
         try{
             DB::table('transaction_charges')->insert([
                 'transaction_id'    => $id,
-                'percent_charge'    => $percent_charge,
-                'fixed_charge'      =>$fixedCharge,
-                'total_charge'      =>$total_charge,
+                'percent_charge'    => $data->data->percent_charge,
+                'fixed_charge'      =>$data->data->fixed_charge,
+                'total_charge'      =>$data->data->total_charge,
                 'created_at'        => now(),
             ]);
             DB::commit();
 
-            //notification
+            //store notification
             $notification_content = [
                 'title'         => __("Send Money"),
-                'message'       => __('Transfer Money to')." ".$receiver->fullname.' ' .$amount.' '.get_default_currency_code()." ".__('Successful'),
-                'image'         => files_asset_path('profile-default'),
+                'message'       => __('Transfer Money to')." ".$data->data->receiver_email.' ' .$data->data->amount.' '.get_default_currency_code()." ".__('Successful'),
+                'image'         =>  get_image($user->image,'user-profile'),
             ];
-
             UserNotification::create([
                 'type'      => NotificationConst::TRANSFER_MONEY,
                 'user_id'  => $user->id,
                 'message'   => $notification_content,
             ]);
 
-             //admin create notifications
-             $notification_content['title'] = __('Transfer Money Send To').' ('.$receiver->username.')';
-             AdminNotification::create([
-                 'type'      => NotificationConst::TRANSFER_MONEY,
-                 'admin_id'  => 1,
-                 'message'   => $notification_content,
-             ]);
+            
             DB::commit();
+
         }catch(Exception $e) {
             DB::rollBack();
-            $error = ['error'=>[__("Something went wrong! Please try again.")]];
-            return Helpers::error($error);
-        }
-    }
-    //Receiver Transaction
-    public function insertReceiver($trx_id,$user,$userWallet,$amount,$recipient,$payable,$receiver,$receiverWallet) {
-        $trx_id = $trx_id;
-        $receiverWallet = $receiverWallet;
-        $recipient_amount = ($receiverWallet->balance + $recipient);
-        $details =[
-            'sender_amount' => $amount,
-            'sender' => $user,
-        ];
-        DB::beginTransaction();
-        try{
-            $id = DB::table("transactions")->insertGetId([
-                'user_id'                       => $receiver->id,
-                'user_wallet_id'                => $receiverWallet->id,
-                'payment_gateway_currency_id'   => null,
-                'type'                          => PaymentGatewayConst::TYPETRANSFERMONEY,
-                'trx_id'                        => $trx_id,
-                'request_amount'                => $amount,
-                'payable'                       => $payable,
-                'available_balance'             => $recipient_amount,
-                'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPETRANSFERMONEY," ")) . " From " .$user->fullname,
-                'details'                       => json_encode($details),
-                'attribute'                      =>PaymentGatewayConst::RECEIVED,
-                'status'                        => true,
-                'created_at'                    => now(),
-            ]);
-            $this->updateReceiverWalletBalance($receiverWallet,$recipient_amount);
-
-            DB::commit();
-        }catch(Exception $e) {
-            DB::rollBack();
-            $error = ['error'=>[__("Something went wrong! Please try again.")]];
-            return Helpers::error($error);
-        }
-        return $id;
-    }
-    public function updateReceiverWalletBalance($receiverWallet,$recipient_amount) {
-        $receiverWallet->update([
-            'balance'   => $recipient_amount,
-        ]);
-    }
-    public function insertReceiverCharges($fixedCharge,$percent_charge, $total_charge, $amount,$user,$id,$receiver) {
-        DB::beginTransaction();
-        try{
-            DB::table('transaction_charges')->insert([
-                'transaction_id'    => $id,
-                'percent_charge'    => $percent_charge,
-                'fixed_charge'      =>$fixedCharge,
-                'total_charge'      =>$total_charge,
-                'created_at'        => now(),
-            ]);
-            DB::commit();
-
-            //notification
-            $notification_content = [
-                'title'         => __("Send Money"),
-                'message'       => __('Transfer Money from')." ".$user->fullname.' ' .$amount.' '.get_default_currency_code()." ".__('Successful'),
-                'image'         => files_asset_path('profile-default'),
-            ];
-
-            UserNotification::create([
-                'type'      => NotificationConst::TRANSFER_MONEY,
-                'user_id'  => $receiver->id,
-                'message'   => $notification_content,
-            ]);
-
-             //admin notification
-             $notification_content['title'] = __('Transfer Money Received From').' ('.$user->username.')';
-            AdminNotification::create([
-                'type'      => NotificationConst::TRANSFER_MONEY,
-                'admin_id'  => 1,
-                'message'   => $notification_content,
-            ]);
-            DB::commit();
-        }catch(Exception $e) {
-            DB::rollBack();
-            $error = ['error'=>[__("Something went wrong! Please try again.")]];
-            return Helpers::error($error);
+            throw new Exception(__("Something went wrong! Please try again."));
         }
     }
 

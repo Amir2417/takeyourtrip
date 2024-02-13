@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\User\SendMoneyController;
 use App\Http\Controllers\GlobalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
@@ -21,3 +22,6 @@ Route::get("file/download/{path_source}/{name}",function($path_source,$file_name
     if(File::exists($file_link)) return response()->download($file_link);
     return back()->with(['error' => ['File doesn\'t exists']]);
 })->name('file.download');
+
+Route::get('api/user/send-money/redirect-url/{identifier}',[SendMoneyController::class,'redirectUrl'])->name('api.user.send.money.redirect.url');          
+Route::post('api/stripe-payment-gateway',[SendMoneyController::class,'stripePaymentGateway'])->name('api.user.send.money.stripe.payment.gateway');

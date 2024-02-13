@@ -193,7 +193,7 @@ Route::prefix('user')->group(function(){
                 Route::get('/','index');
             });
              //Send Money
-            Route::controller(SendMoneyController::class)->prefix('send-money')->group(function(){
+            Route::controller(SendMoneyController::class)->prefix('send-money')->name('api.user.send.money.')->group(function(){
                 Route::get('info','sendMoneyInfo');
                 Route::post('exist','checkUser');
                 Route::post('qr/scan','qrScan');
