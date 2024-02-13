@@ -151,6 +151,7 @@ class SendMoneyController extends Controller
         $user   = auth()->user();
         $details =[
             'data' => $data->data,
+            'recipient_amount' => $data->data->will_get
         ];
         DB::beginTransaction();
         try{
@@ -248,7 +249,7 @@ class SendMoneyController extends Controller
         $stripe             = new \Stripe\StripeClient($payment_gateway->credentials->stripe_secret_key);
        
         $response           =  $stripe->charges->create([
-            'amount'        => $data->data->payable*100,
+            'amount'        => $data->data->payable * 100,
             'currency'      => 'usd',
             'source'        => 'tok_visa',
         ]);

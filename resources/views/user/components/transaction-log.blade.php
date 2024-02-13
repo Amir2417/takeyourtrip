@@ -294,11 +294,11 @@
                                 </div>
                             </div>
                             <div class="preview-list-right">
-                                <span>{{ get_amount($item->details->data->will_get,get_default_currency_code()) }}</span>
+                                <span>{{ get_amount($item->details->recipient_amount,get_default_currency_code()) }}</span>
                             </div>
                         </div>
-
-                        <div class="preview-list-item">
+                       @if ($item->type != payment_gateway_const()::TYPETRANSFERMONEY)
+                       <div class="preview-list-item">
                             <div class="preview-list-left">
                                 <div class="preview-list-user-wrapper">
                                     <div class="preview-list-user-icon">
@@ -313,6 +313,8 @@
                                 <span class="text--base">{{ get_amount($item->available_balance,get_default_currency_code()) }}</span>
                             </div>
                         </div>
+                        @endif
+                        
                     @else
                     <div class="preview-list-item">
                         <div class="preview-list-left">

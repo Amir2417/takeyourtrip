@@ -2,25 +2,28 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Constants\NotificationConst;
-use App\Constants\PaymentGatewayConst;
-use App\Http\Controllers\Controller;
-use App\Http\Helpers\Api\Helpers;
-use App\Models\Admin\AdminNotification;
-use App\Models\Admin\BasicSettings;
-use App\Models\Admin\Currency;
-use App\Models\Admin\TransactionSetting;
-use App\Models\Transaction;
+use Exception;
 use App\Models\User;
-use App\Models\UserNotification;
 use App\Models\UserQrCode;
 use App\Models\UserWallet;
-use App\Notifications\User\SendMoney\ReceiverMail;
-use App\Notifications\User\SendMoney\SenderMail;
-use Exception;
+use App\Models\Transaction;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\TemporaryData;
+use App\Models\Admin\Currency;
+use App\Models\UserNotification;
+use App\Http\Helpers\Api\Helpers;
 use Illuminate\Support\Facades\DB;
+use App\Models\Admin\BasicSettings;
+use App\Constants\NotificationConst;
+use App\Http\Controllers\Controller;
+use App\Constants\PaymentGatewayConst;
+use App\Models\Admin\SendMoneyGateway;
+use App\Models\Admin\AdminNotification;
+use App\Models\Admin\TransactionSetting;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\User\SendMoney\SenderMail;
+use App\Notifications\User\SendMoney\ReceiverMail;
 
 class SendMoneyController extends Controller
 {
@@ -56,12 +59,11 @@ class SendMoneyController extends Controller
                         'type' =>$item->attribute,
                         'trx' => @$item->trx_id,
                         'transaction_type' => $item->type,
-                        'transaction_heading' => "Send Money to @" . @$item->details->receiver->username." (".@$item->details->receiver->email.")",
-                        'request_amount' => getAmount(@$item->request_amount,2).' '.get_default_currency_code() ,
-                        'total_charge' => getAmount(@$item->charge->total_charge,2).' '.get_default_currency_code(),
-                        'payable' => getAmount(@$item->payable,2).' '.get_default_currency_code(),
-                        'recipient_received' => getAmount(@$item->details->recipient_amount,2).' '.get_default_currency_code(),
-                        'current_balance' => getAmount(@$item->available_balance,2).' '.get_default_currency_code(),
+                        'transaction_heading' => "Send Money to @" . @$item->details->data->receiver_email,
+                        'request_amount' => getAmount(@$item->request_amount,2) ,
+                        'total_charge' => getAmount(@$item->charge->total_charge,2),
+                        'payable' => getAmount(@$item->payable,2),
+                        'recipient_received' => getAmount(@$item->details->recipient_amount,2),
                         'status' => @$item->stringStatus->value ,
                         'date_time' => @$item->created_at ,
                         'status_info' =>(object)@$statusInfo ,
@@ -83,18 +85,21 @@ class SendMoneyController extends Controller
                 }
 
         });
-        $userWallet = UserWallet::where('user_id',$user->id)->get()->map(function($data){
-            return[
-                'balance' => getAmount($data->balance,2),
-                'currency' => get_default_currency_code(),
-            ];
-        })->first();
+        $send_money_gateway  = SendMoneyGateway::where('slug',global_const()::GOOGLE_PAY)->where('status',true)->first();
+        
+        $send_money_image_path            = [
+            'base_url'         => url("/"),
+            'path_location'    => files_asset_path_basename("send-money-gateway"),
+            'default_image'    => files_asset_path_basename("default"),
+
+        ];
         $data =[
-            'base_curr' => get_default_currency_code(),
-            'base_curr_rate' => get_default_currency_rate(),
-            'sendMoneyCharge'=> (object)$sendMoneyCharge,
-            'userWallet'=>  (object)$userWallet,
-            'transactions'   => $transactions,
+            'base_curr'             => get_default_currency_code(),
+            'base_curr_rate'        => get_default_currency_rate(),
+            'sendMoneyCharge'       => (object)$sendMoneyCharge,
+            'send_money_gateway'    => $send_money_gateway,
+            'send_money_image_path' => $send_money_image_path,
+            'transactions'          => $transactions,
         ];
         $message =  ['success'=>[__('Send Money Information')]];
         return Helpers::success($data,$message);
@@ -158,8 +163,10 @@ class SendMoneyController extends Controller
 
     public function confirmedSendMoney(Request $request){
         $validator = Validator::make(request()->all(), [
-            'amount' => 'required|numeric|gt:0',
-            'email' => 'required|email'
+            'amount'            => 'required|numeric|gt:0',
+            'email'             => 'required|email',
+            'payment_method'    => 'required',
+            'sender_email'      => 'nullable'
         ]);
         if($validator->fails()){
             $error =  ['error'=>$validator->errors()->all()];
@@ -179,14 +186,30 @@ class SendMoneyController extends Controller
                 return Helpers::error($error);
             }
         }
-        $amount = $request->amount;
-        $user = auth()->user();
+        $amount             = $request->amount;
+        $currency           = $request->currency;
+        $receiver_email     = $request->email;
+        $sender_email       = $request->sender_email;
+        $user               = auth()->user();
+
         $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->first();
-        $userWallet = UserWallet::where('user_id',$user->id)->first();
-        if(!$userWallet){
-            $error = ['error'=>[__('User wallet not found')]];
+        $payment_gateway    = SendMoneyGateway::where('id',$request->payment_method)->first();
+        
+        $this_month_start   = date('Y-m-01');
+        $this_month_end     = date('Y-m-t');
+        $this_month_send_money  = Transaction::where('type',PaymentGatewayConst::TYPETRANSFERMONEY)->whereDate('created_at',">=" , $this_month_start)
+                            ->whereDate('created_at',"<=" , $this_month_end)
+                            ->sum('request_amount');
+        if($sendMoneyCharge->monthly_limit < $this_month_send_money){
+            $error = ['error'=>[__('The receiver have exceeded the monthly amount. Please try smaller amount.')]];
             return Helpers::error($error);
         }
+        $total_request_amount = $amount + $this_month_send_money;
+        if($sendMoneyCharge->monthly_limit < $total_request_amount){
+            $error = ['error'=>[__('The receiver have exceeded the monthly amount. Please try smaller amount.')]];
+            return Helpers::error($error);
+        }
+
         $baseCurrency = Currency::default();
         if(!$baseCurrency){
             $error = ['error'=>[__('Default currency not found')]];
@@ -194,20 +217,7 @@ class SendMoneyController extends Controller
         }
         $rate = $baseCurrency->rate;
         $email = $request->email;
-        $receiver = User::where('email',$email)->first();
-        if(!$receiver){
-            $error = ['error'=>[__('Receiver not exist')]];
-            return Helpers::error($error);
-        }
-        if($receiver->email ==  $user->email){
-            $error = ['error'=>[__("Can't send money to your own")]];
-            return Helpers::error($error);
-        }
-        $receiverWallet = UserWallet::where('user_id',$receiver->id)->first();
-        if(!$receiverWallet){
-            $error = ['error'=>[__('Receiver wallet not found')]];
-            return Helpers::error($error);
-        }
+        
 
         $minLimit =  $sendMoneyCharge->min_limit *  $rate;
         $maxLimit =  $sendMoneyCharge->max_limit *  $rate;
@@ -216,60 +226,57 @@ class SendMoneyController extends Controller
             return Helpers::error($error);
         }
         //charge calculations
-        $fixedCharge = $sendMoneyCharge->fixed_charge *  $rate;
-        $percent_charge = ($request->amount / 100) * $sendMoneyCharge->percent_charge;
-        $total_charge = $fixedCharge + $percent_charge;
-        $payable = $total_charge + $amount;
-        $recipient = $amount;
-        if($payable > $userWallet->balance ){
-            $error = ['error'=>[__('Sorry, insufficient balance')]];
-            return Helpers::error($error);
-        }
+        $fixedCharge        = $sendMoneyCharge->fixed_charge *  $rate;
+        $percent_charge     = ($request->amount / 100) * $sendMoneyCharge->percent_charge;
+        $total_charge       = $fixedCharge + $percent_charge;
+        $payable            = $total_charge + $amount;
+        
 
+        $validated['identifier']     = Str::uuid();
+        $data     = [
+            'type'                   => global_const()::SENDMONEY,
+            'identifier'             => $validated['identifier'],
+            'data'                   => [
+                'payment_gateway'    => $payment_gateway->id,
+                'amount'             => floatval($amount),
+                'total_charge'       => $total_charge,
+                'percent_charge'     => $percent_charge,
+                'fixed_charge'       => $fixedCharge,
+                'payable'            => $payable,
+                'currency'           => $currency,
+                'sender_email'       => $sender_email,
+                'receiver_email'     => $receiver_email,
+                'will_get'           => floatval($amount),
+            ],  
+        ];
         try{
-            $trx_id = $this->trx_id;
-            $notifyDataSender = [
-                'trx_id'  => $trx_id,
-                'title'  => "Send Money to @" . @$receiver->username." (".@$receiver->email.")",
-                'request_amount'  => getAmount($amount,4).' '.get_default_currency_code(),
-                'payable'   =>  getAmount($payable,4).' ' .get_default_currency_code(),
-                'charges'   => getAmount( $total_charge, 2).' ' .get_default_currency_code(),
-                'received_amount'  => getAmount( $recipient, 2).' ' .get_default_currency_code(),
-                'status'  => "Success",
-              ];
-
-            $sender = $this->insertSender( $trx_id,$user,$userWallet,$amount,$recipient,$payable,$receiver);
-            if($sender){
-                 $this->insertSenderCharges( $fixedCharge,$percent_charge, $total_charge, $amount,$user,$sender,$receiver);
-            }
-            //sender notifications
-            if( $basic_setting->email_notification == true){
-                $user->notify(new SenderMail($user,(object)$notifyDataSender));
-            }
-             //Receiver notifications
-             $notifyDataReceiver = [
-                'trx_id'  => $trx_id,
-                'title'  => "Received Money from @" .@$user->username." (".@$user->email.")",
-                'received_amount'  => getAmount( $recipient, 2).' ' .get_default_currency_code(),
-                'status'  => "Success",
-              ];
-
-            $receiverTrans = $this->insertReceiver( $trx_id,$user,$userWallet,$amount,$recipient,$payable,$receiver,$receiverWallet);
-            if($receiverTrans){
-                 $this->insertReceiverCharges( $fixedCharge,$percent_charge, $total_charge, $amount,$user,$receiverTrans,$receiver);
-            }
-            //send notifications
-            if( $basic_setting->email_notification == true){
-                $receiver->notify(new ReceiverMail($receiver,(object)$notifyDataReceiver));
-            }
-
-            $message =  ['success'=>[__('Send Money successful to').' '.$receiver->fullname]];
-            return Helpers::onlysuccess($message);
-        }catch(Exception $e) {
+            $temporary_data = TemporaryData::create($data);
+            $this->redirectUrl($temporary_data->identifier);
+            
+        }catch(Exception $e){
             $error = ['error'=>[__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
-
         }
+        $message  = ['success' => ['Send Money Data stored successfully.']];
+        return Helpers::onlysuccess($message);
+    }
+    /**
+     * Method for redirect url
+     * @param $identifier
+     * @param \Illuminate\Http\Request $request
+     */
+    public function redirectUrl($identifier){
+        $data            = TemporaryData::where('identifier',$identifier)->first();
+        if(!$data){
+            $error       = ['error' => [__("Something went wrong! Please try again.")]];
+            return Helpers::error($error);
+        }
+        $payment_gateway = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
+        
+        return view('payment-gateway.google-pay',compact(
+            'data',
+            'payment_gateway'
+        ));
     }
 
      //sender transaction
