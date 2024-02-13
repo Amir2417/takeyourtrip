@@ -172,6 +172,8 @@ Route::prefix('user')->group(function(){
             //bank account
             Route::controller(BankAccountController::class)->prefix('bank-account')->group(function(){
                 Route::get('/','index');
+                Route::post('store','store');
+                Route::post('delete','delete');
             });
 
              //add money

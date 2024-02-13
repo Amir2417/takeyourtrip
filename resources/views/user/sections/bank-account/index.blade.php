@@ -36,7 +36,6 @@
                             @php
                                 $fileData = [];
                                 $textData = [];
-
                                 foreach ($bank_account_approved->credentials as $item) {
                                     if ($item->type === 'file') {
                                         $fileData[] = $item;
@@ -84,9 +83,35 @@
                     <div class="card-body">
                         <div class="row"> 
                             <div class="col-xl-12 col-lg-12 col-md-12 form-group">
-                                <p>{{ __("Your bank account is rejected due to ") }} "{{ $bank_account_reject->reject_reason }}".</p>
+                                <p>{{ __("Your bank account is rejected due to ") }} "{{ $bank_account_reject->reject_reason }}". Create a new Bank Account</p>
                             </div>
                         </div>
+
+                        <form class="card-form add-recipient-item" action="{{ setRoute('user.bank.account.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="trx-inputs bt-view" style="display: block;">
+                                <div class="row"> 
+                                    <div class="col-xl-12 col-lg-12 col-md-12 form-group">
+                                        <label>{{ __("Select Bank") }}<span>*</span></label>
+                                        <select class="form--control select2-basic" name="bank">
+                                            <option selected disabled>{{ __("Select Bank") }}</option>
+                                            @foreach ($banks as $item)
+                                                <option 
+                                                    value="{{ $item->id }}"
+                                                    data-input_fields="{{ $item }}"
+                                                    >{{ $item->bank_name }} </option>
+                                            @endforeach 
+                                        </select>
+                                    </div>
+                                    <div class="col-xl-12 col-lg-12 col-md-12 form-group bank-dynamic-fields">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12">
+                                <button type="submit" class="btn--base w-100">{{ __("Confirm") }}</button>
+                            </div>
+                        </form>
                     </div>
                     @else
                     <div class="card-body">

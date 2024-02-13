@@ -2204,3 +2204,7 @@ function generate_random_number($length = 12)
     }
     return $randomString;
 }
+
+function files_asset_path_basename($slug) {
+    return "public/" . files_path($slug)->path;
+}
