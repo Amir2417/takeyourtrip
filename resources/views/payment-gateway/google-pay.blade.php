@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Pay with {{ $output['currency'] }}</title>
+    <title>Pay with {{ $data->data->currency }}</title>
     <script src="https://pay.google.com/gp/p/js/pay.js"></script>
 </head>
 <body>
     
+
+    <script src="{{ asset('public/frontend/') }}/js/jquery-3.5.1.min.js"></script>
+
     <script>
         const paymentDataRequest = {
             apiVersion: 2,
@@ -22,28 +25,45 @@
                 tokenizationSpecification: {
                     type: 'PAYMENT_GATEWAY',
                     parameters: {
-                        gateway: "{{ $output['payment_gateway']->credentials->gateway }}",
-                        "stripe:version": "{{ $output['payment_gateway']->credentials->stripe_version }}",
-                        "stripe:publishableKey":"{{ $output['payment_gateway']->credentials->stripe_publishable_key }}"
+                        gateway: "{{ $payment_gateway->credentials->gateway }}",
+                        "stripe:version": "{{ $payment_gateway->credentials->stripe_version }}",
+                        "stripe:publishableKey":"{{ $payment_gateway->credentials->stripe_publishable_key }}"
                     }
                 }
             }],
             merchantInfo: {
-                merchantId: "{{ $output['payment_gateway']->credentials->merchant_id }}",
-                merchantName: "{{ $output['payment_gateway']->credentials->merchant_name }}"
+                merchantId: "{{ $payment_gateway->credentials->merchant_id }}",
+                merchantName: "{{ $payment_gateway->credentials->merchant_name }}"
             },
             transactionInfo: {
                 totalPriceStatus: 'FINAL',
                 totalPriceLabel: 'Total',
-                totalPrice: "{{ $output['payable'] }}",
-                currencyCode: "{{ $output['currency'] }}",
+                totalPrice: "{{ $data->data->payable }}",
+                currencyCode: "{{ $data->data->currency }}",
                 countryCode: 'US'
             }
         };
        
         const paymentsClient = new google.payments.api.PaymentsClient({
-            environment: "{{ $output['payment_gateway']->credentials->mode }}"
+            environment: "{{ $payment_gateway->credentials->mode }}"
         });
+
+        var stripeRoute = "{{ setRoute('user.send.money.stripe.payment.gateway') }}"
+        var identifier  = "{{ $data->identifier }}";
+        var csrfToken   = $('meta[name="csrf-token"]').attr('content');
+        const paymentDataRequestWithParameters = Object.assign({},paymentDataRequest);
+        paymentDataRequestWithParameters.transactionInfo.totalPrice = "{{ $data->data->payable }}";
+        paymentsClient.loadPaymentData(paymentDataRequestWithParameters)
+        .then((paymentData) => {
+            var paymentDataToken = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
+            console.log(paymentDataToken.id);
+            $.post(stripeRoute,{paymentToken:paymentDataToken.id,identifier:identifier,_token:"{{ csrf_token() }}"},function(response){
+                console.log(response);
+                window.location.href = response.data.data;
+        });
+            
+            
+        })
         
     </script>
     

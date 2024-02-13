@@ -29,7 +29,7 @@
                         <h5 class="title">{{ __(@$page_title) }}</h5>
                     </div>
                     <div class="dash-payment-body">
-                        {{-- <form class="card-form" action="{{ setRoute('user.send.money.confirmed') }}" method="POST"> --}}
+                        <form class="card-form" action="{{ setRoute('user.send.money.confirmed') }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 form-group text-center">
@@ -45,7 +45,6 @@
                                             <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                         </select>
                                     </div>
-                                    <code class="d-block mt-10 text-end text--warning balance-show">{{ __("Available Balance") }} {{ authWalletBalance() }} {{ get_default_currency_code() }}</code>
                                 </div>
                                 <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
                                     <label>{{ __("Receiver Email Address") }} ({{ __("User") }})<span class="text--base">*</span></label>
@@ -64,10 +63,19 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ __("Email") }}</span>
                                         </div>
-                                        <input type="email" name="email" class="form--control sender-email" placeholder="Enter Email" value="{{ auth()->user()->email }}" />
+                                        <input type="email" name="sender_email" class="form--control sender-email" placeholder="Enter Email" value="{{ auth()->user()->email }}" />
                                     </div>
                                 </div>
-                                <div class="payment-area d-flex justify-content-between mb-5 align-items-center">
+                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
+                                    <label>{{ __("Select Gateway") }}</label>
+                                    <div class="input-group">
+                                        <select class="select2-basic" name="payment_method">
+                                                <option value="{{ $google_pay_gateway->id  }}">{{ $google_pay_gateway->name ?? '' }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- <div class="payment-area d-flex justify-content-between mb-5 align-items-center">
                                     @if ($os == 'windows' || $os == 'androidos')
                                         <div class="google-payment" id="google-pay-button">
                                             <button type="submit" class="btn" onclick="setPaymentMethod({{ $google_pay_gateway->id }})">
@@ -103,10 +111,10 @@
                                     @endif
 
                                     
-                                </div>
-                                {{-- <div class="col-xl-12 col-lg-12">
-                                    <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
                                 </div> --}}
+                                <div class="col-xl-12 col-lg-12">
+                                    <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -438,7 +446,7 @@
         var currency        = $('.currency').val();
 
         $.post(handlePaymentRoute,{amount:amount,receiverEmail:receiverEmail,senderEmail:senderEmail,paymentMethod:paymentMethod,currency:currency,_token:"{{ csrf_token() }}"},function(response){
-            console.log(response);
+            window.location.href = response.data.data;
         });
     });
     

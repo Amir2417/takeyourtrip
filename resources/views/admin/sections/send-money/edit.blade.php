@@ -44,7 +44,7 @@
                         <div class="col-xl-8 col-lg-8 form-group">
                             <label>{{ __("Name*") }}</label>
                             <div class="input-group append">
-                                <span class="input-group-text"><i class="las la-key"></i></span>
+                                <span class="input-group-text"><i class="las la-file-signature"></i></span>
                                 <input type="hidden" class="form--control" name="slug" value="{{ @$data->slug }}">
                                 <input type="text" class="form--control" name="name" value="{{ @$data->name }}">
                             </div>
@@ -62,35 +62,42 @@
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 form-group">
                                     <label>{{ __("Gateway Name*") }}</label>
                                     <div class="input-group append">
-                                        <span class="input-group-text"><i class="las la-key"></i></span>
+                                        <span class="input-group-text"><i class="las la-file-signature"></i></span>
                                         <input type="text" class="form--control" name="gateway" value="{{ @$data->credentials->gateway }}">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 form-group">
                                     <label>{{ __("Stripe Version*") }}</label>
                                     <div class="input-group append">
-                                        <span class="input-group-text"><i class="las la-hashtag"></i></span>
+                                        <span class="input-group-text"><i class="las la-calendar"></i></span>
                                         <input type="text" class="form--control" name="stripe_version" value="{{ @$data->credentials->stripe_version }}">
                                     </div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
                                     <label>{{ __("Stripe Publishable Key*") }}</label>
                                     <div class="input-group append">
-                                        <span class="input-group-text"><i class="las la-link"></i></span>
+                                        <span class="input-group-text"><i class="las la-key"></i></span>
                                         <input type="text" class="form--control" name="stripe_publishable_key" value="{{ @$data->credentials->stripe_publishable_key }}">
+                                    </div>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
+                                    <label>{{ __("Stripe Secret Key*") }}</label>
+                                    <div class="input-group append">
+                                        <span class="input-group-text"><i class="las la-key"></i></span>
+                                        <input type="text" class="form--control" name="stripe_secret_key" value="{{ @$data->credentials->stripe_secret_key }}">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 form-group">
                                     <label>{{ __("Merchant Name*") }}</label>
                                     <div class="input-group append">
-                                        <span class="input-group-text"><i class="las la-link"></i></span>
+                                        <span class="input-group-text"><i class="las la-file-signature"></i></span>
                                         <input type="text" class="form--control" name="merchant_name" value="{{ @$data->credentials->merchant_name }}">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 form-group">
                                     <label>{{ __("Merchant ID*") }}</label>
                                     <div class="input-group append">
-                                        <span class="input-group-text"><i class="las la-link"></i></span>
+                                        <span class="input-group-text"><i class="las la-hashtag"></i></span>
                                         <input type="text" class="form--control" name="merchant_id" value="{{ @$data->credentials->merchant_id }}">
                                     </div>
                                 </div>

@@ -37,20 +37,22 @@ class Transaction extends Model
     }
 
     protected $casts = [
-        'admin_id' => 'integer',
-        'user_id' => 'integer',
-        'user_wallet_id' => 'integer',
-        'merchant_id' => 'integer',
-        'merchant_wallet_id' => 'integer',
-        'payment_gateway_currency_id' => 'integer',
-        'trx_id' => 'string',
-        'request_amount' => 'double',
-        'payable' => 'double',
-        'available_balance' => 'double',
-        'remark' => 'string',
-        'status' => 'integer',
-        'details' => 'object',
-        'reject_reason' => 'string',
+        'admin_id'                      => 'integer',
+        'user_id'                       => 'integer',
+        'user_wallet_id'                => 'integer',
+        'merchant_id'                   => 'integer',
+        'merchant_wallet_id'            => 'integer',
+        'payment_gateway_currency_id'   => 'integer',
+        'send_money_gateway_id'         => 'integer',
+        'type'                          => 'string',
+        'trx_id'                        => 'string',
+        'request_amount'                => 'double',
+        'payable'                       => 'double',
+        'available_balance'             => 'double',
+        'remark'                        => 'string',
+        'status'                        => 'integer',
+        'details'                       => 'object',
+        'reject_reason'                 => 'string',
     ];
 
     public function user()

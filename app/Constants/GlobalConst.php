@@ -49,4 +49,6 @@ class GlobalConst {
 
     const LIVE = 'live';
     const SANDBOX = 'sandbox';
+
+    const SENDMONEY     = "Send Money";
 }

@@ -55,6 +55,7 @@ class SendMoneyGatewayController extends Controller
             'gateway'               => 'required_if:slug,google-pay',
             'stripe_version'        => 'required_if:slug,google-pay',
             'stripe_publishable_key'=> 'required_if:slug,google-pay',
+            'stripe_secret_key'     => 'required_if:slug,google-pay',
             'merchant_id'           => 'required_if:slug,google-pay',
             'merchant_name'         => 'required_if:slug,google-pay',
             'secret_id'             => 'required_if:slug,paypal',

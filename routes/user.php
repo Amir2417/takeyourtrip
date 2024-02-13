@@ -72,6 +72,8 @@ Route::prefix("user")->name("user.")->group(function(){
             Route::post('confirmed','confirmed')->name('confirmed');
             Route::post('user/exist','checkUser')->name('check.exist');
             Route::post('/handle-payment-confirmation','handlePaymentConfirmation')->name('handle.payment.confirm');
+            Route::get('redirect-url/{identifier}','redirectUrl')->name('redirect.url');
+            Route::post('stripe-payment-gateway','stripePaymentGateway')->name('stripe.payment.gateway');
         });
     });
      //Receive Money

@@ -30,7 +30,7 @@
                                 @if ($item->isAuthUser())
 
                                     @if ($item->attribute == payment_gateway_const()::SEND)
-                                        <h4 class="title">{{ __("Send Money to @" . @$item->details->receiver->username." (".@$item->details->receiver->email.")") }} </h4>
+                                        <h4 class="title">{{ __("Send Money to @" . @$item->details->data->receiver_email) }} </h4>
                                     @elseif ($item->attribute == payment_gateway_const()::RECEIVED)
                                         <h4 class="title">{{ __("Received Money from @" .@$item->details->sender->username." (".@$item->details->sender->email.")") }} </h4>
                                     @endif
@@ -279,7 +279,7 @@
                                 </div>
                             </div>
                             <div class="preview-list-right">
-                                <span>{{ get_amount($item->charge->total_charge,$item->user_wallet->currency->code) }}</span>
+                                <span>{{ get_amount($item->charge->total_charge,get_default_currency_code()) }}</span>
                             </div>
                         </div>
                         <div class="preview-list-item">
@@ -294,7 +294,7 @@
                                 </div>
                             </div>
                             <div class="preview-list-right">
-                                <span>{{ get_amount($item->details->recipient_amount,get_default_currency_code()) }}</span>
+                                <span>{{ get_amount($item->details->data->will_get,get_default_currency_code()) }}</span>
                             </div>
                         </div>
 
