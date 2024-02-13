@@ -284,7 +284,7 @@ class SendMoneyController extends Controller
                 
             }
         }else{
-            dd("else");
+            return Response::error(__("Something went wrong! Please try again."),404);
         }
     }
     

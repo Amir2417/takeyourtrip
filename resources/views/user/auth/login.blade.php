@@ -52,7 +52,9 @@
                     </div>
                     <div class="col-lg-12 text-center">
                         <div class="account-item">
-                            <label>{{ __("Don't Have An Account?") }} <a href="{{ setRoute('user.register') }}" class="account-control-btn">{{ __("Register Now") }}</a></label>
+                            @if ($basic_settings->user_registration == true)
+                                <label>{{ __("Don't Have An Account?") }} <a href="{{ setRoute('user.register') }}" class="account-control-btn">{{ __("Register Now") }}</a></label>
+                            @endif
                         </div>
                     </div>
                 </div>

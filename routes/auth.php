@@ -32,7 +32,7 @@ Route::name('user.')->group(function(){
     Route::get('login',[UserLoginController::class,"showLoginForm"])->name('login');
     Route::post('login',[UserLoginController::class,"login"])->name('login.submit');
 
-    Route::get('register',[UserRegisterController::class,"showRegistrationForm"])->name('register');
+    Route::get('register',[UserRegisterController::class,"showRegistrationForm"])->name('register')->middleware('register.verification.guard');
     Route::post('register',[UserRegisterController::class,"register"])->name('register.submit');
     Route::post('send/verify-code',[UserRegisterController::class,"sendVerifyCode"])->name('send.code');
     Route::get('email/verify/{token}',[AuthorizationController::class,"showMailFormBeforRegister"])->name('email.verify');

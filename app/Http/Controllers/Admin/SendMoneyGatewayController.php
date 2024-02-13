@@ -49,8 +49,8 @@ class SendMoneyGatewayController extends Controller
         if(!$data) return back()->with(['error' => ['Sorry! Data not found.']]);
 
         $validator                  = Validator::make($request->all(),[
-            'slug'                  => 'required|in:google-pay,paypal',
-            'name'                  => 'required_if:slug,google-pay,paypal',
+            'slug'                  => 'required|in:google-pay',
+            'name'                  => 'required_if:slug,google-pay',
             'mode'                  => 'required_if:slug,google-pay',
             'gateway'               => 'required_if:slug,google-pay',
             'stripe_version'        => 'required_if:slug,google-pay',
@@ -58,8 +58,6 @@ class SendMoneyGatewayController extends Controller
             'stripe_secret_key'     => 'required_if:slug,google-pay',
             'merchant_id'           => 'required_if:slug,google-pay',
             'merchant_name'         => 'required_if:slug,google-pay',
-            'secret_id'             => 'required_if:slug,paypal',
-            'client_id'             => 'required_if:slug,palpal',
             'image'                 => "nullable|mimes:png,jpg,jpeg,webp",
         ]);
         if($validator->fails()) return back()->withErrors($validator)->withInput($request->all());

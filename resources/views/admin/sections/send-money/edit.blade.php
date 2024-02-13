@@ -39,14 +39,13 @@
                             ])
                         </div>
                     </div>
-                    
                     @if ($data->slug == 'google-pay')
                         <div class="col-xl-8 col-lg-8 form-group">
                             <label>{{ __("Name*") }}</label>
                             <div class="input-group append">
                                 <span class="input-group-text"><i class="las la-file-signature"></i></span>
                                 <input type="hidden" class="form--control" name="slug" value="{{ @$data->slug }}">
-                                <input type="text" class="form--control" name="name" value="{{ @$data->name }}">
+                                <input type="text" class="form--control" readonly name="name" value="{{ @$data->name }}">
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 form-group">
@@ -60,10 +59,10 @@
                         <div class="col-xl-12 col-lg-12 form-group">
                             <div class="row" >
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 form-group">
-                                    <label>{{ __("Gateway Name*") }}</label>
+                                    <label>{{ __("Linked with Stripe*") }}</label>
                                     <div class="input-group append">
                                         <span class="input-group-text"><i class="las la-file-signature"></i></span>
-                                        <input type="text" class="form--control" name="gateway" value="{{ @$data->credentials->gateway }}">
+                                        <input type="text" class="form--control" readonly name="gateway" value="{{ @$data->credentials->gateway }}">
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 form-group">
@@ -102,33 +101,6 @@
                                     </div>
                                 </div>
                                 
-                            </div>
-                        </div>
-                    @elseif ($data->slug == 'paypal')
-                        <div class="col-xl-12 col-lg-12 form-group">
-                            <label>{{ __("Name*") }}</label>
-                            <div class="input-group append">
-                                <span class="input-group-text"><i class="las la-key"></i></span>
-                                <input type="hidden" class="form--control" name="slug" value="{{ @$data->slug }}">
-                                <input type="text" class="form--control" name="name" value="{{ @$data->name }}">
-                            </div>
-                        </div>
-                        <div class="col-xl-12 col-lg-12 form-group">
-                            <div class="row" >
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
-                                    <label>{{ __("Secret ID*") }}</label>
-                                    <div class="input-group append">
-                                        <span class="input-group-text"><i class="las la-key"></i></span>
-                                        <input type="text" class="form--control" name="secret_id" value="{{ @$data->credentials->secret_id }}">
-                                    </div>
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
-                                    <label>{{ __("Client ID*") }}</label>
-                                    <div class="input-group append">
-                                        <span class="input-group-text"><i class="las la-key"></i></span>
-                                        <input type="text" class="form--control" name="client_id" value="{{ @$data->credentials->client_id }}">
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     @endif

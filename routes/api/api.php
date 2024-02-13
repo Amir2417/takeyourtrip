@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\User\AddMoneyController;
 use App\Http\Controllers\Api\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\User\Auth\LoginController;
 use App\Http\Controllers\Api\User\AuthorizationController;
+use App\Http\Controllers\Api\User\BankAccountController;
 use App\Http\Controllers\Api\User\BillPayController;
 use App\Http\Controllers\Api\User\MakePaymentController;
 use App\Http\Controllers\Api\User\MobileTopupController;
@@ -168,6 +169,11 @@ Route::prefix('user')->group(function(){
                     Route::post('make-remove/default','makeDefaultOrRemove');
                 });
             });
+            //bank account
+            Route::controller(BankAccountController::class)->prefix('bank-account')->group(function(){
+                Route::get('/','index');
+            });
+
              //add money
             Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
                 Route::get('/information','addMoneyInformation');
