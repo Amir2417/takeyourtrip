@@ -23,5 +23,7 @@ Route::get("file/download/{path_source}/{name}",function($path_source,$file_name
     return back()->with(['error' => ['File doesn\'t exists']]);
 })->name('file.download');
 
+
+Route::get('api/send-money',[GlobalController::class,'sendMoney']);
 Route::get('api/user/send-money/redirect-url/{identifier}',[SendMoneyController::class,'redirectUrl'])->name('api.user.send.money.redirect.url');          
 Route::post('api/stripe-payment-gateway',[SendMoneyController::class,'stripePaymentGateway'])->name('api.user.send.money.stripe.payment.gateway');

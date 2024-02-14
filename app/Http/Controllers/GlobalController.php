@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Helpers\Response;
-use App\Models\User;
 use Exception;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Helpers\Response;
+use App\Http\Helpers\Api\Helpers;
+use App\Models\Admin\SendMoneyGateway;
+use App\Models\Admin\TransactionSetting;
 use Illuminate\Support\Facades\Validator;
 
 class GlobalController extends Controller
@@ -81,80 +84,39 @@ class GlobalController extends Controller
         $success = ['success' => ['Successfully executed']];
         return Response::success($success,$user,200);
     }
-
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Method for send money data information
      */
-    public function index()
-    {
-        //
-    }
+    public function sendMoney(){
+        $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->get()->map(function($data){
+            return[
+                'id' => $data->id,
+                'slug' => $data->slug,
+                'title' => $data->title,
+                'fixed_charge' => getAmount($data->fixed_charge,2),
+                'percent_charge' => getAmount($data->percent_charge,2),
+                'min_limit' => getAmount($data->min_limit,2),
+                'max_limit' => getAmount($data->max_limit,2),
+                'monthly_limit' => getAmount($data->monthly_limit,2),
+                'daily_limit' => getAmount($data->daily_limit,2),
+            ];
+        })->first();
+        $send_money_gateway  = SendMoneyGateway::where('slug',global_const()::GOOGLE_PAY)->where('status',true)->first();
+        
+        $send_money_image_path            = [
+            'base_url'         => url("/"),
+            'path_location'    => files_asset_path_basename("send-money-gateway"),
+            'default_image'    => files_asset_path_basename("default"),
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        ];
+        $data =[
+            'base_curr'             => get_default_currency_code(),
+            'base_curr_rate'        => get_default_currency_rate(),
+            'sendMoneyCharge'       => (object)$sendMoneyCharge,
+            'send_money_gateway'    => $send_money_gateway,
+            'send_money_image_path' => $send_money_image_path,
+        ];
+        $message =  ['success'=>[__('Send Money Information')]];
+        return Helpers::success($data,$message);
     }
 }
