@@ -28,9 +28,7 @@ class BankAccountController extends Controller
                 'input_fields'  => $data->input_fields
             ];
         });
-        $bank_account_approved      = BankAccount::auth()->where('status',BankAccountConst::APPROVED)->first();
-        $bank_account_pending       = BankAccount::auth()->where('status',BankAccountConst::PENDING)->first();
-        $bank_account_reject        = BankAccount::auth()->where('status',BankAccountConst::REJECTED)->first();
+        $bank_account      = BankAccount::auth()->first();
         
         $bank_image_path            = [
             'base_url'         => url("/"),
@@ -38,13 +36,11 @@ class BankAccountController extends Controller
             'default_image'    => files_asset_path_basename("default"),
 
         ];
-        $status = ['PENDING'       => 1, 'APPROVED'      => 2,'REJECTED'      => 3];
+        $status = $bank_account->status;
         $data    = [
             'bank_list'             => $bank_list,
             'status'                => $status,
-            'bank_account_approved' => $bank_account_approved,
-            'bank_account_pending'  => $bank_account_pending,
-            'bank_account_reject'   => $bank_account_reject
+            'bank_account' => $bank_account
         ];
 
         $message =  ['success'=>[__('Bank List Fetch Successfully.')]];
