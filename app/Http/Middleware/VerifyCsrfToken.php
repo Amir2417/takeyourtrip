@@ -22,6 +22,7 @@ class VerifyCsrfToken extends Middleware
         '/api-add-money/sslcommerz/cancel',
         '/api-add-money/sslcommerz/fail',
         '/api-add-money/sslcommerz/ipn',
-        '/handle-payment-confirmation'
+        '/handle-payment-confirmation',
+        '/api/send-money/confirmed'
     ];
 }

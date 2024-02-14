@@ -38,9 +38,10 @@ class BankAccountController extends Controller
             'default_image'    => files_asset_path_basename("default"),
 
         ];
-
+        $status = ['PENDING'       => 1, 'APPROVED'      => 2,'REJECTED'      => 3];
         $data    = [
             'bank_list'             => $bank_list,
+            'status'                => $status,
             'bank_account_approved' => $bank_account_approved,
             'bank_account_pending'  => $bank_account_pending,
             'bank_account_reject'   => $bank_account_reject

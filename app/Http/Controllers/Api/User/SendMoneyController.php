@@ -291,7 +291,6 @@ class SendMoneyController extends Controller
             'stripe_url'
         ));
     }
-
     /**
      * Method for stripe payment gateway 
      * @param $identifier
