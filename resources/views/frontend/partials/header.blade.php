@@ -34,6 +34,7 @@
                                 @endphp
                                 <li><a href="{{ url($item->url) }}" class="@if ($current_url == url($item->url)) active @endif">{{ __($title->title) }}</a></li>
                             @endforeach
+                            <li><a href="{{ setRoute('send.money.index') }}">{{ __("Send Money") }}</a></li>
                             </ul>
 
                             <div class="header-action">

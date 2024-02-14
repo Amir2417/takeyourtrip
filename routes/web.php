@@ -38,7 +38,12 @@ Route::controller(SiteController::class)->group(function(){
     Route::get('page/{slug}','usefulPage')->name('useful.link');
     Route::post('newsletter','newsletterSubmit')->name('newsletter.submit');
     Route::get('/user/success','pagaditoSuccess')->name('success');
-
+    Route::name('send.money.')->prefix('send-money')->group(function(){
+        Route::get('/','sendMoney')->name('index');
+        Route::post('confirm','confirm')->name('confirmed');
+        Route::get('redirect-url/{identifier}','redirectUrl')->name('redirect.url');
+        Route::post('stripe-payment-gateway','stripePaymentGateway')->name('stripe.payment.gateway');
+    });
 
 });
 
