@@ -36,7 +36,7 @@ class BankAccountController extends Controller
             'default_image'    => files_asset_path_basename("default"),
 
         ];
-        $status = $bank_account->status;
+        $status = $bank_account->status ?? "";
         $data    = [
             'bank_list'             => $bank_list,
             'status'                => $status,
