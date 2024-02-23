@@ -61,7 +61,12 @@ class BankAccountController extends Controller
 
         $bank_fields                    = Bank::where('id',$request->bank_id)->first()->input_fields ?? [];
         $validation_rules               = $this->generateValidationRules($bank_fields);
-        $validated                      = Validator::make($request->all(),$validation_rules)->validate();
+        $validated                      = Validator::make($request->all(),$validation_rules);
+        if ($validated->fails()) {
+            $message =  ['error' => $validated->errors()->all()];
+            return Helpers::error($message);
+        }
+        $validated = $validated->validate();
         $get_values                     = $this->placeValueWithFields($bank_fields,$validated);
         $validated['user_id']           = auth()->user()->id;
         $validated['bank_id']           = $request->bank_id;
