@@ -36,11 +36,11 @@ class BankAccountController extends Controller
             'default_image'    => files_asset_path_basename("default"),
 
         ];
-        $status = $bank_account->status ?? "";
+        $status = $bank_account->status ?? 0;
         $data    = [
             'bank_list'             => $bank_list,
             'status'                => $status,
-            'bank_account' => $bank_account
+            'bank_account'          => $bank_account
         ];
 
         $message =  ['success'=>[__('Bank List Fetch Successfully.')]];
