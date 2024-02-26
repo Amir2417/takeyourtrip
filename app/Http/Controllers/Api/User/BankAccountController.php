@@ -28,11 +28,17 @@ class BankAccountController extends Controller
                 'input_fields'  => $data->input_fields
             ];
         });
-        $bank_account      = BankAccount::auth()->first();
+        $bank_account      = BankAccount::auth()->with(['bank'])->first();
         
-        $bank_image_path            = [
+        $bank_account_image_path            = [
             'base_url'         => url("/"),
             'path_location'    => files_asset_path_basename("kyc-files"),
+            'default_image'    => files_asset_path_basename("default"),
+
+        ];
+        $bank_image_path            = [
+            'base_url'         => url("/"),
+            'path_location'    => files_asset_path_basename("bank"),
             'default_image'    => files_asset_path_basename("default"),
 
         ];
@@ -40,7 +46,9 @@ class BankAccountController extends Controller
         $data    = [
             'bank_list'             => $bank_list,
             'status'                => $status,
-            'bank_account'          => $bank_account
+            'bank_image_path'       => $bank_image_path,
+            'bank_account'          => $bank_account,
+            'bank_account_image_path'=> $bank_account_image_path,
         ];
 
         $message =  ['success'=>[__('Bank List Fetch Successfully.')]];
