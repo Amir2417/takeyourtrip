@@ -24,6 +24,7 @@ class BankAccountController extends Controller
                 'id'            => $data->id,
                 'slug'          => $data->slug,
                 'bank_name'     => $data->bank_name,
+                'image'         => $data->image,
                 'desc'          => $data->desc,
                 'input_fields'  => $data->input_fields
             ];
