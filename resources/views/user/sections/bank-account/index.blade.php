@@ -33,25 +33,29 @@
                     @elseif (isset($bank_account_approved))
                     <div class="bank-account-list-area">
                         <div class="bank-account-list-wrapper">
-                            @php
-                                $fileData = [];
-                                $textData = [];
-                                foreach ($bank_account_approved->credentials as $item) {
-                                    if ($item->type === 'file') {
-                                        $fileData[] = $item;
-                                    } else {
-                                        $textData[] = $item;
-                                    }
-                                }
-                            @endphp
-                                @foreach ($fileData ?? [] as $item)
-                                    <div class="bank-account-list-thumb">
-                                        <img class="image-resize" src="{{ get_image($item->value,'kyc-files') }}" alt="">
-                                    </div>
-                                @endforeach
+                            
+                                <div class="bank-account-list-thumb">
+                                    <img class="image-resize" src="{{ get_image($bank_account_approved->bank->image,'bank') }}" alt="">
+                                </div>
                                 <ul class="bank-account-list">
-                                    @foreach ($textData ?? [] as $item)
+                                    @php
+                                        $files      = [];
+                                        $text       = [];
+
+                                        foreach ($bank_account_approved->credentials ?? [] as $item) {
+                                            if ($item->type == 'file') {
+                                                $files[]      = $item;
+                                            }else{
+                                                $text[]         = $item;
+                                            }
+                                        }
+                                    @endphp
+
+                                    @foreach ($text ?? [] as $item)
                                         <li class="d-block">{{ $item->label }} : <span>{{ $item->value }}</span></li>
+                                    @endforeach
+                                    @foreach ($files ?? [] as $item)
+                                        <li>{{ $item->label }} : <img class="image-resize" src="{{ get_image($item->value,'kyc-files') }}" alt=""></li>
                                     @endforeach
                                 </ul>
                                 

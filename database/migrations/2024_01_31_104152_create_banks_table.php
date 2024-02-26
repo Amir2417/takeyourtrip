@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('bank_name');
             $table->text('desc',500)->nullable();
             $table->text('input_fields',1000)->nullable();
+            $table->string('image')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

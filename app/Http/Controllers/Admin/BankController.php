@@ -60,6 +60,7 @@ class BankController extends Controller
             'file_extensions.*'     => 'nullable|string|max:255',
             'file_max_size'         => 'nullable|array',
             'file_max_size.*'       => 'nullable|numeric',
+            'image'                 => 'required|mimes:png,jpg,webp,jpeg'
         ]);
         if($validator->fails()) return back()->withErrors($validator)->withInput($request->all());
         $validated                  = $validator->validate();
@@ -68,11 +69,16 @@ class BankController extends Controller
                 'name'  => "Bank Already Exists",
             ]);
         }
+        
         $validated['slug']              = Str::slug($request->bank_name);
         $validated['desc']              = $validated['desc'];
         $validated['input_fields']      = decorate_input_fields($validated);
         
         $validated = Arr::except($validated,['label','input_type','min_char','max_char','field_necessity','file_extensions','file_max_size']);
+        if($request->hasFile("image")){
+            $validated['image'] = $this->imageValidate($request,"image",null);
+        }
+        
         try{
             Bank::create($validated);
         }catch(Exception $e){
@@ -119,6 +125,7 @@ class BankController extends Controller
             'file_extensions.*'     => 'nullable|string|max:255',
             'file_max_size'         => 'nullable|array',
             'file_max_size.*'       => 'nullable|numeric',
+            'image'                 => 'nullable|mimes:png,jpg,webp,jpeg'
         ]);
         if($validator->fails()) return back()->withErrors($validator)->withInput($request->all());
         $validated                      = $validator->validate();
@@ -132,7 +139,10 @@ class BankController extends Controller
         $validated['input_fields']      = decorate_input_fields($validated);
         
         $validated = Arr::except($validated,['label','input_type','min_char','max_char','field_necessity','file_extensions','file_max_size']);
-        
+        if($request->hasFile('image')){
+            $validated['image']  =  $this->imageValidate($request,"image",null);
+        }
+
         try{
             $data->update($validated);
         }catch(Exception $e){
@@ -191,5 +201,21 @@ class BankController extends Controller
         $success = ['success' => ['Bank status updated successfully!']];
         return Response::success($success);
     }
+    /**
+     * Method for image validate
+     * @param string $slug
+     * @param \Illuminate\Http\Request  $request
+    */
+    public function imageValidate($request,$input_name,$old_image = null) {
+        if($request->hasFile($input_name)) {
+            $image_validated = Validator::make($request->only($input_name),[
+                $input_name         => "image|mimes:png,jpg,webp,jpeg,svg",
+            ])->validate();
 
+            $image = get_files_from_fileholder($request,$input_name);
+            $upload = upload_files_from_path_dynamic($image,'bank',$old_image);
+            return $upload;
+        }
+        return false;
+    }
 }

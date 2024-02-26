@@ -20,9 +20,9 @@ class BankAccountController extends Controller
      */
     public function index(){
         $page_title                 = __("Bank Account");
-        $bank_account_approved      = BankAccount::auth()->where('status',BankAccountConst::APPROVED)->first();
-        $bank_account_pending       = BankAccount::auth()->where('status',BankAccountConst::PENDING)->first();
-        $bank_account_reject        = BankAccount::auth()->where('status',BankAccountConst::REJECTED)->first();
+        $bank_account_approved      = BankAccount::auth()->with(['bank'])->where('status',BankAccountConst::APPROVED)->first();
+        $bank_account_pending       = BankAccount::auth()->with(['bank'])->where('status',BankAccountConst::PENDING)->first();
+        $bank_account_reject        = BankAccount::auth()->with(['bank'])->where('status',BankAccountConst::REJECTED)->first();
         $banks                      = Bank::where('status',true)->orderBy('id','desc')->get();
 
         return view('user.sections.bank-account.index',compact(

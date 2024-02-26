@@ -32,6 +32,7 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>{{ __("Bank Name") }}</th>
                             <th>{{ __("Status") }}</th>
                             <th></th>
@@ -40,6 +41,9 @@
                     <tbody>
                         @forelse ($banks as $item)
                             <tr data-item="{{ $item }}">
+                                <td><ul class="user-list">
+                                    <li><img src="{{ get_image($item->image ?? '','bank') ?? ''}}" alt="" srcset=""></li>
+                                </ul></td>
                                 <td>{{ $item->bank_name }}</td>
                                 <td>
                                     @include('admin.components.form.switcher',[
