@@ -20,7 +20,7 @@ class ReceiveMoneyController extends Controller
             'uniqueCode' => @$uniqueCode,
             'web_link' => $web_link,
         ];
-        $qrCode = generateQr(json_encode($data));
+        $qrCode = generateQr($web_link);
         $result = [
             'uniqueCode' => @$uniqueCode,
             'web_link'   => $web_link,
