@@ -15,10 +15,7 @@ class ReceiveMoneyController extends Controller
         $userQrCode = $user->qrCode()->first();
         $uniqueCode = $userQrCode->qr_code??'';
         $web_link   = route('send.money.index') . '?' .$uniqueCode;
-        $data       = [
-            'web_link' => $web_link,
-            'email' => $uniqueCode,
-        ];
+        
         $qrCode = generateQr($web_link);
        
         return view('user.sections.receive-money.index',compact("page_title","uniqueCode","qrCode",'user'));

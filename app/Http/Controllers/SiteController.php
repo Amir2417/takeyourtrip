@@ -180,7 +180,8 @@ class SiteController extends Controller
      * Method for view send money page
      * @return view
      */
-    public function sendMoney(){
+    public function sendMoney(Request $request){
+        dd($request->all());
         $page_title         = "Send Money";
         $sendMoneyCharge    = TransactionSetting::where('slug','transfer')->where('status',1)->first();
         $google_pay_gateway = SendMoneyGateway::where('slug',global_const()::GOOGLE_PAY)->where('status',true)->first();
