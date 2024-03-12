@@ -35,7 +35,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text copytext">{{ __("Email") }}</span>
                                             </div>
-                                            <input type="email" name="email" class="form--control receiver-email" id="username" placeholder="Enter Email" value="{{ old('email',$email) }}" />
+                                            <input type="email" name="email" class="form--control receiver-email" id="username" placeholder={{ __("Enter Email") }} value="{{ old('email',$email) }}" />
                                         </div>
                                         <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
                                         <label class="exist text-start"></label>
@@ -46,7 +46,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">{{ __("Email") }}</span>
                                             </div>
-                                            <input type="email" name="sender_email" class="form--control sender-email" placeholder="Enter Email"/>
+                                            <input type="email" name="sender_email" class="form--control sender-email" placeholder={{ __("Enter Email") }}/>
                                         </div>
                                     </div>
                                     <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
@@ -58,43 +58,7 @@
                                         </div>
                                     </div>
     
-                                    {{-- <div class="payment-area d-flex justify-content-between mb-5 align-items-center">
-                                        @if ($os == 'windows' || $os == 'androidos')
-                                            <div class="google-payment" id="google-pay-button">
-                                                <button type="submit" class="btn" onclick="setPaymentMethod({{ $google_pay_gateway->id }})">
-                                                    <input type="hidden" class="payment-method" name="payment_method">
-                                                    <img src="{{ get_image(@$google_pay_gateway->image,'send-money-gateway') }}">
-                                                </button>
-                                            </div>
-                                            <div class="or-area">
-                                                <span>Or</span>
-                                            </div>
-                                            <div class="google-payment">
-                                                <button type="submit" class="btn" onclick="setPaymentMethod(3)">
-                                                    <input type="hidden" class="payment-method" name="payment_method">
-                                                    <img src="{{ get_image(@$paypal_gateway->image,'send-money-gateway') }}">
-                                                </button>
-                                            </div>
-                                        @else
-                                            <div class="apple-payment">
-                                                <button type="submit" class="btn" onclick="setPaymentMethod(2)">
-                                                    <input type="hidden" class="payment-method" name="payment_method">
-                                                    <img src="{{ asset('public/backend/images/payment-gateways/seeder/apple-pay.png') }}">
-                                                </button>
-                                            </div>
-                                            <div class="or-area">
-                                                <span>Or</span>
-                                            </div>
-                                            <div class="google-payment">
-                                                <button type="submit" class="btn" onclick="setPaymentMethod(3)">
-                                                    <input type="hidden" class="payment-method" name="payment_method">
-                                                    <img src="{{ get_image(@$paypal_gateway->image,'send-money-gateway') }}">
-                                                </button>
-                                            </div>
-                                        @endif
-    
-                                        
-                                    </div> --}}
+                                    
                                     <div class="col-xl-12 col-lg-12">
                                         <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
                                     </div>

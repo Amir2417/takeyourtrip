@@ -205,7 +205,7 @@ class SiteController extends Controller
             'amount'            => 'required|numeric|gt:0',
             'email'             => 'required|email',
             'payment_method'    => 'required',
-            'sender_email'      => 'required'
+            'sender_email'      => 'nullable'
         ]);
         $basic_setting = BasicSettings::first();
         
