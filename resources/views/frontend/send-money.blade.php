@@ -35,7 +35,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text copytext">{{ __("Email") }}</span>
                                             </div>
-                                            <input type="email" name="email" class="form--control receiver-email" id="username" placeholder="Enter Email" value="{{ old('email') }}" />
+                                            <input type="email" name="email" class="form--control receiver-email" id="username" placeholder="Enter Email" value="{{ old('email',$email) }}" />
                                         </div>
                                         <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
                                         <label class="exist text-start"></label>
