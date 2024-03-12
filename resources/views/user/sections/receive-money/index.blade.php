@@ -46,13 +46,6 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12">
-                                    {{-- <a href="whatsapp://send?text=Your%20QR%20Code%20Image%20Link%20Here">Send via WhatsApp</a>
-
-                                    <br>
-                                    <a href="fb-messenger://share/?link=Your%20QR%20Code%20Image%20Link%20Here">Send via Messenger</a>
-                                <br>
-                                <a href="https://web.telegram.org/#/im?p=@username&text=Your%20QR%20Code%20Image%20Link%20Here">Send via Telegram</a> --}}
-
                                     <button type="button" class="btn--base w-100" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ __("Share") }} <i class="fas fa-share-square ms-1"></i></button>
                                 </div>
                             </form>
@@ -75,7 +68,6 @@
             <div class="footer-download d-flex justify-content-center">
                 @php
                     $whatsappLink = 'whatsapp://send?text=' . urlencode($qrCode);
-
                 @endphp
 
         <p style="margin-right:10px; font-size:18px;" >Share By: </p>
