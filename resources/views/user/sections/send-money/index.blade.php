@@ -29,9 +29,9 @@
                         <h5 class="title">{{ __(@$page_title) }}</h5>
                     </div>
                     <div class="dash-payment-body">
-                        <form class="card-form" action="{{ setRoute('user.send.money.confirmed') }}" method="POST">
-                            @csrf
-                            <div class="row">
+                        {{-- <form class="card-form" action="{{ setRoute('user.send.money.confirmed') }}" method="POST">
+                            @csrf --}}
+                            <div class="row justify-content-center">
                                 <div class="col-xl-12 col-lg-12 form-group text-center">
                                     <div class="exchange-area">
                                         <code class="d-block text-center"><span class="fees-show">--</span> <span class="limit-show">--</span></code>
@@ -57,7 +57,7 @@
                                     <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
                                     <label class="exist text-start"></label>
                                 </div>
-                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 form-group paste-wrapper">
                                     <label>{{ __("Sender Email Address to receive invoice (Optional)") }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -66,13 +66,19 @@
                                         <input type="email" name="sender_email" class="form--control sender-email" placeholder="Enter Email" value="{{ auth()->user()->email }}" />
                                     </div>
                                 </div>
-                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
+                                {{-- <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
                                     <label>{{ __("Select Gateway") }}</label>
                                     <div class="input-group">
                                         <select class="select2-basic" name="payment_method">
                                                 <option value="{{ $google_pay_gateway->id  }}">{{ $google_pay_gateway->name ?? '' }}</option>
                                         </select>
                                     </div>
+                                </div> --}}
+
+                                <div class="col-lg-7 text-center pay-btn-wrapper">
+                                    <button class="pay-button w-100" id="google-pay-button"><input type="hidden" class="payment-method" name="payment_method" value="{{ $google_pay_gateway->id }}">{{ __("Pay With") }} <img src="{{ get_image($google_pay_gateway->image ,'send-money-gateway') }}" alt=""></button>
+                                    <span class="divider-badge">or</span>
+                                    <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
                                 </div>
 
                                 {{-- <div class="payment-area d-flex justify-content-between mb-5 align-items-center">
@@ -112,11 +118,11 @@
 
                                     
                                 </div> --}}
-                                <div class="col-xl-12 col-lg-12">
+                                {{-- <div class="col-xl-12 col-lg-12">
                                     <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
-                                </div>
+                                </div> --}}
                             </div>
-                        </form>
+                        {{-- </form> --}}
                     </div>
                 </div>
             </div>
@@ -437,6 +443,7 @@
 
 <script>
     var handlePaymentRoute = "{{ setRoute('user.send.money.handle.payment.confirm') }}";
+    var stripeUrl = "{{ setRoute('user.send.money.stripe.payment.gateway') }}";
 
     $('#google-pay-button').on('click',function(){
         var amount          = $('.amount').val();
@@ -446,7 +453,73 @@
         var currency        = $('.currency').val();
 
         $.post(handlePaymentRoute,{amount:amount,receiverEmail:receiverEmail,senderEmail:senderEmail,paymentMethod:paymentMethod,currency:currency,_token:"{{ csrf_token() }}"},function(response){
-            window.location.href = response.data.data;
+            if(response.type == 'success'){
+                // console.log("gateway",response.data.payment_gateway.credentials.gateway);
+                // console.log("stripe_version",response.data.payment_gateway.credentials.stripe_version);
+                // console.log("stripe_publishable_key",response.data.payment_gateway.credentials.stripe_publishable_key);
+                // console.log("merchantId",response.data.payment_gateway.credentials.merchant_id);
+                // console.log("merchant_name",response.data.payment_gateway.credentials.merchant_name);
+                // console.log("payable",response.data.data.data.payable);
+                // console.log("currency",response.data.data.data.currency);
+                // console.log("environment",response.data.payment_gateway.credentials.mode);
+                // console.log("identifier",response.data.data.identifier);
+            const paymentDataRequest = {
+                    apiVersion: 2,
+                    apiVersionMinor: 0,
+                    allowedPaymentMethods: [{
+                        type: 'CARD',
+                        parameters: {
+                            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                            allowedCardNetworks: ['VISA', 'MASTERCARD']
+                        },
+                        tokenizationSpecification: {
+                            type: 'PAYMENT_GATEWAY',
+                            parameters: {
+                                gateway: "{{ $google_pay_gateway->credentials->gateway }}",
+                                "stripe:version": "{{ $google_pay_gateway->credentials->stripe_version }}",
+                                "stripe:publishableKey":"{{ $google_pay_gateway->credentials->stripe_publishable_key }}"
+                            }
+                        }
+                    }],
+                    merchantInfo: {
+                        merchantId: "{{ $google_pay_gateway->credentials->merchant_id }}",
+                        merchantName: "{{ $google_pay_gateway->credentials->merchant_name }}"
+                    },
+                    transactionInfo: {
+                        totalPriceStatus: 'FINAL',
+                        totalPriceLabel: 'Total',
+                        totalPrice: response.data.data.data.payable,
+                        currencyCode: response.data.data.data.currency,
+                        countryCode: 'US'
+                    }
+                };
+            
+                const paymentsClient = new google.payments.api.PaymentsClient({
+                    environment: "{{ $google_pay_gateway->credentials->mode }}"
+                });
+                var stripeRoute = stripeUrl;
+                var identifier  = response.data.data.identifier;
+                var csrfToken   = $('meta[name="csrf-token"]').attr('content');
+                const paymentDataRequestWithParameters = Object.assign({},paymentDataRequest);
+                console.log(paymentDataRequestWithParameters);
+                paymentDataRequestWithParameters.transactionInfo.totalPrice = response.data.data.data.payable;
+                console.log(paymentsClient);
+                paymentsClient.loadPaymentData(paymentDataRequestWithParameters)
+                .then((paymentData) => {
+                    var paymentDataToken = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
+                
+                    $.post(stripeRoute,{paymentToken:paymentDataToken.id,identifier:identifier,_token:"{{ csrf_token() }}"},function(response){
+                        window.location.href = response.data.data;
+                        
+                });
+                    
+                    
+                })
+
+                
+
+
+            }
         });
     });
     

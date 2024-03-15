@@ -147,6 +147,95 @@ class SendMoneyController extends Controller
         return redirect()->route('user.send.money.redirect.url',$temporary_data->identifier);
         
     }
+    /**
+     * Method for Send Money form submit using google pay
+     */
+    public function handlePaymentConfirmation(Request $request){
+        $request->validate([
+            'amount'            => 'required|numeric|gt:0',
+            'receiverEmail'             => 'required|email',
+            'paymentMethod'    => 'required',
+            'senderEmail'      => 'nullable'
+        ]);
+        $basic_setting = BasicSettings::first();
+        $user = auth()->user();
+        if($basic_setting->kyc_verification){
+            if( $user->kyc_verified == 0){
+                return Response::error([__('Please submit kyc information!')],[],404);
+            }elseif($user->kyc_verified == 2){
+                return Response::error([__('Please wait before admin approved your kyc information')],[],404);
+            }elseif($user->kyc_verified == 3){
+                return Response::error([__('Admin rejected your kyc information, Please re-submit again')],[],404);
+            }
+        }
+        $amount             = floatval($request->amount);
+        $currency           = $request->currency;
+        $receiver_email     = $request->receiverEmail;
+        $sender_email       = $request->senderEmail;
+        $user               = auth()->user();
+        $sendMoneyCharge    = TransactionSetting::where('slug','transfer')->where('status',1)->first();
+        $payment_gateway    = SendMoneyGateway::where('id',$request->paymentMethod)->first();
+       
+        $this_month_start   = date('Y-m-01');
+        $this_month_end     = date('Y-m-t');
+        $this_month_send_money  = Transaction::where('type',PaymentGatewayConst::TYPETRANSFERMONEY)->whereDate('created_at',">=" , $this_month_start)
+                            ->whereDate('created_at',"<=" , $this_month_end)
+                            ->sum('request_amount');
+        if($sendMoneyCharge->monthly_limit < $this_month_send_money){
+            return Response::error([__('The receiver have exceeded the monthly amount. Please try smaller amount.')],[],404);
+        }
+        $total_request_amount = $amount + $this_month_send_money;
+        if($sendMoneyCharge->monthly_limit < $total_request_amount){
+            return Response::error([__('The receiver have exceeded the monthly amount. Please try smaller amount.')],[],404);
+        }
+
+        $baseCurrency = Currency::default();
+        $rate = $baseCurrency->rate;
+        if(!$baseCurrency){
+            return Response::error([__('Default currency not found')],[],404);
+        }
+        
+
+        $minLimit =  $sendMoneyCharge->min_limit *  $rate;
+        $maxLimit =  $sendMoneyCharge->max_limit *  $rate;
+        if($amount < $minLimit || $amount > $maxLimit) {
+            return Response::error([__('Please follow the transaction limit')],[],404);
+        }
+        //charge calculations
+        $fixedCharge        = $sendMoneyCharge->fixed_charge *  $rate;
+        $percent_charge     = ($request->amount / 100) * $sendMoneyCharge->percent_charge;
+        $total_charge       = $fixedCharge + $percent_charge;
+        $payable            = $total_charge + $amount;
+
+        $validated['identifier']     = Str::uuid();
+        $data     = [
+            'type'                   => global_const()::SENDMONEY,
+            'identifier'             => $validated['identifier'],
+            'data'                   => [
+                'login_user'         => auth()->user()->id,
+                'payment_gateway'    => $payment_gateway->id,
+                'amount'             => floatval($amount),
+                'total_charge'       => $total_charge,
+                'percent_charge'     => $percent_charge,
+                'fixed_charge'       => $fixedCharge,
+                'payable'            => $payable,
+                'currency'           => $currency,
+                'sender_email'       => $sender_email,
+                'receiver_email'     => $receiver_email,
+                'will_get'           => floatval($amount),
+            ],  
+        ];
+        try{
+            $temporary_data = TemporaryData::create($data);
+        }catch(Exception $e){
+            return Response::error([__('Something went wrong! Please try again.')],[],404);
+        }
+        $payment_gateway = SendMoneyGateway::where('id',$temporary_data->data->payment_gateway)->first();
+        return Response::success([__('Data stored')],[
+            'data' => $temporary_data,
+            'payment_gateway' => $payment_gateway
+        ],200);
+    }
     //sender transaction
     public function insertSender($trx_id,$data) {
         $trx_id = $trx_id;
@@ -231,6 +320,23 @@ class SendMoneyController extends Controller
         ));
     }
     /**
+     * Method for view redirect url
+     * @param $identifier
+     * @param \Illuminate\Http\Request $request
+     */
+    public function redirectGooglePayUrl($identifier){
+        $data            = TemporaryData::where('identifier',$identifier)->first();
+        if(!$data)  return back()->with(['error' => ['Sorry! Data not found.']]);
+        $payment_gateway = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
+        $stripe_url      = setRoute('user.send.money.stripe.payment.gateway');
+        
+        return view('payment-gateway.google-pay',compact(
+            'data',
+            'payment_gateway',
+            'stripe_url'
+        ));
+    }
+    /**
      * Method for stripe payment gateway 
      * @param $identifier
      */
@@ -248,6 +354,7 @@ class SendMoneyController extends Controller
         $validated          = $validator->validated();
         $data               = TemporaryData::where('identifier',$validated['identifier'])->first();
         $payment_gateway    = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
+        
         $payment_token      = $request->paymentToken;
         $user               = auth()->user();
         $stripe             = new \Stripe\StripeClient($payment_gateway->credentials->stripe_secret_key);
@@ -267,19 +374,7 @@ class SendMoneyController extends Controller
                 if($sender){
                     
                     $this->insertSenderCharges($data,$sender);
-                    // if( $basic_setting->email_notification == true){
-                    //     $notifyDataSender = [
-                    //         'trx_id'  => $trx_id,
-                    //         'title'  => "Send Money to @" . @$data->data->receiver_email,
-                    //         'request_amount'  => getAmount($data->data->amount,4).' '.get_default_currency_code(),
-                    //         'payable'   =>  getAmount($data->data->payable,4).' ' .get_default_currency_code(),
-                    //         'charges'   => getAmount($data->data->total_charge, 2).' ' .get_default_currency_code(),
-                    //         'received_amount'  => getAmount( $data->data->will_get, 2).' ' .get_default_currency_code(),
-                    //         'status'  => "Success",
-                    //     ];
-                    //     //sender notifications
-                    //     // $user->notify(new SenderMail($user,(object)$notifyDataSender));
-                    // }
+                    
                 }
                 $route  = route("user.send.money.index");
                

@@ -74,6 +74,7 @@ Route::prefix("user")->name("user.")->group(function(){
             Route::post('/handle-payment-confirmation','handlePaymentConfirmation')->name('handle.payment.confirm');
             Route::get('redirect-url/{identifier}','redirectUrl')->name('redirect.url');
             Route::post('stripe-payment-gateway','stripePaymentGateway')->name('stripe.payment.gateway');
+            //
         });
     });
      //Receive Money
