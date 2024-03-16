@@ -41,6 +41,7 @@ Route::controller(SiteController::class)->group(function(){
     Route::name('send.money.')->prefix('send-money')->group(function(){
         Route::get('/','sendMoney')->name('index');
         Route::post('confirm','confirm')->name('confirmed');
+        Route::post('/handle-payment-confirmation','handlePaymentConfirmation')->name('handle.payment.confirm');
         Route::get('redirect-url/{identifier}','redirectUrl')->name('redirect.url');
         Route::post('stripe-payment-gateway','stripePaymentGateway')->name('stripe.payment.gateway');
     });

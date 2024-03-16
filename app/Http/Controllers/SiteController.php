@@ -200,22 +200,34 @@ class SiteController extends Controller
      * Method for send money confirm 
      * @param \Illuminate\Http\Request $request
      */
-    public function confirm(Request $request){
+    /**
+     * Method for Send Money form submit using google pay
+     */
+    public function handlePaymentConfirmation(Request $request){
         $request->validate([
             'amount'            => 'required|numeric|gt:0',
-            'email'             => 'required|email',
-            'payment_method'    => 'required',
-            'sender_email'      => 'nullable'
+            'receiverEmail'             => 'required|email',
+            'paymentMethod'    => 'required',
+            'senderEmail'      => 'nullable'
         ]);
         $basic_setting = BasicSettings::first();
-        
+        $user = auth()->user();
+        if($basic_setting->kyc_verification){
+            if( $user->kyc_verified == 0){
+                return Response::error([__('Please submit kyc information!')],[],404);
+            }elseif($user->kyc_verified == 2){
+                return Response::error([__('Please wait before admin approved your kyc information')],[],404);
+            }elseif($user->kyc_verified == 3){
+                return Response::error([__('Admin rejected your kyc information, Please re-submit again')],[],404);
+            }
+        }
         $amount             = floatval($request->amount);
         $currency           = $request->currency;
-        $receiver_email     = $request->email;
-        $sender_email       = $request->sender_email;
-        
+        $receiver_email     = $request->receiverEmail;
+        $sender_email       = $request->senderEmail;
+        $user               = auth()->user();
         $sendMoneyCharge    = TransactionSetting::where('slug','transfer')->where('status',1)->first();
-        $payment_gateway    = SendMoneyGateway::where('id',$request->payment_method)->first();
+        $payment_gateway    = SendMoneyGateway::where('id',$request->paymentMethod)->first();
        
         $this_month_start   = date('Y-m-01');
         $this_month_end     = date('Y-m-t');
@@ -223,24 +235,24 @@ class SiteController extends Controller
                             ->whereDate('created_at',"<=" , $this_month_end)
                             ->sum('request_amount');
         if($sendMoneyCharge->monthly_limit < $this_month_send_money){
-            return back()->with(['error' => [__('The receiver have exceeded the monthly amount. Please try smaller amount.')]]);
+            return Response::error([__('The receiver have exceeded the monthly amount. Please try smaller amount.')],[],404);
         }
         $total_request_amount = $amount + $this_month_send_money;
         if($sendMoneyCharge->monthly_limit < $total_request_amount){
-            return back()->with(['error' => [__('The receiver have exceeded the monthly amount. Please try smaller amount.')]]);
+            return Response::error([__('The receiver have exceeded the monthly amount. Please try smaller amount.')],[],404);
         }
 
         $baseCurrency = Currency::default();
         $rate = $baseCurrency->rate;
         if(!$baseCurrency){
-            return back()->with(['error' => [__('Default currency not found')]]);
+            return Response::error([__('Default currency not found')],[],404);
         }
         
 
         $minLimit =  $sendMoneyCharge->min_limit *  $rate;
         $maxLimit =  $sendMoneyCharge->max_limit *  $rate;
         if($amount < $minLimit || $amount > $maxLimit) {
-            return back()->with(['error' => [__("Please follow the transaction limit")]]);
+            return Response::error([__('Please follow the transaction limit')],[],404);
         }
         //charge calculations
         $fixedCharge        = $sendMoneyCharge->fixed_charge *  $rate;
@@ -253,6 +265,7 @@ class SiteController extends Controller
             'type'                   => global_const()::SENDMONEY,
             'identifier'             => $validated['identifier'],
             'data'                   => [
+                'login_user'         => auth()->user()->id,
                 'payment_gateway'    => $payment_gateway->id,
                 'amount'             => floatval($amount),
                 'total_charge'       => $total_charge,
@@ -268,9 +281,13 @@ class SiteController extends Controller
         try{
             $temporary_data = TemporaryData::create($data);
         }catch(Exception $e){
-            return back()->with(['error' => ['Something went wrong! Please try again.']]);
+            return Response::error([__('Something went wrong! Please try again.')],[],404);
         }
-        return redirect()->route('send.money.redirect.url',$temporary_data->identifier);
+        $payment_gateway = SendMoneyGateway::where('id',$temporary_data->data->payment_gateway)->first();
+        return Response::success([__('Data stored')],[
+            'data' => $temporary_data,
+            'payment_gateway' => $payment_gateway
+        ],200);
     }
     /**
      * Method for direct url for send money

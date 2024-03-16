@@ -12,63 +12,56 @@
                             <h5 class="title">{{ __(@$page_title) }}</h5>
                         </div>
                         <div class="dash-payment-body">
-                            <form class="card-form" action="{{ setRoute('send.money.confirmed') }}" method="POST">
-                                @csrf
-                                <div class="row justify-content-center">
-                                    <div class="col-xl-12 col-lg-12 form-group text-center">
-                                        <div class="exchange-area">
-                                            <code class="d-block text-center"><span class="fees-show">--</span> <span class="limit-show">--</span></code>
-                                        </div>
+                            <div class="row justify-content-center">
+                                <div class="col-xl-12 col-lg-12 form-group text-center">
+                                    <div class="exchange-area">
+                                        <code class="d-block text-center"><span class="fees-show">--</span> <span class="limit-show">--</span></code>
                                     </div>
-                                    <div class="col-xxl-6 col-xl-12 col-lg-6 form-group">
-                                        <label>{{ __("Amount") }}<span>*</span></label>
-                                        <div class="input-group">
-                                            <input type="number" class="form--control amount" required placeholder="Enter Amount" name="amount" value="{{ old("amount") }}">
-                                            <select class="form--control nice-select currency" name="currency">
-                                                <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
-                                        <label>{{ __("Receiver Email Address") }} ({{ __("User") }})<span class="text--base">*</span></label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text copytext">{{ __("Email") }}</span>
-                                            </div>
-                                            <input type="email" name="email" class="form--control receiver-email" id="username" placeholder="{{ __("Enter Email") }}" value="{{ old('email',$email) }}" />
-                                        </div>
-                                        <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
-                                        <label class="exist text-start"></label>
-                                    </div>
-                                    <div class="col-xxl-12 col-xl-12 col-lg-12 form-group paste-wrapper">
-                                        <label>{{ __("Sender Email Address to receive invoice (Optional)") }}</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">{{ __("Email") }}</span>
-                                            </div>
-                                            <input type="email" name="sender_email" class="form--control sender-email" placeholder="{{ __("Enter Email") }}"/>
-                                        </div>
-                                    </div>
-                                    @if ($os == 'windows' || $os == 'androidos')
-                                        <div class="col-lg-7 text-center pay-btn-wrapper">
-                                            <button class="pay-button w-100" id="google-pay-button"><input type="hidden" class="payment-method" name="payment_method" value="{{ $google_pay_gateway->id }}">{{ __("Pay With") }} <img src="{{ get_image($google_pay_gateway->image ,'send-money-gateway') }}" alt=""></button>
-                                            <span class="divider-badge">or</span>
-                                            <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
-                                        </div>
-                                    @else
-                                        <div class="col-lg-7 text-center pay-btn-wrapper">
-                                            <button class="pay-button w-100" id="apple-pay-button"><input type="hidden" class="payment-method" name="payment_method" value="">{{ __("Pay With") }} <img src="{{ asset('public/backend/images/send-money-gateways/seeder/apple-pay.png') }}" alt=""></button>
-                                            <span class="divider-badge">or</span>
-                                            <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
-                                        </div>
-                                    @endif
-    
-                                    
-                                    {{-- <div class="col-xl-12 col-lg-12">
-                                        <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
-                                    </div> --}}
                                 </div>
-                            </form>
+                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group">
+                                    <label>{{ __("Amount") }}<span>*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form--control amount" required placeholder="Enter Amount" name="amount" value="{{ old("amount") }}">
+                                        <select class="form--control nice-select currency" name="currency">
+                                            <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
+                                    <label>{{ __("Receiver Email Address") }} ({{ __("User") }})<span class="text--base">*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text copytext">{{ __("Email") }}</span>
+                                        </div>
+                                        <input type="email" name="email" class="form--control receiver-email" id="username" placeholder="{{ __("Enter Email") }}" value="{{ old('email',$email) }}" />
+                                    </div>
+                                    <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
+                                    <label class="exist text-start"></label>
+                                </div>
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 form-group paste-wrapper">
+                                    <label>{{ __("Sender Email Address to receive invoice (Optional)") }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">{{ __("Email") }}</span>
+                                        </div>
+                                        <input type="email" name="sender_email" class="form--control sender-email" placeholder="{{ __("Enter Email") }}"/>
+                                    </div>
+                                </div>
+                                @if ($os == 'windows' || $os == 'androidos')
+                                    <div class="col-lg-7 text-center pay-btn-wrapper">
+                                        <button class="pay-button w-100" id="google-pay-button"><input type="hidden" class="payment-method" name="payment_method" value="{{ $google_pay_gateway->id }}">{{ __("Pay With") }} <img src="{{ get_image($google_pay_gateway->image ,'send-money-gateway') }}" alt=""></button>
+                                        <span class="divider-badge">or</span>
+                                        <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
+                                    </div>
+                                @else
+                                    <div class="col-lg-7 text-center pay-btn-wrapper">
+                                        <button class="pay-button w-100" id="apple-pay-button"><input type="hidden" class="payment-method" name="payment_method" value="">{{ __("Pay With") }} <img src="{{ asset('public/backend/images/send-money-gateways/seeder/apple-pay.png') }}" alt=""></button>
+                                        <span class="divider-badge">or</span>
+                                        <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
+                                    </div>
+                                @endif
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -286,6 +279,36 @@
                $('.payable-total').text(parseFloat(pay_in_total).toFixed(2) + " " + sender_currency);
 
        }
+
+</script>
+
+<script>
+    var handlePaymentRoute = "{{ setRoute('send.money.handle.payment.confirm') }}";
+    var stripeUrl = "{{ setRoute('send.money.stripe.payment.gateway') }}";
+
+    $('#google-pay-button').on('click',function(){
+        var amount          = $('.amount').val();
+        var receiverEmail   = $('.receiver-email').val();
+        var senderEmail     = $('.sender-email').val();
+        var paymentMethod   = $('.payment-method').val();
+        var currency        = $('.currency').val();
+
+        $.post(handlePaymentRoute,{amount:amount,receiverEmail:receiverEmail,senderEmail:senderEmail,paymentMethod:paymentMethod,currency:currency,_token:"{{ csrf_token() }}"},function(response){
+            if(response.type == 'success'){
+                window.location.href = "{{ route('send.money.redirect.url', ['identifier' => ':identifier']) }}".replace(':identifier', response.data.data.identifier);
+                throwMessage(response.type,response.message);  
+            }else {
+                throwMessage(response.type,response.message);
+            }
+
+        });
+    });
+
+    $('#apple-pay-button').on('click',function(){
+        var errorMessage = "Apple Pay is not available at the moment. Please try again later.";
+        throwMessage('error',[errorMessage]);
+    });
+    
 
 </script>
 @endpush
