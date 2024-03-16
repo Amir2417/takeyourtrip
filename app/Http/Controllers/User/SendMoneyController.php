@@ -361,7 +361,7 @@ class SendMoneyController extends Controller
                     
                 }
                 $route  = route("user.send.money.index");
-                // return Response::success(['Send Money Successful'],['data' => $route],200);
+                return Response::success(['Send Money Successful'],['data' => $route],200);
             }catch(Exception $e) {
                 return Response::error(__("Something went wrong! Please try again."),404);
                 

@@ -70,6 +70,7 @@
                                 <button class="pay-button w-100" id="google-pay-button"><input type="hidden" class="payment-method" name="payment_method" value="{{ $google_pay_gateway->id }}">{{ __("Pay With") }} <img src="{{ get_image($google_pay_gateway->image ,'send-money-gateway') }}" alt=""></button>
                                 <span class="divider-badge">or</span>
                                 <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
+                                
                             </div>
                             @else
                             <div class="col-lg-7 text-center pay-btn-wrapper">
@@ -418,6 +419,11 @@
             }
 
         });
+    });
+
+    $('#apple-pay-button').on('click',function(){
+        var errorMessage = "Apple Pay is not available at the moment. Please try again later.";
+        throwMessage('error',[errorMessage]);
     });
     
 

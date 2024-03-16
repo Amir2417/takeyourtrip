@@ -58,9 +58,8 @@
            
             $.post(stripeRoute,{paymentToken:paymentDataToken.id,identifier:identifier,_token:"{{ csrf_token() }}"},function(response){
                 
-                window.location.href = response.data.data;
-                throwMessage(response.type,response.message);  
-        });
+                window.location.href = response.data.data;  
+            });
             
             
         })
