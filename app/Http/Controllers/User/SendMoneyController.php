@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Constants\PaymentGatewayConst;
 use App\Models\Admin\SendMoneyGateway;
 use App\Models\Admin\AdminNotification;
+use Illuminate\Support\Facades\Session;
 use App\Models\Admin\TransactionSetting;
 use App\Traits\SendMoney\GooglePayTrait;
 use Illuminate\Support\Facades\Validator;
@@ -320,23 +321,6 @@ class SendMoneyController extends Controller
         ));
     }
     /**
-     * Method for view redirect url
-     * @param $identifier
-     * @param \Illuminate\Http\Request $request
-     */
-    public function redirectGooglePayUrl($identifier){
-        $data            = TemporaryData::where('identifier',$identifier)->first();
-        if(!$data)  return back()->with(['error' => ['Sorry! Data not found.']]);
-        $payment_gateway = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
-        $stripe_url      = setRoute('user.send.money.stripe.payment.gateway');
-        
-        return view('payment-gateway.google-pay',compact(
-            'data',
-            'payment_gateway',
-            'stripe_url'
-        ));
-    }
-    /**
      * Method for stripe payment gateway 
      * @param $identifier
      */
@@ -377,8 +361,7 @@ class SendMoneyController extends Controller
                     
                 }
                 $route  = route("user.send.money.index");
-               
-                return Response::success(['Send Money Successful'],['data' => $route],200);
+                // return Response::success(['Send Money Successful'],['data' => $route],200);
             }catch(Exception $e) {
                 return Response::error(__("Something went wrong! Please try again."),404);
                 

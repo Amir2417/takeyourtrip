@@ -50,25 +50,25 @@
                                         </div>
                                     </div>
 
-                                    {{-- <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
+                                    <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
                                         <label>{{ __("Select Gateway") }}</label>
                                         <div class="input-group">
                                             <select class="select2-basic" name="payment_method">
                                                     <option value="{{ $google_pay_gateway->id  }}">{{ $google_pay_gateway->name ?? '' }}</option>
                                             </select>
                                         </div>
-                                    </div> --}}
+                                    </div>
 
-                                    <div class="col-lg-7 text-center pay-btn-wrapper">
+                                    {{-- <div class="col-lg-7 text-center pay-btn-wrapper">
                                         <button class="pay-button w-100">{{ __("Pay With") }} <img src="{{ get_image($google_pay_gateway->image ,'send-money-gateway') }}" alt=""></button>
                                         <span class="divider-badge">or</span>
                                         <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
-                                    </div>
+                                    </div> --}}
     
                                     
-                                    {{-- <div class="col-xl-12 col-lg-12">
+                                    <div class="col-xl-12 col-lg-12">
                                         <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
-                                    </div> --}}
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -154,6 +154,7 @@
         </div>
     </div>
 </section>
+
 @endsection
 @push('script')
 <script>

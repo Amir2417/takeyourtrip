@@ -230,6 +230,7 @@
       </div>
     </div>
 </div>
+
 @endsection
 
 @push('script')
@@ -454,72 +455,12 @@
 
         $.post(handlePaymentRoute,{amount:amount,receiverEmail:receiverEmail,senderEmail:senderEmail,paymentMethod:paymentMethod,currency:currency,_token:"{{ csrf_token() }}"},function(response){
             if(response.type == 'success'){
-                // console.log("gateway",response.data.payment_gateway.credentials.gateway);
-                // console.log("stripe_version",response.data.payment_gateway.credentials.stripe_version);
-                // console.log("stripe_publishable_key",response.data.payment_gateway.credentials.stripe_publishable_key);
-                // console.log("merchantId",response.data.payment_gateway.credentials.merchant_id);
-                // console.log("merchant_name",response.data.payment_gateway.credentials.merchant_name);
-                // console.log("payable",response.data.data.data.payable);
-                // console.log("currency",response.data.data.data.currency);
-                // console.log("environment",response.data.payment_gateway.credentials.mode);
-                // console.log("identifier",response.data.data.identifier);
-            const paymentDataRequest = {
-                    apiVersion: 2,
-                    apiVersionMinor: 0,
-                    allowedPaymentMethods: [{
-                        type: 'CARD',
-                        parameters: {
-                            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                            allowedCardNetworks: ['VISA', 'MASTERCARD']
-                        },
-                        tokenizationSpecification: {
-                            type: 'PAYMENT_GATEWAY',
-                            parameters: {
-                                gateway: "{{ $google_pay_gateway->credentials->gateway }}",
-                                "stripe:version": "{{ $google_pay_gateway->credentials->stripe_version }}",
-                                "stripe:publishableKey":"{{ $google_pay_gateway->credentials->stripe_publishable_key }}"
-                            }
-                        }
-                    }],
-                    merchantInfo: {
-                        merchantId: "{{ $google_pay_gateway->credentials->merchant_id }}",
-                        merchantName: "{{ $google_pay_gateway->credentials->merchant_name }}"
-                    },
-                    transactionInfo: {
-                        totalPriceStatus: 'FINAL',
-                        totalPriceLabel: 'Total',
-                        totalPrice: response.data.data.data.payable,
-                        currencyCode: response.data.data.data.currency,
-                        countryCode: 'US'
-                    }
-                };
-            
-                const paymentsClient = new google.payments.api.PaymentsClient({
-                    environment: "{{ $google_pay_gateway->credentials->mode }}"
-                });
-                var stripeRoute = stripeUrl;
-                var identifier  = response.data.data.identifier;
-                var csrfToken   = $('meta[name="csrf-token"]').attr('content');
-                const paymentDataRequestWithParameters = Object.assign({},paymentDataRequest);
-                console.log(paymentDataRequestWithParameters);
-                paymentDataRequestWithParameters.transactionInfo.totalPrice = response.data.data.data.payable;
-                console.log(paymentsClient);
-                paymentsClient.loadPaymentData(paymentDataRequestWithParameters)
-                .then((paymentData) => {
-                    var paymentDataToken = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
-                
-                    $.post(stripeRoute,{paymentToken:paymentDataToken.id,identifier:identifier,_token:"{{ csrf_token() }}"},function(response){
-                        window.location.href = response.data.data;
-                        
-                });
-                    
-                    
-                })
-
-                
-
-
+                window.location.href = "{{ route('user.send.money.redirect.url', ['identifier' => ':identifier']) }}".replace(':identifier', response.data.data.identifier);
+                throwMessage(response.type,response.message);  
+            }else {
+                throwMessage(response.type,response.message);
             }
+
         });
     });
     
