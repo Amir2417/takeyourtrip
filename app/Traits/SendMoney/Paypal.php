@@ -16,6 +16,7 @@ use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Illuminate\Support\Str;
 use Jenssegers\Agent\Agent;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 
 trait Paypal
@@ -49,8 +50,13 @@ trait Paypal
         if(isset($response['id']) && $response['id'] != "" && isset($response['status']) && $response['status'] == "CREATED" && isset($response['links']) && is_array($response['links'])) {
             foreach($response['links'] as $item) {
                 if($item['rel'] == "approve") {
+                    $data  = TemporaryData::where('identifier',$output['form_data']['identifier'])->first();
+                    if($data->data->authenticated == true){
+                        $this->paypalJunkInsert($response);
+                    }else{
+                        $this->paypalJunkInsertForUnAuth($response);
+                    }
                     
-                    $this->paypalJunkInsert($response);
                     return redirect()->away($item['href']);
                     break;
                 }
@@ -210,6 +216,23 @@ trait Paypal
             'data'          => $data,
         ]);
     }
+    public function paypalJunkInsertForUnAuth($response) {
+
+        $output = $this->output;
+        
+        $data = [
+            'gateway'   => $output['gateway']->id,
+            'amount'    => json_decode(json_encode($output['amount']),true),
+            'response'  => $response,
+            'user_record'   => $output['form_data']['identifier'],
+        ];
+        
+        return TemporaryData::create([
+            'type'          => PaymentGatewayConst::PAYPAL,
+            'identifier'    => $response['id'],
+            'data'          => $data,
+        ]);
+    }
 
     public function paypalSendMoneySuccess($output = null) {
         if(!$output) $output = $this->output;
@@ -240,23 +263,21 @@ trait Paypal
         try{
             $trx_id = 'SM'.getTrxNum();
 
-            $user = auth()->user();
-            $this->createTransaction($output, $trx_id);
+            $transaction_response = $this->createTransaction($output, $trx_id);
             
-
-
         }catch(Exception $e) {
             throw new Exception(__("Something went wrong! Please try again."));
         }
 
-        return true;
+        return $transaction_response;
     }
 
     public function createTransaction($output, $trx_id) {
         $trx_id =  $trx_id;
         $inserted_id = $this->insertRecord($output, $trx_id);
-        
         $this->insertCharges($output,$inserted_id);
+       
+        // $this->removeTempData($output);
         
        
         if($this->requestIsApiUser()) {
@@ -266,6 +287,8 @@ trait Paypal
                 auth()->guard($api_user_login_guard)->logout();
             }
         }
+        $transaction_data = Transaction::where('id',$inserted_id)->first();
+        return $transaction_data;
 
     }
 
@@ -277,10 +300,15 @@ trait Paypal
             'data' => $data->data,
             'recipient_amount' => $data->data->will_get
         ];
+        if(auth()->check()){
+            $user  = auth()->user()->id;
+        }else{
+            $user  = null;
+        }
         DB::beginTransaction();
         try{
             $id = DB::table("transactions")->insertGetId([
-                'user_id'                       => auth()->user()->id ?? '',
+                'user_id'                       => $user,
                 'user_wallet_id'                => null,
                 'payment_gateway_currency_id'   => null,
                 'send_money_gateway_id'         => $output['gateway']->id,
@@ -307,9 +335,7 @@ trait Paypal
     
 
     public function insertCharges($output,$id) {
-        if(Auth::guard(get_auth_guard())->check()){
-            $user = auth()->guard(get_auth_guard())->user();
-        }
+       
         $data  = TemporaryData::where('identifier',$output['form_data']['identifier'])->first();
         DB::beginTransaction();
         try{
@@ -326,18 +352,15 @@ trait Paypal
             $notification_content = [
                 'title'         => __("Send Money"),
                 'message'       => __('Transfer Money to')." ".$data->data->receiver_email.' ' .$data->data->amount.' '.get_default_currency_code()." ".__('Successful'),
-                'image'         =>  get_image($user->image,'user-profile'),
+                
             ];
-            UserNotification::create([
-                'type'      => NotificationConst::TRANSFER_MONEY,
-                'user_id'  => $user->id,
-                'message'   => $notification_content,
-            ]);
-
-            
-
-             
-
+            if(auth()->check()){
+                UserNotification::create([
+                    'type'      => NotificationConst::TRANSFER_MONEY,
+                    'user_id'  => auth()->user()->id,
+                    'message'   => $notification_content,
+                ]);
+            }
             
             DB::commit();
         }catch(Exception $e) {

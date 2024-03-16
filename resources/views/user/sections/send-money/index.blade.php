@@ -75,7 +75,7 @@
                             <div class="col-lg-7 text-center pay-btn-wrapper">
                                 <button class="pay-button w-100" id="apple-pay-button"><input type="hidden" class="payment-method" name="payment_method" value="">{{ __("Pay With") }} <img src="{{ asset('public/backend/images/send-money-gateways/seeder/apple-pay.png') }}" alt=""></button>
                                 <span class="divider-badge">or</span>
-                                <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
+                                <button class="pay-button round w-100" id="paypal-button"><input type="hidden" class="paypal-payment-method" name="payment_method" value="{{ $paypal_gateway->id }}"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
                             </div>
                             @endif
                         </div>
@@ -430,7 +430,7 @@
         $.post(handlePaymentRoute,{amount:amount,receiverEmail:receiverEmail,senderEmail:senderEmail,paymentMethod:paymentMethod,currency:currency,_token:"{{ csrf_token() }}"},function(response){
             if(response.type == 'success'){
                 window.location.href = "{{ route('user.send.money.redirect.url', ['identifier' => ':identifier']) }}".replace(':identifier', response.data.data.identifier);
-                throwMessage(response.type,response.message);  
+                
             }else {
                 throwMessage(response.type,response.message);
             }

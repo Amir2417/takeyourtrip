@@ -149,7 +149,7 @@ class SendMoneyGateway {
         $this->gateway();
         $this->output['tempData'] = $tempData;
         if(method_exists(Paypal::class,$method_name)) {
-                
+            
             return $this->$method_name($this->output);
         }
        

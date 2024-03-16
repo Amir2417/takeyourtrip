@@ -212,6 +212,11 @@ class SendMoneyController extends Controller
         $percent_charge     = ($request->amount / 100) * $sendMoneyCharge->percent_charge;
         $total_charge       = $fixedCharge + $percent_charge;
         $payable            = $total_charge + $amount;
+        if(auth()->check()){
+            $authenticated  = true;
+        }else{
+            $authenticated  = false;
+        }
 
         $validated['identifier']     = Str::uuid();
         $data     = [
@@ -229,6 +234,7 @@ class SendMoneyController extends Controller
                 'sender_email'       => $sender_email,
                 'receiver_email'     => $receiver_email,
                 'will_get'           => floatval($amount),
+                'authenticated'      => $authenticated,
             ],  
         ];
         try{
@@ -337,11 +343,18 @@ class SendMoneyController extends Controller
         $checkTempData = $checkTempData->toArray();
         
         try{
-            SendMoneyGatewayHelper::init($checkTempData)->responseReceive();
+            
+            $data = SendMoneyGatewayHelper::init($checkTempData)->responseReceive();
+            
         }catch(Exception $e) {
             return back()->with(['error' => [__('Something went wrong! Please try again.')]]);
         }
-        return redirect()->route("user.send.money.index")->with(['success' => [__("Successfully Send Money")]]);
+        $data = $data->details->data;
+        if($data->authenticated == false){
+            return redirect()->route("send.money.index")->with(['success' => [__("Successfully Send Money")]]);
+        }else{
+            return redirect()->route("user.send.money.index")->with(['success' => [__("Successfully Send Money")]]);
+        }
     }
 
 

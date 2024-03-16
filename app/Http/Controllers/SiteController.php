@@ -26,6 +26,7 @@ use App\Models\Admin\SendMoneyGateway;
 use App\Http\Helpers\PaymentGatewayApi;
 use App\Models\Admin\TransactionSetting;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Helpers\SendMoneyGateway as SendMoneyGatewayHelper;
 
 class SiteController extends Controller
 {
@@ -185,6 +186,7 @@ class SiteController extends Controller
         $page_title         = "Send Money";
         $sendMoneyCharge    = TransactionSetting::where('slug','transfer')->where('status',1)->first();
         $google_pay_gateway = SendMoneyGateway::where('slug',global_const()::GOOGLE_PAY)->where('status',true)->first();
+        $paypal_gateway     = SendMoneyGateway::where('slug',global_const()::PAYPAL)->where('status',true)->first();
         $agent              = new Agent();
         $os                 = Str::lower($agent->platform());
         $email              = $request->email ?? '';
@@ -192,6 +194,7 @@ class SiteController extends Controller
             'page_title',
             'sendMoneyCharge',
             'google_pay_gateway',
+            'paypal_gateway',
             'os',
             'email'
         ));
@@ -211,21 +214,12 @@ class SiteController extends Controller
             'senderEmail'      => 'nullable'
         ]);
         $basic_setting = BasicSettings::first();
-        $user = auth()->user();
-        if($basic_setting->kyc_verification){
-            if( $user->kyc_verified == 0){
-                return Response::error([__('Please submit kyc information!')],[],404);
-            }elseif($user->kyc_verified == 2){
-                return Response::error([__('Please wait before admin approved your kyc information')],[],404);
-            }elseif($user->kyc_verified == 3){
-                return Response::error([__('Admin rejected your kyc information, Please re-submit again')],[],404);
-            }
-        }
+        
         $amount             = floatval($request->amount);
         $currency           = $request->currency;
         $receiver_email     = $request->receiverEmail;
         $sender_email       = $request->senderEmail;
-        $user               = auth()->user();
+        
         $sendMoneyCharge    = TransactionSetting::where('slug','transfer')->where('status',1)->first();
         $payment_gateway    = SendMoneyGateway::where('id',$request->paymentMethod)->first();
        
@@ -259,13 +253,19 @@ class SiteController extends Controller
         $percent_charge     = ($request->amount / 100) * $sendMoneyCharge->percent_charge;
         $total_charge       = $fixedCharge + $percent_charge;
         $payable            = $total_charge + $amount;
-
+        if(auth()->check()){
+            $authenticated  = true;
+            $user           = auth()->user()->id;
+        }else{
+            $authenticated  = false;
+            $user           = null;
+        }
         $validated['identifier']     = Str::uuid();
         $data     = [
             'type'                   => global_const()::SENDMONEY,
             'identifier'             => $validated['identifier'],
             'data'                   => [
-                'login_user'         => auth()->user()->id,
+                'login_user'         => $user,
                 'payment_gateway'    => $payment_gateway->id,
                 'amount'             => floatval($amount),
                 'total_charge'       => $total_charge,
@@ -276,6 +276,7 @@ class SiteController extends Controller
                 'sender_email'       => $sender_email,
                 'receiver_email'     => $receiver_email,
                 'will_get'           => floatval($amount),
+                'authenticated'      => $authenticated,
             ],  
         ];
         try{
@@ -298,13 +299,30 @@ class SiteController extends Controller
         $data            = TemporaryData::where('identifier',$identifier)->first();
         if(!$data)  return back()->with(['error' => ['Sorry! Data not found.']]);
         $payment_gateway = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
-        $stripe_url      = setRoute('send.money.stripe.payment.gateway');
+        if($payment_gateway->slug == global_const()::GOOGLE_PAY){
+            $stripe_url      = setRoute('send.money.stripe.payment.gateway');
 
-        return view('payment-gateway.google-pay',compact(
-            'data',
-            'payment_gateway',
-            'stripe_url'
-        ));
+            return view('payment-gateway.google-pay',compact(
+                'data',
+                'payment_gateway',
+                'stripe_url'
+            ));
+
+        }elseif($payment_gateway->slug == global_const()::PAYPAL){
+            $request_data = [
+                'identifier'    => $data->identifier,
+                'gateway'       => $payment_gateway->slug,
+            ];
+            try{
+
+                $instance  = SendMoneyGatewayHelper::init($request_data)->gateway()->render();
+                
+            }catch(Exception $e){
+                return Response::error([__('Something went wrong! Please try again.')],[],404);
+            }
+            return $instance;
+        }
+        
     }
     /**
      * Method for stripe payment gateway 
