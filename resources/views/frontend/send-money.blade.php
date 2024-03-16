@@ -305,7 +305,7 @@
     });
 
     $('#apple-pay-button').on('click',function(){
-        var errorMessage = "Apple Pay is not available at the moment. Please try again later.";
+        var errorMessage = "Apple Pay is not available right now. Please try again later.";
         throwMessage('error',[errorMessage]);
     });
     

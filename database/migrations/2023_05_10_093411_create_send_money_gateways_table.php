@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('image')->nullable();
             $table->text('credentials');
+            $table->string('env');
             $table->boolean('status')->default(true);
             $table->timestamps();
 

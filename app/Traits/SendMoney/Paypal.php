@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits\PaymentGateway;
+namespace App\Traits\SendMoney;
 
 use App\Constants\NotificationConst;
 use App\Constants\PaymentGatewayConst;
@@ -20,20 +20,21 @@ use Illuminate\Support\Facades\Auth;
 
 trait Paypal
 {
-    public function paypalInit($output = null) {
+    public function sendMoneyPaypalInit($output = null) {
         if(!$output) $output = $this->output;
         $credentials = $this->getPaypalCredentials($output);
-
+        
         $config = $this->paypalConfig($credentials,$output['amount']);
         $paypalProvider = new PayPalClient;
         $paypalProvider->setApiCredentials($config);
         $paypalProvider->getAccessToken();
+        
 
         $response = $paypalProvider->createOrder([
             "intent" => "CAPTURE",
             "application_context" => [
-                "return_url" => route('user.add.money.payment.success',PaymentGatewayConst::PAYPAL),
-                "cancel_url" => route('user.add.money.payment.cancel',PaymentGatewayConst::PAYPAL),
+                "return_url" => route('send.money.payment.success',PaymentGatewayConst::PAYPAL),
+                "cancel_url" => route('send.money.payment.cancel',PaymentGatewayConst::PAYPAL),
             ],
             "purchase_units" => [
                 0 => [
@@ -44,10 +45,11 @@ trait Paypal
                 ]
             ]
         ]);
-
+        
         if(isset($response['id']) && $response['id'] != "" && isset($response['status']) && $response['status'] == "CREATED" && isset($response['links']) && is_array($response['links'])) {
             foreach($response['links'] as $item) {
                 if($item['rel'] == "approve") {
+                    
                     $this->paypalJunkInsert($response);
                     return redirect()->away($item['href']);
                     break;
@@ -69,7 +71,7 @@ trait Paypal
         $paypalProvider = new PayPalClient;
         $paypalProvider->setApiCredentials($config);
         $paypalProvider->getAccessToken();
-
+        
         $response = $paypalProvider->createOrder([
             "intent" => "CAPTURE",
             "application_context" => [
@@ -85,7 +87,6 @@ trait Paypal
                 ]
             ]
         ]);
-
         if(isset($response['id']) && $response['id'] != "" && isset($response['status']) && $response['status'] == "CREATED" && isset($response['links']) && is_array($response['links'])) {
             foreach($response['links'] as $item) {
                 if($item['rel'] == "approve") {
@@ -192,19 +193,17 @@ trait Paypal
     public function paypalJunkInsert($response) {
 
         $output = $this->output;
-
+        
         $data = [
             'gateway'   => $output['gateway']->id,
-            'currency'  => $output['currency']->id,
             'amount'    => json_decode(json_encode($output['amount']),true),
             'response'  => $response,
-            'wallet_table'  => $output['wallet']->getTable(),
-            'wallet_id'     => $output['wallet']->id,
             'creator_table' => auth()->guard(get_auth_guard())->user()->getTable(),
             'creator_id'    => auth()->guard(get_auth_guard())->user()->id,
             'creator_guard' => get_auth_guard(),
+            'user_record'   => $output['form_data']['identifier'],
         ];
-       
+        
         return TemporaryData::create([
             'type'          => PaymentGatewayConst::PAYPAL,
             'identifier'    => $response['id'],
@@ -212,7 +211,7 @@ trait Paypal
         ]);
     }
 
-    public function paypalSuccess($output = null) {
+    public function paypalSendMoneySuccess($output = null) {
         if(!$output) $output = $this->output;
         $token = $this->output['tempData']['identifier'] ?? "";
         
@@ -239,24 +238,11 @@ trait Paypal
         $output['capture'] = $response;
         $basic_setting = BasicSettings::first();
         try{
-            $trx_id = 'AM'.getTrxNum();
+            $trx_id = 'SM'.getTrxNum();
 
             $user = auth()->user();
             $this->createTransaction($output, $trx_id);
-            if($this->requestIsApiUser()) {
-                $api_user_login_guard = $this->output['api_login_guard'] ?? null;
-                if( $api_user_login_guard != null ){
-                    $user = auth()->guard($api_user_login_guard)->user();
-                    if( $basic_setting->email_notification == true){
-                        $user->notify(new ApprovedMail($user,$output, $trx_id));
-                    }
-                }
-            }else{
-                if( $basic_setting->email_notification == true){
-                   
-                    $user->notify(new ApprovedMail($user,$output, $trx_id));
-                }
-            }
+            
 
 
         }catch(Exception $e) {
@@ -271,8 +257,7 @@ trait Paypal
         $inserted_id = $this->insertRecord($output, $trx_id);
         
         $this->insertCharges($output,$inserted_id);
-        $this->insertDevice($output,$inserted_id);
-        $this->removeTempData($output);
+        
        
         if($this->requestIsApiUser()) {
             // logout user
@@ -287,25 +272,30 @@ trait Paypal
     public function insertRecord($output, $trx_id) {
         $trx_id =  $trx_id;
         $token = $this->output['tempData']['identifier'] ?? "";
+        $data  = TemporaryData::where('identifier',$output['form_data']['identifier'])->first();
+        $details =[
+            'data' => $data->data,
+            'recipient_amount' => $data->data->will_get
+        ];
         DB::beginTransaction();
         try{
             $id = DB::table("transactions")->insertGetId([
-                'user_id'                       => auth()->user()->id,
-                'user_wallet_id'                => $output['wallet']->id,
-                'payment_gateway_currency_id'   => $output['currency']->id,
-                'type'                          => $output['type'],
+                'user_id'                       => auth()->user()->id ?? '',
+                'user_wallet_id'                => null,
+                'payment_gateway_currency_id'   => null,
+                'send_money_gateway_id'         => $output['gateway']->id,
+                'type'                          => PaymentGatewayConst::TYPETRANSFERMONEY,
                 'trx_id'                        => $trx_id,
                 'request_amount'                => $output['amount']->requested_amount,
                 'payable'                       => $output['amount']->total_amount,
-                'available_balance'             => $output['wallet']->balance + $output['amount']->requested_amount,
-                'remark'                        => ucwords(remove_speacial_char($output['type']," ")) . " With " . $output['gateway']->name,
-                'details'                       => json_encode($output['capture']),
+                'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPETRANSFERMONEY," ")) . " To " .$data->data->receiver_email,
+                'details'                       => json_encode($details),
                 'status'                        => true,
                 'attribute'                      =>PaymentGatewayConst::SEND,
                 'created_at'                    => now(),
             ]);
 
-            $this->updateWalletBalance($output);
+           
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
@@ -314,18 +304,13 @@ trait Paypal
         return $id;
     }
 
-    public function updateWalletBalance($output) {
-        $update_amount = $output['wallet']->balance + $output['amount']->requested_amount;
-
-        $output['wallet']->update([
-            'balance'   => $update_amount,
-        ]);
-    }
+    
 
     public function insertCharges($output,$id) {
         if(Auth::guard(get_auth_guard())->check()){
             $user = auth()->guard(get_auth_guard())->user();
         }
+        $data  = TemporaryData::where('identifier',$output['form_data']['identifier'])->first();
         DB::beginTransaction();
         try{
             DB::table('transaction_charges')->insert([
@@ -337,35 +322,23 @@ trait Paypal
             ]);
             DB::commit();
 
-            //notification
+            //store notification
             $notification_content = [
-                'title'         => __("Add Money"),
-                'message'       => __("Your Wallet")." (".$output['wallet']->currency->code.")  ".__("balance  has been added")." ".$output['amount']->requested_amount.' '. $output['wallet']->currency->code,
-                'time'          => Carbon::now()->diffForHumans(),
-                'image'         => get_image($user->image,'user-profile'),
+                'title'         => __("Send Money"),
+                'message'       => __('Transfer Money to')." ".$data->data->receiver_email.' ' .$data->data->amount.' '.get_default_currency_code()." ".__('Successful'),
+                'image'         =>  get_image($user->image,'user-profile'),
             ];
-
             UserNotification::create([
-                'type'      => NotificationConst::BALANCE_ADDED,
-                'user_id'  =>  auth()->user()->id,
+                'type'      => NotificationConst::TRANSFER_MONEY,
+                'user_id'  => $user->id,
                 'message'   => $notification_content,
             ]);
 
-             //Push Notifications
-             event(new UserNotificationEvent($notification_content,$user));
-             send_push_notification(["user-".$user->id],[
-                 'title'     => $notification_content['title'],
-                 'body'      => $notification_content['message'],
-                 'icon'      => $notification_content['image'],
-             ]);
+            
 
-            //admin notification
-            $notification_content['title'] = __('Add Money').' '.$output['amount']->requested_amount.' '.$output['amount']->default_currency.' '.__('By'). $output['currency']->name.' ('.$user->username.')';
-            AdminNotification::create([
-                'type'      => NotificationConst::BALANCE_ADDED,
-                'admin_id'  => 1,
-                'message'   => $notification_content,
-            ]);
+             
+
+            
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
@@ -373,36 +346,7 @@ trait Paypal
         }
     }
 
-    public function insertDevice($output,$id) {
-        $client_ip = request()->ip() ?? false;
-        $location = geoip()->getLocation($client_ip);
-        $agent = new Agent();
-
-        // $mac = exec('getmac');
-        // $mac = explode(" ",$mac);
-        // $mac = array_shift($mac);
-        $mac = "";
-
-        DB::beginTransaction();
-        try{
-            DB::table("transaction_devices")->insert([
-                'transaction_id'=> $id,
-                'ip'            => $client_ip,
-                'mac'           => $mac,
-                'city'          => $location['city'] ?? "",
-                'country'       => $location['country'] ?? "",
-                'longitude'     => $location['lon'] ?? "",
-                'latitude'      => $location['lat'] ?? "",
-                'timezone'      => $location['timezone'] ?? "",
-                'browser'       => $agent->browser() ?? "",
-                'os'            => $agent->platform() ?? "",
-            ]);
-            DB::commit();
-        }catch(Exception $e) {
-            DB::rollBack();
-            throw new Exception(__("Something went wrong! Please try again."));
-        }
-    }
+    
 
     public function removeTempData($output) {
         $token = $output['capture']['id'];

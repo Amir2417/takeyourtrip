@@ -47,11 +47,13 @@ class ApprovedMail extends Notification
      */
     public function toMail($notifiable)
     {
+
         $user = $this->user;
         $data = $this->data;
         $trx_id = $this->trx_id;
         $date = Carbon::now();
         $dateTime = $date->format('Y-m-d h:i:s A');
+       
         return (new MailMessage)
                     ->greeting("Hello ".$user->fullname." !")
                     ->subject("Add Money Via ". $data['currency']['name'])

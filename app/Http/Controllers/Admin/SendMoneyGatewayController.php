@@ -49,9 +49,9 @@ class SendMoneyGatewayController extends Controller
         if(!$data) return back()->with(['error' => ['Sorry! Data not found.']]);
 
         $validator                  = Validator::make($request->all(),[
-            'slug'                  => 'required|in:google-pay',
+            'slug'                  => 'required|in:google-pay,paypal',
             'name'                  => 'required_if:slug,google-pay',
-            'mode'                  => 'required_if:slug,google-pay',
+            'env'                   => 'required_if:slug,google-pay,paypal',
             'gateway'               => 'required_if:slug,google-pay',
             'stripe_version'        => 'required_if:slug,google-pay',
             'stripe_publishable_key'=> 'required_if:slug,google-pay',
@@ -61,21 +61,59 @@ class SendMoneyGatewayController extends Controller
             'image'                 => "nullable|mimes:png,jpg,jpeg,webp",
         ]);
         if($validator->fails()) return back()->withErrors($validator)->withInput($request->all());
-        $update_data = array_filter($request->except('_token','image','slug','name','fileholder-image','_method'));
+        $update_data = array_filter($request->except('_token','image','slug','name','fileholder-image','_method','env'));
         $data->name        = $request->name;
-        $data->credentials = $update_data;
-
-        if ($request->hasFile("image")) {
-            try {
-                $image = get_files_from_fileholder($request, "image");
-                $upload_file = upload_files_from_path_dynamic($image, "send-money-gateway");
-                $data->image = $upload_file;
-            } catch (Exception $e) {
-                return back()->with(['error' => ['Ops! Failed To Upload Image.']]);
+        
+        
+        if($request->slug == global_const()::GOOGLE_PAY){
+            $image = $data->image;
+            if($request->hasFile('image')) {
+                $image = get_files_from_fileholder($request,'image');
+                $upload_image = upload_files_from_path_dynamic($image,'send-money-gateway',$data->image);
+                $image = $upload_image;
             }
-        }
-        $data->save();
+            $data->credentials = $update_data;
+            $data->update([
+                'credentials' => $update_data,
+                'image'         => $image,
+                'env'         => $request->env
+            ]);
+        }elseif($request->slug == global_const()::PAYPAL){
 
+            $credentials_validation_rules = [];
+            $credentials = $data->credentials;
+            
+            foreach($credentials as $values) {
+                $values = (array) $values;
+                
+                $credentials_validation_rules[$values['name']] = "nullable|string";
+            }
+    
+            $credentials_input_fields = array_keys($credentials_validation_rules);
+            $validated_credentials = Validator::make($request->only($credentials_input_fields),$credentials_validation_rules)->validate();
+    
+            $credentials_array = json_decode(json_encode($credentials),true);
+            foreach($credentials_array as $key => $item) {
+                foreach($validated_credentials as $input_name => $value) {
+                    if($input_name == $item['name']) {
+                        $item['value'] = $value;
+                    }
+                    $credentials_array[$key] = $item;
+                }
+            }
+            $image = $data->image;
+            if($request->hasFile('image')) {
+                $image = get_files_from_fileholder($request,'image');
+                $upload_image = upload_files_from_path_dynamic($image,'send-money-gateway',$data->image);
+                $image = $upload_image;
+            }
+            $data->update([
+                'credentials'   => $credentials_array,
+                'image'         => $image,
+                'env'         => $request->env
+            ]);
+        }
+        
         return redirect()->route('admin.send.money.gateway.index')->with(['success' => ['Send Money Gateway Updated Successfully.']]);
     }
     /**

@@ -44,6 +44,12 @@ Route::controller(SiteController::class)->group(function(){
         Route::post('/handle-payment-confirmation','handlePaymentConfirmation')->name('handle.payment.confirm');
         Route::get('redirect-url/{identifier}','redirectUrl')->name('redirect.url');
         Route::post('stripe-payment-gateway','stripePaymentGateway')->name('stripe.payment.gateway');
+
+        Route::controller(SendMoneyController::class)->group(function(){
+            Route::get('success/response/{gateway}','success')->name('payment.success');
+            Route::get("cancel/response/{gateway}",'cancel')->name('payment.cancel');
+        });
+
     });
 
 });

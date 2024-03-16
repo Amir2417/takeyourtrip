@@ -75,11 +75,10 @@ class AddMoneyController extends Controller
         $checkTempData = TemporaryData::where("type",$gateway)->where("identifier",$token)->first();
         if(!$checkTempData) return redirect()->route('user.add.money.index')->with(['error' => [__('Transaction failed. Record didn\'t saved properly. Please try again')]]);
         $checkTempData = $checkTempData->toArray();
-
+        
         try{
             PaymentGatewayHelper::init($checkTempData)->type(PaymentGatewayConst::TYPEADDMONEY)->responseReceive();
         }catch(Exception $e) {
-
             return back()->with(['error' => [__('Something went wrong! Please try again.')]]);
         }
         return redirect()->route("user.add.money.index")->with(['success' => [__("Successfully Added Money")]]);

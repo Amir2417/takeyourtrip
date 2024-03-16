@@ -69,7 +69,7 @@
                             <div class="col-lg-7 text-center pay-btn-wrapper">
                                 <button class="pay-button w-100" id="google-pay-button"><input type="hidden" class="payment-method" name="payment_method" value="{{ $google_pay_gateway->id }}">{{ __("Pay With") }} <img src="{{ get_image($google_pay_gateway->image ,'send-money-gateway') }}" alt=""></button>
                                 <span class="divider-badge">or</span>
-                                <button class="pay-button round w-100"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
+                                <button class="pay-button round w-100" id="paypal-button"><input type="hidden" class="paypal-payment-method" name="payment_method" value="{{ $paypal_gateway->id }}"><img src="{{ asset('public/backend/images/send-money-gateways/seeder/paypal.webp') }}" alt=""></button>
                             </div>
                             @else
                             <div class="col-lg-7 text-center pay-btn-wrapper">
@@ -409,6 +409,24 @@
         var paymentMethod   = $('.payment-method').val();
         var currency        = $('.currency').val();
 
+        handlePaymentRouteUrl(handlePaymentRoute,amount,receiverEmail,senderEmail,paymentMethod,currency);
+
+
+        
+    });
+
+    //send money using paypal
+    $('#paypal-button').on('click',function(){
+        var amount          = $('.amount').val();
+        var receiverEmail   = $('.receiver-email').val();
+        var senderEmail     = $('.sender-email').val();
+        var paymentMethod   = $('.paypal-payment-method').val();
+        var currency        = $('.currency').val();
+        handlePaymentRouteUrl(handlePaymentRoute,amount,receiverEmail,senderEmail,paymentMethod,currency);
+    });
+
+    //function for handle payment route
+    function handlePaymentRouteUrl(handlePaymentRoute,amount,receiverEmail,senderEmail,paymentMethod,currency){
         $.post(handlePaymentRoute,{amount:amount,receiverEmail:receiverEmail,senderEmail:senderEmail,paymentMethod:paymentMethod,currency:currency,_token:"{{ csrf_token() }}"},function(response){
             if(response.type == 'success'){
                 window.location.href = "{{ route('user.send.money.redirect.url', ['identifier' => ':identifier']) }}".replace(':identifier', response.data.data.identifier);
@@ -418,10 +436,10 @@
             }
 
         });
-    });
+    }
 
     $('#apple-pay-button').on('click',function(){
-        var errorMessage = "Apple Pay is not available at the moment. Please try again later.";
+        var errorMessage = "Apple Pay is not available right now. Please try again later.";
         throwMessage('error',[errorMessage]);
     });
     

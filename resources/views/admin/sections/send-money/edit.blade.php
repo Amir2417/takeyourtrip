@@ -39,7 +39,7 @@
                             ])
                         </div>
                     </div>
-                    @if ($data->slug == 'google-pay')
+                    @if ($data->slug == global_const()::GOOGLE_PAY)
                         <div class="col-xl-8 col-lg-8 form-group">
                             <label>{{ __("Name*") }}</label>
                             <div class="input-group append">
@@ -51,8 +51,8 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 form-group">
                             @include('admin.components.form.switcher', [
                                 'label'         => 'Mode*',
-                                'value'         => old('mode',@$data->credentials->mode),
-                                'name'          => "mode",
+                                'value'         => old('env',@$data->env),
+                                'name'          => "env",
                                 'options'       => ['PRODUCTION' => global_const()::PRODUCTION , 'TEST' => global_const()::TEST]
                             ])
                         </div>
@@ -103,6 +103,29 @@
                                 
                             </div>
                         </div>
+                    @elseif($data->slug == global_const()::PAYPAL)
+                    <div class="col-xl-8 col-lg-8 form-group">
+                        <label>{{ __("Name*") }}</label>
+                        <div class="input-group append">
+                            <span class="input-group-text"><i class="las la-file-signature"></i></span>
+                            <input type="hidden" class="form--control" name="slug" value="{{ @$data->slug }}">
+                            <input type="text" class="form--control" readonly name="name" value="{{ @$data->name }}">
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 form-group">
+                        @include('admin.components.form.switcher', [
+                            'label'         => 'Gateway Environment*',
+                            'value'         => old('env',@$data->env),
+                            'name'          => "env",
+                            'options'       => ['PRODUCTION' => global_const()::PRODUCTION , 'SANDBOX' => global_const()::SANDBOX]
+                        ])
+                    </div>
+                    @foreach ($data->credentials as $item)
+                        <div class="form-group">
+                            <label>{{ $item->label }}</label>
+                            <input type="text" class="form--control" placeholder="{{ $item->placeholder }}" name="{{ $item->name }}" value="{{ $item->value }}">
+                        </div>
+                    @endforeach
                     @endif
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[

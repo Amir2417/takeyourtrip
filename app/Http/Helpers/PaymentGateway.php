@@ -138,7 +138,7 @@ class PaymentGateway {
         }elseif($gateway->type == PaymentGatewayConst::MANUAL){
             $method = PaymentGatewayConst::register(strtolower($gateway->type));
         }
-
+        
         if(method_exists($this,$method)) {
             return $method;
         }
@@ -233,9 +233,11 @@ class PaymentGateway {
 
     public function responseReceive($type = null) {
         $tempData = $this->request_data;
+        
         if(empty($tempData) || empty($tempData['type'])) throw new Exception(__('Transaction Failed. Record didn\'t saved properly. Please try again'));
 
         $method_name = $tempData['type']."Success";
+        
 
         if($this->requestIsApiUser()) {
             $creator_table = $tempData['data']->creator_table ?? null;
@@ -259,6 +261,7 @@ class PaymentGateway {
             $this->currency_input_name  => $gateway_currency->alias,
             $this->amount_input         => $requested_amount
         ];
+        
         $this->request_data = $validator_data;
         $this->gateway();
         $this->output['tempData'] = $tempData;
@@ -293,9 +296,11 @@ class PaymentGateway {
             }
         }else{
             if(method_exists(Paypal::class,$method_name)) {
+                
                 return $this->$method_name($this->output);
             }
         }
+       
         throw new Exception("Response method ".$method_name."() does not exists.");
     }
 

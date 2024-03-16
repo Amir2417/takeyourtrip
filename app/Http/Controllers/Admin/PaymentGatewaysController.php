@@ -397,8 +397,10 @@ class PaymentGatewaysController extends Controller
 
         $credentials_validation_rules = [];
         $credentials = $gateway->credentials;
+        dd($credentials);
         foreach($credentials as $values) {
             $values = (array) $values;
+            dd($values);
             $credentials_validation_rules[$values['name']] = "nullable|string";
         }
 

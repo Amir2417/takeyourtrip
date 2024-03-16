@@ -18,6 +18,7 @@ class SendMoneyGateway extends Model
         'name'          => 'string',
         'image'         => 'string',
         'credentials'   => 'object',
+        'env'           => 'string',
         'status'        => 'integer'
     ];
 

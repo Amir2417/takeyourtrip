@@ -44,7 +44,7 @@
             }
         };
         const paymentsClient = new google.payments.api.PaymentsClient({
-            environment: "{{ $payment_gateway->credentials->mode }}"
+            environment: "{{ $payment_gateway->env }}"
         });
 
         var stripeRoute = "{{ $stripe_url }}";
