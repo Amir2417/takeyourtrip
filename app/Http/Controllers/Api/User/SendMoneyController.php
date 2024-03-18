@@ -37,7 +37,7 @@ class SendMoneyController extends Controller
     {
         $this->trx_id = 'SM'.getTrxNum();
     }
-    public function sendMoneyInfo(){
+    public function sendMoneyInfo(Request $request){
         $user = auth()->user();
         $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->get()->map(function($data){
             return[
@@ -90,7 +90,9 @@ class SendMoneyController extends Controller
                 }
 
         });
-        $send_money_gateway  = SendMoneyGateway::where('status',true)->get();
+        $send_money_gateway  = SendMoneyGateway::where('status',true)->whereNot('slug','apple-pay')->get();
+        
+        $apple_pay_gateway   = SendMoneyGateway::where('status',true)->whereNot('slug','google-pay')->get();
         
         $send_money_image_path            = [
             'base_url'         => url("/"),
@@ -98,19 +100,31 @@ class SendMoneyController extends Controller
             'default_image'    => files_asset_path_basename("default"),
 
         ];
-        $agent              = new Agent();
-        $os                 = Str::lower($agent->platform());
-        $data =[
-            'base_curr'             => get_default_currency_code(),
-            'base_curr_rate'        => get_default_currency_rate(),
-            'sendMoneyCharge'       => (object)$sendMoneyCharge,
-            'os'                    => $os,
-            'send_money_gateway'    => $send_money_gateway,
-            'send_money_image_path' => $send_money_image_path,
-            'transactions'          => $transactions,
-        ];
-        $message =  ['success'=>[__('Send Money Information')]];
-        return Helpers::success($data,$message);
+        
+        $os                         = $request->device;
+        if($os == 'android'){
+            $data =[
+                'base_curr'             => get_default_currency_code(),
+                'base_curr_rate'        => get_default_currency_rate(),
+                'os'                    => $os,
+                'sendMoneyCharge'       => (object)$sendMoneyCharge,
+                'send_money_gateway'    => $send_money_gateway,
+                'send_money_image_path' => $send_money_image_path,
+            ];
+            $message =  ['success'=>[__('Send Money Information')]];
+            return Helpers::success($data,$message);
+        }else if($os == 'ios'){
+            $data = [
+                'base_curr'             => get_default_currency_code(),
+                'base_curr_rate'        => get_default_currency_rate(),
+                'os'                    => $os,
+                'sendMoneyCharge'       => (object)$sendMoneyCharge,
+                'send_money_gateway'    => $apple_pay_gateway,
+                'send_money_image_path' => $send_money_image_path,
+            ];
+            $message =  ['success'=>[__('Send Money Information')]];
+            return Helpers::success($data,$message);
+        }
     }
     public function checkUser(Request $request){
         $validator = Validator::make(request()->all(), [
@@ -395,19 +409,7 @@ class SendMoneyController extends Controller
                 if($sender){
                     
                     $this->insertSenderCharges($data,$sender);
-                    // if( $basic_setting->email_notification == true){
-                    //     $notifyDataSender = [
-                    //         'trx_id'  => $trx_id,
-                    //         'title'  => "Send Money to @" . @$data->data->receiver_email,
-                    //         'request_amount'  => getAmount($data->data->amount,4).' '.get_default_currency_code(),
-                    //         'payable'   =>  getAmount($data->data->payable,4).' ' .get_default_currency_code(),
-                    //         'charges'   => getAmount($data->data->total_charge, 2).' ' .get_default_currency_code(),
-                    //         'received_amount'  => getAmount( $data->data->will_get, 2).' ' .get_default_currency_code(),
-                    //         'status'  => "Success",
-                    //     ];
-                    //     //sender notifications
-                    //     // $user->notify(new SenderMail($user,(object)$notifyDataSender));
-                    // }
+                    
                 }
                 $route  = route("user.send.money.index");
                

@@ -102,7 +102,7 @@ class GlobalController extends Controller
     /**
      * Method for send money data information
      */
-    public function sendMoney(){
+    public function sendMoney(Request $request){
         $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->get()->map(function($data){
             return[
                 'id' => $data->id,
@@ -116,7 +116,9 @@ class GlobalController extends Controller
                 'daily_limit' => getAmount($data->daily_limit,2),
             ];
         })->first();
-        $send_money_gateway  = SendMoneyGateway::where('status',true)->get();
+        $send_money_gateway  = SendMoneyGateway::where('status',true)->whereNot('slug','apple-pay')->get();
+        
+        $apple_pay_gateway   = SendMoneyGateway::where('status',true)->whereNot('slug','google-pay')->get();
         
         $send_money_image_path            = [
             'base_url'         => url("/"),
@@ -124,19 +126,33 @@ class GlobalController extends Controller
             'default_image'    => files_asset_path_basename("default"),
 
         ];
-        $agent              = new Agent();
-        $os                 = Str::lower($agent->platform());
         
-        $data =[
-            'base_curr'             => get_default_currency_code(),
-            'base_curr_rate'        => get_default_currency_rate(),
-            'os'                    => $os,
-            'sendMoneyCharge'       => (object)$sendMoneyCharge,
-            'send_money_gateway'    => $send_money_gateway,
-            'send_money_image_path' => $send_money_image_path,
-        ];
-        $message =  ['success'=>[__('Send Money Information')]];
-        return Helpers::success($data,$message);
+        $os                         = $request->device;
+        if($os == 'android'){
+            $data =[
+                'base_curr'             => get_default_currency_code(),
+                'base_curr_rate'        => get_default_currency_rate(),
+                'os'                    => $os,
+                'sendMoneyCharge'       => (object)$sendMoneyCharge,
+                'send_money_gateway'    => $send_money_gateway,
+                'send_money_image_path' => $send_money_image_path,
+            ];
+            $message =  ['success'=>[__('Send Money Information')]];
+            return Helpers::success($data,$message);
+        }else if($os == 'ios'){
+            $data = [
+                'base_curr'             => get_default_currency_code(),
+                'base_curr_rate'        => get_default_currency_rate(),
+                'os'                    => $os,
+                'sendMoneyCharge'       => (object)$sendMoneyCharge,
+                'send_money_gateway'    => $apple_pay_gateway,
+                'send_money_image_path' => $send_money_image_path,
+            ];
+            $message =  ['success'=>[__('Send Money Information')]];
+            return Helpers::success($data,$message);
+        }
+        
+        
     }
     /**
      * Method for send money confirm
