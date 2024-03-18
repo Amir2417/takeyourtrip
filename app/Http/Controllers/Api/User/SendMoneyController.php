@@ -269,6 +269,7 @@ class SendMoneyController extends Controller
             return Helpers::error($error);
         }
         $payment_gateway = SendMoneyGateway::where('id',$temporary_data->data->payment_gateway)->first();
+        
         if($payment_gateway->slug == global_const()::GOOGLE_PAY){
             $data       = [
                 'temporary_data' => $temporary_data,

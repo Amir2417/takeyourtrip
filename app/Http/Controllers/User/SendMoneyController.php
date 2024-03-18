@@ -355,6 +355,15 @@ class SendMoneyController extends Controller
         }
     }
 
+    //cancel method
+    public function cancel(Request $request, $gateway) {
+        $token = session()->get('identifier');
+     
+        if( $token){
+            TemporaryData::where("identifier",$token)->delete();
+        }
+        return redirect()->route('send.money.index');
+    }
     //sender transaction
     public function insertSender($trx_id,$data) {
         $trx_id = $trx_id;
