@@ -187,14 +187,17 @@ class SiteController extends Controller
         $sendMoneyCharge    = TransactionSetting::where('slug','transfer')->where('status',1)->first();
         $google_pay_gateway = SendMoneyGateway::where('slug',global_const()::GOOGLE_PAY)->where('status',true)->first();
         $paypal_gateway     = SendMoneyGateway::where('slug',global_const()::PAYPAL)->where('status',true)->first();
+        $apple_pay_gateway  = SendMoneyGateway::where('slug',global_const()::APPLE_PAY)->where('status',true)->first();
         $agent              = new Agent();
         $os                 = Str::lower($agent->platform());
         $email              = $request->email ?? '';
+        
         return view('frontend.send-money',compact(
             'page_title',
             'sendMoneyCharge',
             'google_pay_gateway',
             'paypal_gateway',
+            'apple_pay_gateway',
             'os',
             'email'
         ));

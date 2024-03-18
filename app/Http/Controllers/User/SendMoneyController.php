@@ -47,6 +47,7 @@ class SendMoneyController extends Controller
         $transactions       = Transaction::auth()->senMoney()->latest()->take(10)->get();
         $google_pay_gateway = SendMoneyGateway::where('slug',global_const()::GOOGLE_PAY)->where('status',true)->first();
         $paypal_gateway     = SendMoneyGateway::where('slug',global_const()::PAYPAL)->where('status',true)->first();
+        $apple_pay_gateway  = SendMoneyGateway::where('slug',global_const()::APPLE_PAY)->where('status',true)->first();
         $agent              = new Agent();
         $os                 = Str::lower($agent->platform());
 
@@ -56,6 +57,7 @@ class SendMoneyController extends Controller
             'transactions',
             'google_pay_gateway',
             'paypal_gateway',
+            'apple_pay_gateway',
             'os',
         ));
     }
