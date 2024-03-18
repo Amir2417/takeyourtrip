@@ -9,6 +9,7 @@ use App\Models\UserQrCode;
 use App\Models\UserWallet;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
+use Jenssegers\Agent\Agent;
 use Illuminate\Http\Request;
 use App\Models\TemporaryData;
 use App\Http\Helpers\Response;
@@ -97,10 +98,13 @@ class SendMoneyController extends Controller
             'default_image'    => files_asset_path_basename("default"),
 
         ];
+        $agent              = new Agent();
+        $os                 = Str::lower($agent->platform());
         $data =[
             'base_curr'             => get_default_currency_code(),
             'base_curr_rate'        => get_default_currency_rate(),
             'sendMoneyCharge'       => (object)$sendMoneyCharge,
+            'os'                    => $os,
             'send_money_gateway'    => $send_money_gateway,
             'send_money_image_path' => $send_money_image_path,
             'transactions'          => $transactions,

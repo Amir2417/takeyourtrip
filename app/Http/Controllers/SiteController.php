@@ -344,7 +344,7 @@ class SiteController extends Controller
         $payment_gateway    = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
         $payment_token      = $request->paymentToken;
         $stripe             = new \Stripe\StripeClient($payment_gateway->credentials->stripe_secret_key);
-       
+      
         $response           =  $stripe->charges->create([
             'amount'        => $data->data->payable * 100,
             'currency'      => 'usd',
