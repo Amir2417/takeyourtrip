@@ -24,7 +24,8 @@ class SetupPageSeeder extends Seeder
             "Web Journal" =>"web/journal",
             "Merchant" =>"merchant-info",
             "Developer" =>"developer",
-            "Contact" => "/contact"
+            "Contact" => "/contact",
+            'Send Money' => 'send-money'
         ];
         $data = [];
         foreach($pages as $item => $url) {

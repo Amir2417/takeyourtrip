@@ -208,8 +208,8 @@ class SiteController extends Controller
      */
     public function handlePaymentConfirmation(Request $request){
         $request->validate([
-            'amount'            => 'required|numeric|gt:0',
-            'receiverEmail'             => 'required|email',
+            'amount'           => 'required|numeric|gt:0',
+            'receiverEmail'    => 'required|email',
             'paymentMethod'    => 'required',
             'senderEmail'      => 'nullable'
         ]);

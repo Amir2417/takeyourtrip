@@ -309,13 +309,16 @@
 
     function handlePaymentRouteUrl(handlePaymentRoute,amount,receiverEmail,senderEmail,paymentMethod,currency){
         $.post(handlePaymentRoute,{amount:amount,receiverEmail:receiverEmail,senderEmail:senderEmail,paymentMethod:paymentMethod,currency:currency,_token:"{{ csrf_token() }}"},function(response){
+            
             if(response.type == 'success'){
                 window.location.href = "{{ route('send.money.redirect.url', ['identifier' => ':identifier']) }}".replace(':identifier', response.data.data.identifier);
                 
-            }else {
-                throwMessage(response.type,response.message);
             }
 
+        }).fail(function(response) {
+            var response = JSON.parse(response.responseText);
+            throwMessage(response.type,response.message.error);
+            
         });
     }
 

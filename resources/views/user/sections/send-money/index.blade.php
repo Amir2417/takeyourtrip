@@ -431,10 +431,11 @@
             if(response.type == 'success'){
                 window.location.href = "{{ route('user.send.money.redirect.url', ['identifier' => ':identifier']) }}".replace(':identifier', response.data.data.identifier);
                 
-            }else {
-                throwMessage(response.type,response.message);
             }
-
+        }).fail(function(response) {
+            var response = JSON.parse(response.responseText);
+            throwMessage(response.type,response.message.error);
+            
         });
     }
 
