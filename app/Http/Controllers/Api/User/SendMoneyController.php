@@ -338,17 +338,15 @@ class SendMoneyController extends Controller
             return Helpers::error($error);
         }
         $payment_gateway = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
-        if($payment_gateway->slug == global_const()::GOOGLE_PAY){
-            $stripe_url      = setRoute('api.user.send.money.stripe.payment.gateway');
 
-            return view('payment-gateway.google-pay',compact(
-                'data',
-                'payment_gateway',
-                'stripe_url'
-            ));
-        }else{
+        $stripe_url      = setRoute('api.user.send.money.stripe.payment.gateway');
 
-        }
+        return view('payment-gateway.google-pay',compact(
+            'data',
+            'payment_gateway',
+            'stripe_url'
+        ));
+        
         
     }
     /**
@@ -374,11 +372,19 @@ class SendMoneyController extends Controller
        
         $stripe             = new \Stripe\StripeClient($payment_gateway->credentials->stripe_secret_key);
        
-        $response           =  $stripe->charges->create([
-            'amount'        => $data->data->payable * 100,
-            'currency'      => 'usd',
-            'source'        => 'tok_visa',
-        ]);
+        if($payment_gateway->env == global_const()::TEST){
+            $response           =  $stripe->charges->create([
+                'amount'        => $data->data->payable * 100,
+                'currency'      => 'usd',
+                'source'        => 'tok_visa',
+            ]);
+        }else{
+            $response           =  $stripe->charges->create([
+                'amount'        => $data->data->payable * 100,
+                'currency'      => $data->data->currency,
+                'source'        => $payment_token,
+            ]);
+        }
        
         if($response->status == 'succeeded'){
            

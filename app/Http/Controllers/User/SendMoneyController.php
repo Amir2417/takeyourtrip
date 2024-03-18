@@ -303,12 +303,20 @@ class SendMoneyController extends Controller
         $payment_token      = $request->paymentToken;
         $user               = auth()->user();
         $stripe             = new \Stripe\StripeClient($payment_gateway->credentials->stripe_secret_key);
-       
-        $response           =  $stripe->charges->create([
-            'amount'        => $data->data->payable * 100,
-            'currency'      => 'usd',
-            'source'        => 'tok_visa',
-        ]);
+        if($payment_gateway->env == global_const()::TEST){
+            $response           =  $stripe->charges->create([
+                'amount'        => $data->data->payable * 100,
+                'currency'      => 'usd',
+                'source'        => 'tok_visa',
+            ]);
+        }else{
+            $response           =  $stripe->charges->create([
+                'amount'        => $data->data->payable * 100,
+                'currency'      => $data->data->currency,
+                'source'        => $payment_token,
+            ]);
+        }
+        
        
         if($response->status == 'succeeded'){
            

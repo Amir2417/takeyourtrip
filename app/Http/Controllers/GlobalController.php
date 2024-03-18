@@ -330,11 +330,19 @@ class GlobalController extends Controller
        
         $stripe             = new \Stripe\StripeClient($payment_gateway->credentials->stripe_secret_key);
        
-        $response           =  $stripe->charges->create([
-            'amount'        => $data->data->payable * 100,
-            'currency'      => 'usd',
-            'source'        => 'tok_visa',
-        ]);
+        if($payment_gateway->env == global_const()::TEST){
+            $response           =  $stripe->charges->create([
+                'amount'        => $data->data->payable * 100,
+                'currency'      => 'usd',
+                'source'        => 'tok_visa',
+            ]);
+        }else{
+            $response           =  $stripe->charges->create([
+                'amount'        => $data->data->payable * 100,
+                'currency'      => $data->data->currency,
+                'source'        => $payment_token,
+            ]);
+        }
        
         if($response->status == 'succeeded'){
            
@@ -345,19 +353,7 @@ class GlobalController extends Controller
                 if($sender){
                     
                     $this->insertSenderCharges($data,$sender);
-                    // if( $basic_setting->email_notification == true){
-                    //     $notifyDataSender = [
-                    //         'trx_id'  => $trx_id,
-                    //         'title'  => "Send Money to @" . @$data->data->receiver_email,
-                    //         'request_amount'  => getAmount($data->data->amount,4).' '.get_default_currency_code(),
-                    //         'payable'   =>  getAmount($data->data->payable,4).' ' .get_default_currency_code(),
-                    //         'charges'   => getAmount($data->data->total_charge, 2).' ' .get_default_currency_code(),
-                    //         'received_amount'  => getAmount( $data->data->will_get, 2).' ' .get_default_currency_code(),
-                    //         'status'  => "Success",
-                    //     ];
-                    //     //sender notifications
-                    //     // $user->notify(new SenderMail($user,(object)$notifyDataSender));
-                    // }
+                    
                 }
                 $route  = route("send.money.index");
                
