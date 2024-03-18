@@ -69,7 +69,7 @@ trait Paypal
 
         throw new Exception(__("Something went wrong! Please try again."));
     }
-    public function paypalInitApi($output = null) {
+    public function sendMoneyPaypalInitApi($output = null) {
         if(!$output) $output = $this->output;
         $credentials = $this->getPaypalCredentials($output);
 
@@ -77,12 +77,11 @@ trait Paypal
         $paypalProvider = new PayPalClient;
         $paypalProvider->setApiCredentials($config);
         $paypalProvider->getAccessToken();
-        
         $response = $paypalProvider->createOrder([
             "intent" => "CAPTURE",
             "application_context" => [
-                "return_url" =>route('api.payment.success',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP),
-                "cancel_url" => route('api.payment.cancel',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP),
+                "return_url" =>route('api.send.money.payment.success',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP),
+                "cancel_url" => route('api.send.money.payment.cancel',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP),
             ],
             "purchase_units" => [
                 0 => [
@@ -93,10 +92,16 @@ trait Paypal
                 ]
             ]
         ]);
+        
         if(isset($response['id']) && $response['id'] != "" && isset($response['status']) && $response['status'] == "CREATED" && isset($response['links']) && is_array($response['links'])) {
             foreach($response['links'] as $item) {
                 if($item['rel'] == "approve") {
-                    $this->paypalJunkInsert($response);
+                    $data  = TemporaryData::where('identifier',$output['form_data']['identifier'])->first();
+                    if($data->data->authenticated == true){
+                        $this->paypalJunkInsert($response);
+                    }else{
+                        $this->paypalJunkInsertForUnAuth($response);
+                    }
                     return $response;
                     break;
                 }

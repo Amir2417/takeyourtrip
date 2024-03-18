@@ -280,8 +280,6 @@ class SendMoneyController extends Controller
             }
             return $instance;
         }
-
-        
     }
     /**
      * Method for stripe payment gateway 
@@ -356,9 +354,6 @@ class SendMoneyController extends Controller
             return redirect()->route("user.send.money.index")->with(['success' => [__("Successfully Send Money")]]);
         }
     }
-
-
-
 
     //sender transaction
     public function insertSender($trx_id,$data) {

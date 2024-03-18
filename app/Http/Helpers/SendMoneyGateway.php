@@ -50,9 +50,6 @@ class SendMoneyGateway {
         $this->output['form_data']  = $this->request_data;
         $this->output['distribute'] = $this->gatewayDistribute($gateway_currency->gateway);
         
-
-        // limit validation
-        // $this->limitValidation($this->output);
         return $this;
     }
 
@@ -120,20 +117,21 @@ class SendMoneyGateway {
         if(empty($tempData) || empty($tempData['type'])) throw new Exception(__('Transaction Failed. Record didn\'t saved properly. Please try again'));
 
         $method_name = $tempData['type']."SendMoneySuccess";
-        
-
-        if($this->requestIsApiUser()) {
-            $creator_table = $tempData['data']->creator_table ?? null;
-            $creator_id = $tempData['data']->creator_id ?? null;
-            $creator_guard = $tempData['data']->creator_guard ?? null;
-            $api_authenticated_guards = PaymentGatewayConst::apiAuthenticateGuard();
-            if(!array_key_exists($creator_guard,$api_authenticated_guards)) throw new Exception(__("Request user doesn\'t save properly. Please try again"));
-            if($creator_table == null || $creator_id == null || $creator_guard == null) throw new Exception(__("Request user doesn\'t save properly. Please try again"));
-            $creator = DB::table($creator_table)->where("id",$creator_id)->first();
-            if(!$creator) throw new Exception(__("Request user doesn\'t save properly. Please try again"));
-            $api_user_login_guard = $api_authenticated_guards[$creator_guard];
-            $this->output['api_login_guard'] = $api_user_login_guard;
-            Auth::guard($api_user_login_guard)->loginUsingId($creator->id);
+        $send_money_data = TemporaryData::where('identifier',$tempData['data']->user_record)->first();
+        if($send_money_data->data->authenticated == true){
+            if($this->requestIsApiUser()) {
+                $creator_table = $tempData['data']->creator_table ?? null;
+                $creator_id = $tempData['data']->creator_id ?? null;
+                $creator_guard = $tempData['data']->creator_guard ?? null;
+                $api_authenticated_guards = PaymentGatewayConst::apiAuthenticateGuard();
+                if(!array_key_exists($creator_guard,$api_authenticated_guards)) throw new Exception(__("Request user doesn\'t save properly. Please try again"));
+                if($creator_table == null || $creator_id == null || $creator_guard == null) throw new Exception(__("Request user doesn\'t save properly. Please try again"));
+                $creator = DB::table($creator_table)->where("id",$creator_id)->first();
+                if(!$creator) throw new Exception(__("Request user doesn\'t save properly. Please try again"));
+                $api_user_login_guard = $api_authenticated_guards[$creator_guard];
+                $this->output['api_login_guard'] = $api_user_login_guard;
+                Auth::guard($api_user_login_guard)->loginUsingId($creator->id);
+            }
         }
         $gateway_id = $tempData['data']->gateway ?? "";
         $gateway_currency = AdminSendMoneyGateway::find($gateway_id);
@@ -160,5 +158,31 @@ class SendMoneyGateway {
         $request_source = request()->get('r-source');
         if($request_source != null && $request_source == PaymentGatewayConst::APP) return true;
         return false;
+    }
+
+    public function api() {
+        $output = $this->output;
+        $output['distribute']   = $this->gatewayDistribute() . "Api";
+        $method = $output['distribute'];
+        $response = $this->$method($output);
+        $output['response'] = $response;
+        if( $output['distribute'] == "pagaditoInitApi"){
+            $parts = parse_url( $output['response']);
+                parse_str($parts['query'], $query);
+                // Extract the token value
+                if (isset($query['token'])) {
+                    $tokenValue = $query['token'];
+                } else {
+                    $tokenValue = '';
+                }
+            $output['response'] =  $tokenValue;
+        }
+
+
+        $this->output = $output;
+        return $this;
+    }
+    public function get() {
+        return $this->output;
     }
 }

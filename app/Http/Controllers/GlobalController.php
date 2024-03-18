@@ -17,6 +17,7 @@ use App\Constants\PaymentGatewayConst;
 use App\Models\Admin\SendMoneyGateway;
 use App\Models\Admin\TransactionSetting;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Helpers\SendMoneyGateway as SendMoneyGatewayHelper;
 
 class GlobalController extends Controller
 {
@@ -114,7 +115,7 @@ class GlobalController extends Controller
                 'daily_limit' => getAmount($data->daily_limit,2),
             ];
         })->first();
-        $send_money_gateway  = SendMoneyGateway::where('slug',global_const()::GOOGLE_PAY)->where('status',true)->first();
+        $send_money_gateway  = SendMoneyGateway::where('status',true)->get();
         
         $send_money_image_path            = [
             'base_url'         => url("/"),
@@ -197,10 +198,18 @@ class GlobalController extends Controller
         
 
         $validated['identifier']     = Str::uuid();
+        if(auth()->check()){
+            $authenticated  = true;
+            $user           = auth()->user()->id;
+        }else{
+            $authenticated  = false;
+            $user           = null;
+        }
         $data     = [
             'type'                   => global_const()::SENDMONEY,
             'identifier'             => $validated['identifier'],
             'data'                   => [
+                'login_user'         => $user,
                 'payment_gateway'    => $payment_gateway->id,
                 'amount'             => floatval($amount),
                 'total_charge'       => $total_charge,
@@ -211,6 +220,7 @@ class GlobalController extends Controller
                 'sender_email'       => $sender_email,
                 'receiver_email'     => $receiver_email,
                 'will_get'           => floatval($amount),
+                'authenticated'      => $authenticated,
             ],  
         ];
         try{
@@ -219,12 +229,55 @@ class GlobalController extends Controller
             $error = ['error'=>[__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
         }
-        $data       = [
-            'temporary_data' => $temporary_data,
-            'redirect_url'   => setRoute('api.send.money.redirect.url',$temporary_data->identifier)
-        ];
-        $message  = ['success' => ['Send Money Data stored successfully.']];
-        return Helpers::success($data,$message,200);
+        $payment_gateway = SendMoneyGateway::where('id',$temporary_data->data->payment_gateway)->first();
+        if($payment_gateway->slug == global_const()::GOOGLE_PAY){
+            $data       = [
+                'temporary_data' => $temporary_data,
+                'redirect_url'   => setRoute('api.send.money.redirect.url',$temporary_data->identifier)
+            ];
+            $message  = ['success' => ['Send Money Data stored successfully.']];
+            return Helpers::success($data,$message,200);
+        }else{
+            $request_data = [
+                'identifier'    => $temporary_data->identifier,
+                'gateway'       => $payment_gateway->slug,
+            ];
+            try{
+
+                $instance  = SendMoneyGatewayHelper::init($request_data)->gateway()->api()->get();
+                
+            }catch(Exception $e){
+                return Response::error([__('Something went wrong! Please try again.')],[],404);
+            }
+        
+            $trx = $instance['response']['id']??$instance['response']['trx']??$instance['response']['reference_id']??$instance['response']['order_id']??$instance['response'];
+            $temData = TemporaryData::where('identifier',$trx)->first();
+           
+            if(!$temData){
+                $error = ['error'=>["Invalid Request"]];
+                return Helpers::error($error);
+            }
+            $payment_informations =[
+                'trx' =>  $temData->identifier,
+                'gateway_name' =>  $payment_gateway->name,
+                'request_amount' => getAmount($temData->data->amount->requested_amount,4),
+                'total_charge' => getAmount($temData->data->amount->total_charge,2).' '.$temData->data->amount->sender_cur_code,
+                'will_get' => getAmount($temData->data->amount->will_get,2).' '.$temData->data->amount->default_currency,
+                'payable_amount' =>  getAmount($temData->data->amount->total_amount,2).' '.$temData->data->amount->sender_cur_code,
+                ];
+                $data =[
+                    'gategay_type' => $payment_gateway->type,
+                    'gateway_name' => $payment_gateway->name,
+                    'slug' => $payment_gateway->slug,
+                    'identify' => $temData->type,
+                    'payment_informations' => $payment_informations,
+                    'url' => @$temData->data->response->links,
+                    'method' => "get",
+                ];
+                $message =  ['success'=>[__('Send Money Inserted Successfully')]];
+                return Helpers::success($data, $message);
+        }
+        
     }
     /**
      * Method for redirect url
@@ -233,20 +286,22 @@ class GlobalController extends Controller
      */
     public function redirectUrl($identifier){
         $data            = TemporaryData::where('identifier',$identifier)->first();
-       
         if(!$data){
             $error       = ['error' => [__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
         }
         $payment_gateway = SendMoneyGateway::where('id',$data->data->payment_gateway)->first();
+        
         $stripe_url      = setRoute('api.send.money.stripe.payment.gateway');
 
-        
+    
         return view('payment-gateway.google-pay',compact(
             'data',
             'payment_gateway',
             'stripe_url'
         ));
+
+        
     }
     /**
      * Method for stripe payment gateway 

@@ -64,6 +64,13 @@ Route::controller(AppSettingsController::class)->prefix("app-settings")->group(f
     Route::get('/','appSettings');
     Route::get('languages','languages');
 });
+
+Route::controller(SendMoneyController::class)->group(function(){
+    Route::get('success/response/{gateway}','success')->name('api.send.money.payment.success');
+    Route::get("cancel/response/{gateway}",'cancel')->name('api.send.money.payment.cancel');
+});
+
+
 Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
     Route::get('success/response/{gateway}','success')->name('api.payment.success');
     Route::get("cancel/response/{gateway}",'cancel')->name('api.payment.cancel');
