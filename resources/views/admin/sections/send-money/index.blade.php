@@ -28,6 +28,7 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>{{ __("Name") }}</th>
                             <th>{{ __("Status") }}</th>
                             <th></th>
@@ -36,6 +37,11 @@
                     <tbody>
                         @forelse ($send_money ?? [] as $item)
                             <tr data-item="{{ $item }}">
+                                <td>
+                                    <ul class="user-list">
+                                        <li><img src="{{ get_image($item->image,'send-money-gateway') }}" alt="image"></li>
+                                    </ul>
+                                </td>
                                 <td>{{ $item->name }}</td>
                                 <td>
                                     @include('admin.components.form.switcher',[

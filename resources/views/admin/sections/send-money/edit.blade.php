@@ -39,7 +39,7 @@
                             ])
                         </div>
                     </div>
-                    @if ($data->slug == global_const()::GOOGLE_PAY)
+                    @if ($data->slug == global_const()::GOOGLE_PAY || $data->slug == global_const()::APPLE_PAY)
                         <div class="col-xl-8 col-lg-8 form-group">
                             <label>{{ __("Name*") }}</label>
                             <div class="input-group append">

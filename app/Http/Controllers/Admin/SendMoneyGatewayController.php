@@ -17,7 +17,7 @@ class SendMoneyGatewayController extends Controller
      */
     public function index(){
         $page_title     = "Send Money Gateway";
-        $send_money     = SendMoneyGateway::orderBy('id','desc')->get();
+        $send_money     = SendMoneyGateway::orderBy('id')->get();
 
         return view('admin.sections.send-money.index',compact(
             'page_title',
@@ -49,15 +49,15 @@ class SendMoneyGatewayController extends Controller
         if(!$data) return back()->with(['error' => ['Sorry! Data not found.']]);
 
         $validator                  = Validator::make($request->all(),[
-            'slug'                  => 'required|in:google-pay,paypal',
-            'name'                  => 'required_if:slug,google-pay',
-            'env'                   => 'required_if:slug,google-pay,paypal',
-            'gateway'               => 'required_if:slug,google-pay',
-            'stripe_version'        => 'required_if:slug,google-pay',
-            'stripe_publishable_key'=> 'required_if:slug,google-pay',
-            'stripe_secret_key'     => 'required_if:slug,google-pay',
-            'merchant_id'           => 'required_if:slug,google-pay',
-            'merchant_name'         => 'required_if:slug,google-pay',
+            'slug'                  => 'required|in:google-pay,paypal,apple-pay',
+            'name'                  => 'required_if:slug,google-pay,apple-pay',
+            'env'                   => 'required_if:slug,google-pay,paypal,apple-pay',
+            'gateway'               => 'required_if:slug,google-pay,apple-pay',
+            'stripe_version'        => 'required_if:slug,google-pay,apple-pay',
+            'stripe_publishable_key'=> 'required_if:slug,google-pay,apple-pay',
+            'stripe_secret_key'     => 'required_if:slug,google-pay,apple-pay',
+            'merchant_id'           => 'required_if:slug,google-pay,apple-pay',
+            'merchant_name'         => 'required_if:slug,google-pay,apple-pay',
             'image'                 => "nullable|mimes:png,jpg,jpeg,webp",
         ]);
         if($validator->fails()) return back()->withErrors($validator)->withInput($request->all());
@@ -65,7 +65,7 @@ class SendMoneyGatewayController extends Controller
         $data->name        = $request->name;
         
         
-        if($request->slug == global_const()::GOOGLE_PAY){
+        if($request->slug == global_const()::GOOGLE_PAY || $data->slug == global_const()::APPLE_PAY){
             $image = $data->image;
             if($request->hasFile('image')) {
                 $image = get_files_from_fileholder($request,'image');

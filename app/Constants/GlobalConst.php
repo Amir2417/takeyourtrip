@@ -25,7 +25,7 @@ class GlobalConst {
 
     const GOOGLE_PAY = "google-pay";
     const PAYPAL     = "paypal";
-    const APPLE_PAY  = "Apple Pay";
+    const APPLE_PAY  = "apple-pay";
 
     const TEST       = "TEST";
     const PRODUCTION = "PRODUCTION";
