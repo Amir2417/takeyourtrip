@@ -218,6 +218,22 @@ class SendMoneyController extends Controller
         $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->first();
         $payment_gateway    = SendMoneyGateway::where('id',$request->payment_method)->first();
         
+        $receiver_info      = User::where('email',$receiver_email)->first();
+        if(isset($receiver_info)){
+            if(auth()->check()){
+                if($receiver_info->email == $sender_email || $receiver_info->email == auth()->user()->email){
+                    return Response::error([__("Can't send money to your own")],[],404);
+                }
+            }else{
+                if($receiver_info->email == $sender_email){
+                    return Response::error([__("Can't send money to your own")],[],404);
+                }
+            }
+        }else{
+            return Response::error([__("Receiver not found.")],[],404);
+        }
+
+
         $this_month_start   = date('Y-m-01');
         $this_month_end     = date('Y-m-t');
         $this_month_send_money  = Transaction::where('type',PaymentGatewayConst::TYPETRANSFERMONEY)->whereDate('created_at',">=" , $this_month_start)
@@ -261,6 +277,10 @@ class SendMoneyController extends Controller
             $user           = null;
         }
 
+        $receiver_wallet             = UserWallet::where('user_id',$receiver_info->id)->first();
+
+        if(!$receiver_wallet) return back()->with(['error' => ['Receiver wallet address not found.']]);
+
         $validated['identifier']     = Str::uuid();
         $data     = [
             'type'                   => global_const()::SENDMONEY,
@@ -276,6 +296,10 @@ class SendMoneyController extends Controller
                 'currency'           => $currency,
                 'sender_email'       => $sender_email,
                 'receiver_email'     => $receiver_email,
+                'receiver_wallet'    => [
+                    'id'             => $receiver_wallet->id,
+                    'balance'        => $receiver_wallet->balance,
+                ],
                 'will_get'           => floatval($amount),
                 'authenticated'      => $authenticated
             ],  
@@ -447,7 +471,7 @@ class SendMoneyController extends Controller
                 'status'                        => true,
                 'created_at'                    => now(),
             ]);
-
+            $this->updateWalletBalance($data);
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
@@ -455,6 +479,17 @@ class SendMoneyController extends Controller
         }
         return $id;
     }
+    //updateWalletBalance
+    function updateWalletBalance($data){
+        $receiver_wallet = UserWallet::where('user_id',$data->data->receiver_wallet->id)->first();
+        if(!$receiver_wallet) return back()->with(['error' => ['Wallet not found.']]);
+        
+        $balance = floatval($receiver_wallet->balance) + floatval($data->data->amount);
+        $receiver_wallet->update([
+            'balance'   => $balance,
+        ]);
+    } 
+
     public function insertSenderCharges($data,$id) {
         $user = auth()->user();
         DB::beginTransaction();
