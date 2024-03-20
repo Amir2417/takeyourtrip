@@ -39,6 +39,7 @@ use Database\Seeders\Merchant\MerchantSeeder;
 use Database\Seeders\Merchant\MerchantWalletSeeder;
 use Database\Seeders\User\UserSeeder;
 use Database\Seeders\User\UserWalletSeeder;
+use Database\Seeders\Admin\SendMoneyGatewaySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -76,6 +77,7 @@ class DatabaseSeeder extends Seeder
         //     SetupEmailSeeder::class,
         //     MerchantConfigurationSeeder::class,
         //     ModuleSettingSeeder::class,
+        //     SendMoneyGatewaySeeder::class,
         //     GatewayApiSeeder::class,
         //     //user
         //     UserSeeder::class,
@@ -87,6 +89,7 @@ class DatabaseSeeder extends Seeder
         //     //Agent
         //     AgentSeeder::class,
         //     AgentWalletSeeder::class,
+
         // ]);
 
 
@@ -117,6 +120,7 @@ class DatabaseSeeder extends Seeder
             MerchantConfigurationSeeder::class,
             ModuleSettingSeeder::class,
             GatewayApiSeeder::class,
+            SendMoneyGatewaySeeder::class,
             //merchant
             MerchantSeeder::class,
             MerchantWalletSeeder::class,
