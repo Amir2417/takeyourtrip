@@ -56,7 +56,7 @@
         paymentsClient.loadPaymentData(paymentDataRequestWithParameters)
         .then((paymentData) => {
             var paymentDataToken = JSON.parse(paymentData.paymentMethodData.tokenizationData.token);
-            console.log(paymentDataToken);
+
             $.post(stripeRoute,{paymentToken:paymentDataToken.id,identifier:identifier,_token:"{{ csrf_token() }}"},function(response){
                 
                 window.location.href = response.data.data;  

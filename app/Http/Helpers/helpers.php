@@ -482,6 +482,9 @@ function files_path($slug)
         'kyc-files'         => [
             'path'          => 'backend/files/kyc-files'
         ],
+        'send-money-gateway'         => [
+            'path'          => 'backend/images/send-money-gateways'
+        ],
         'blog'         => [
             'path'          => 'backend/files/blog'
         ],

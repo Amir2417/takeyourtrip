@@ -123,6 +123,22 @@ class PaymentGatewayConst {
         }
         return "init";
     }
+
+    public static function send_money_register($alias = null) {
+        $gateway_alias  = [
+            self::PAYPAL => "sendMoneyPaypalInit",  
+        ];
+        if($alias == null) {
+            return $gateway_alias;
+        }
+
+        if(array_key_exists($alias,$gateway_alias)) {
+            
+            return $gateway_alias[$alias];
+        }
+        
+        return "init";
+    }
     const APP       = "APP";
     public static function apiAuthenticateGuard() {
             return [

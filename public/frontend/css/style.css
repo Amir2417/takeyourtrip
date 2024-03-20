@@ -10705,3 +10705,30 @@ input[type=number] {
     .rtl .support-profile-wrapper .support-profile-list li span, .support-profile-wrapper .support-profile-list li p{
         float: left;
     }
+
+
+    .pay-btn-wrapper .pay-button{
+      background-color: #080808;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      padding: 10px 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .pay-btn-wrapper .pay-button.round{
+      background-color: #f6c703;
+      border-radius: 30px;
+    }
+    .pay-btn-wrapper .pay-button img{
+      width: auto;
+      height: 20px;
+      margin-left: 5px;
+    }
+    
+    .pay-btn-wrapper .divider-badge{
+      display: block;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 15px 0;
+    }

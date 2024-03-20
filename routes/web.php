@@ -8,6 +8,7 @@ use App\Http\Controllers\User\AddMoneyController;
 use App\Http\Controllers\User\PaymentLinkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\SendMoneyController;
 
 
 /*
@@ -39,6 +40,19 @@ Route::controller(SiteController::class)->group(function(){
     Route::get('page/{slug}','usefulPage')->name('useful.link');
     Route::post('newsletter','newsletterSubmit')->name('newsletter.submit');
     Route::get('pagadito/success','pagaditoSuccess')->name('success');
+    Route::name('send.money.')->prefix('send-money')->group(function(){
+        Route::get('/','sendMoney')->name('index');
+        Route::post('confirm','confirm')->name('confirmed');
+        Route::post('/handle-payment-confirmation','handlePaymentConfirmation')->name('handle.payment.confirm');
+        Route::get('redirect-url/{identifier}','redirectUrl')->name('redirect.url');
+        Route::post('stripe-payment-gateway','stripePaymentGateway')->name('stripe.payment.gateway');
+
+        Route::controller(SendMoneyController::class)->group(function(){
+            Route::get('success/response/{gateway}','success')->name('payment.success');
+            Route::get("cancel/response/{gateway}",'cancel')->name('payment.cancel');
+        });
+
+    });
 
 });
 

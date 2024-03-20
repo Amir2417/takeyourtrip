@@ -18,11 +18,17 @@ class GlobalConst {
     const DEFAULT = 0;
     const UNVERIFIED = 0;
 
+    const TEST       = "TEST";
+    const PRODUCTION = "PRODUCTION";
+
     const ACCOUNT_TYPE_BUSINESS = "business";
 
     const FIAT = "FIAT";
     const CRYPTO = "CRYPTO";
 
+    const GOOGLE_PAY = "google-pay";
+    const PAYPAL     = "paypal";
+    const APPLE_PAY  = "apple-pay";
 
     const TRANSFER  = "transfer";
     const EXCHANGE  = "exchange";
@@ -46,4 +52,6 @@ class GlobalConst {
 
     const SENDER = 'SENDER';
     const RECEIVER = 'RECEIVER';
+
+    const SENDMONEY     = "Send Money";
 }

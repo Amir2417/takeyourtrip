@@ -24,7 +24,8 @@ class SetupPageSeeder extends Seeder
             "Agent" =>"agent-info",
             "Merchant" =>"merchant-info",
             "Developer" =>"developer",
-            "Contact" => "/contact"
+            "Contact" => "/contact",
+            'Send Money' => 'send-money'
         ];
         $data = [];
         foreach($pages as $item => $url) {
