@@ -17,7 +17,7 @@ class ProfitLogsController extends Controller
      */
     public function profitLogs()
     {
-        $page_title = "All Profits Logs";
+        $page_title = __("All Profits Logs");
         $profits = TransactionCharge::with('transactions')
         ->whereHas('transactions', function ($query) {
             $query->whereNotIn('type', [PaymentGatewayConst::TYPEADDMONEY, PaymentGatewayConst::TYPEMONEYOUT,PaymentGatewayConst::TYPEADDSUBTRACTBALANCE]);

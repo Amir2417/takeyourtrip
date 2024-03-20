@@ -4,25 +4,24 @@ namespace App\Traits\PaymentGateway;
 
 use App\Constants\NotificationConst;
 use App\Constants\PaymentGatewayConst;
-use App\Http\Helpers\Api\Helpers;
 use App\Models\Admin\AdminNotification;
 use App\Models\Admin\BasicSettings;
 use App\Models\TemporaryData;
 use App\Models\UserNotification;
 use App\Notifications\User\AddMoney\ApprovedMail;
-use App\Providers\Admin\BasicSettingsProvider;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
 use Jenssegers\Agent\Agent;
 use Illuminate\Support\Str;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
+use App\Traits\TransactionAgent;
 
 
 trait SslcommerzTrait
 {
+    use TransactionAgent;
     public function sslcommerzInit($output = null) {
         if(!$output) $output = $this->output;
         $credentials = $this->getSslCredentials($output);
@@ -43,9 +42,19 @@ trait SslcommerzTrait
         $post_data['total_amount'] =$amount;
         $post_data['currency'] = $currency;
         $post_data['tran_id'] =  $reference;
-        $post_data['success_url'] =  route('add.money.ssl.success');
-        $post_data['fail_url'] = route('add.money.ssl.fail');
-        $post_data['cancel_url'] = route('add.money.ssl.cancel');
+
+        if(userGuard()['guard'] == 'web'){
+            $post_data['success_url'] =  route('add.money.ssl.success');
+            $post_data['fail_url'] = route('add.money.ssl.fail');
+            $post_data['cancel_url'] = route('add.money.ssl.cancel');
+
+        } elseif(userGuard()['guard'] == 'agent'){
+            $post_data['success_url'] =  route('agent.add.money.ssl.success');
+            $post_data['fail_url'] = route('agent.add.money.ssl.fail');
+            $post_data['cancel_url'] = route('agent.add.money.ssl.cancel');
+
+        }
+
         # $post_data['multi_card_name'] = "mastercard,visacard,amexcard";  # DISABLE TO DISPLAY ALL AVAILABLE
 
         # EMI INFO
@@ -232,13 +241,21 @@ trait SslcommerzTrait
 
     public function sslJunkInsert($response) {
         $output = $this->output;
-        $user = auth()->guard(get_auth_guard())->user();
         $creator_table = $creator_id = $wallet_table = $wallet_id = null;
 
-        $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
-        $creator_id = auth()->guard(get_auth_guard())->user()->id;
-        $wallet_table = $output['wallet']->getTable();
-        $wallet_id = $output['wallet']->id;
+        if(authGuardApi()['type']  == "AGENT"){
+            $creator_table = authGuardApi()['user']->getTable();
+            $creator_id = authGuardApi()['user']->id;
+            $creator_guard = authGuardApi()['guard'];
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }else{
+            $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
+            $creator_id = auth()->guard(get_auth_guard())->user()->id;
+            $creator_guard = get_auth_guard();
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }
 
             $data = [
                 'gateway'      => $output['gateway']->id,
@@ -249,7 +266,7 @@ trait SslcommerzTrait
                 'wallet_id'     => $wallet_id,
                 'creator_table' => $creator_table,
                 'creator_id'    => $creator_id,
-                'creator_guard' => get_auth_guard(),
+                'creator_guard' => $creator_guard,
             ];
 
         return TemporaryData::create([
@@ -260,11 +277,14 @@ trait SslcommerzTrait
     }
 
     public function sslcommerzSuccess($output = null) {
-
         if(!$output) $output = $this->output;
         $token = $this->output['tempData']['identifier'] ?? "";
         if(empty($token)) throw new Exception(__("Transaction failed. Record didn\'t saved properly. Please try again"));
-        return $this->createTransactionSsl($output);
+        if(userGuard()['type'] == "USER"){
+            return $this->createTransactionSsl($output);
+        }else{
+            return $this->createTransactionChildRecords($output,PaymentGatewayConst::STATUSSUCCESS);
+        }
     }
 
     public function createTransactionSsl($output) {
@@ -422,21 +442,33 @@ trait SslcommerzTrait
         $amount = $output['amount']->total_amount ? number_format($output['amount']->total_amount,2,'.','') : 0;
         $currency = $output['currency']['currency_code']??"USD";
 
-        if(auth()->guard(get_auth_guard())->check()){
+
+        $post_data = array();
+
+        if(authGuardApi()['guard'] == 'agent_api'){
+            $user = authGuardApi()['user'];
+            $user_email = $user->email;
+            $user_phone = $user->full_mobile ?? '';
+            $user_name = $user->firstname.' '.$user->lastname ?? '';
+            $post_data['success_url'] =  route('agent.api.add.money.ssl.success',"?r-source=".PaymentGatewayConst::APP);
+            $post_data['fail_url'] = route('agent.api.add.money.ssl.fail',"?r-source=".PaymentGatewayConst::APP);
+            $post_data['cancel_url'] = route('agent.api.add.money.ssl.cancel',"?r-source=".PaymentGatewayConst::APP);
+        }elseif(auth()->guard(get_auth_guard())->check()){
             $user = auth()->guard(get_auth_guard())->user();
             $user_email = $user->email;
             $user_phone = $user->full_mobile ?? '';
             $user_name = $user->firstname.' '.$user->lastname ?? '';
+            $post_data['success_url'] =  route('api.add.money.ssl.success',"?r-source=".PaymentGatewayConst::APP);
+            $post_data['fail_url'] = route('api.add.money.ssl.fail',"?r-source=".PaymentGatewayConst::APP);
+            $post_data['cancel_url'] = route('api.add.money.ssl.cancel',"?r-source=".PaymentGatewayConst::APP);
         }
-        $post_data = array();
+        // dd($post_data);
         $post_data['store_id'] = $credentials->store_id??"";
         $post_data['store_passwd'] = $credentials->store_password??"";
         $post_data['total_amount'] =$amount;
         $post_data['currency'] = $currency;
         $post_data['tran_id'] =  $reference;
-        $post_data['success_url'] =  route('api.add.money.ssl.success',"?r-source=".PaymentGatewayConst::APP);
-        $post_data['fail_url'] = route('api.add.money.ssl.fail',"?r-source=".PaymentGatewayConst::APP);
-        $post_data['cancel_url'] = route('api.add.money.ssl.cancel',"?r-source=".PaymentGatewayConst::APP);
+
         # $post_data['multi_card_name'] = "mastercard,visacard,amexcard";  # DISABLE TO DISPLAY ALL AVAILABLE
 
         # EMI INFO

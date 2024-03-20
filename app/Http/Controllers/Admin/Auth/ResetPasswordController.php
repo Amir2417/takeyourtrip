@@ -79,7 +79,7 @@ class ResetPasswordController extends Controller
      */
     protected function sendResetResponse(Request $request, $response)
     {
-        return redirect()->route('admin.login')->with(['success' => ['Successfully updated password. Please login']]);
+        return redirect()->route('admin.login')->with(['success' => [__("Successfully updated password. Please login")]]);
     }
 
 }

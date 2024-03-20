@@ -15,9 +15,6 @@
                 var URL = "{{ $route ?? "" }}";
                 var channel = pusher.subscribe('support.conversation.'+token);
 
-                // console.log(token);
-                // console.log(URL);
-                // console.log(channel);
 
                 channel.bind('support-conversation', function(data) {
                     data = JSON.stringify(data);

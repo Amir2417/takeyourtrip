@@ -33,7 +33,7 @@
                                         <i class="las la-arrow-up"></i>
                                     </div>
                                     <div class="dashboard-list-user-content">
-                                        <h4 class="title">{{ __("TRX ID") }}: {{ @$value['id'] }}</h4>
+                                        <h4 class="title">{{ __("web_trx_id") }}: {{ @$value['id'] }}</h4>
                                         <span class="sub-title text--danger"> <span class="badge badge--success ms-2">{{ ucwords(@$value['type']) }}</span></span>
                                     </div>
                                 </div>
@@ -51,7 +51,7 @@
                                             <i class="las la-exchange-alt"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("TRX ID") }}</span>
+                                            <span>{{ __("web_trx_id") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -125,7 +125,7 @@
                 @endif
             @else
             <div class="alert alert-primary text-center">
-                {{ __("No Record Found!") }}
+                {{ __("No data found!") }}
             </div>
             @endif
 

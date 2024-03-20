@@ -35,10 +35,10 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Gateway</th>
-                            <th>Currency Code</th>
-                            <th>Currency Symbol</th>
-                            <th>Status</th>
+                            <th>{{ __("Gateway") }}</th>
+                            <th>{{ __("Currency Code") }}</th>
+                            <th>{{ __("Currency Symbol") }}</th>
+                            <th>{{ __("Status") }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -58,7 +58,7 @@
                                         'name'          => 'status',
                                         'data_target'   => $item->id,
                                         'value'         => $item->status,
-                                        'options'       => ['Enable' => 1, 'Disabled' => 0],
+                                         'options'       => [__("Enable") => 1, __("Disabled") => 0],
                                         'onload'        => true,
                                         'permission'    => "admin.payment.gateway.status.update",
                                     ])
@@ -109,7 +109,7 @@
                                         <div class="foot d-flex align-items-center justify-content-between">
                                             <button type="button" class="modal-close btn btn--info">Close</button>
                                             <button type="submit" class="alert-submit-btn btn btn--danger btn-loading">Remove</button>
-                                        </div>    
+                                        </div>
                                     </form>
                                 </div>
                             </div>`,

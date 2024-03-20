@@ -28,13 +28,13 @@
                         <div class="col-xl-12 col-lg-12 form-group">
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text copytext">{{ __("Email") }}</span>
+                                    <span class="input-group-text copytext"><span>{{ __("Email") }}</span></span>
                                 </div>
-                                 <input type="email" name="email" class="form--control" placeholder="Enter Email" required value="{{old('email')}}">
+                                 <input type="email" name="email" class="form--control" placeholder="{{ __("enter Email Address") }}" required value="{{old('email')}}">
                             </div>
                         </div>
                         <div class="col-lg-12 form-group" id="show_hide_password">
-                            <input type="password" required class="form-control form--control" name="password" placeholder="Password">
+                            <input type="password" required class="form-control form--control" name="password"placeholder="{{ __('enter Password') }}">
                             <a href="javascript:void(0)" class="show-pass"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                         </div>
 

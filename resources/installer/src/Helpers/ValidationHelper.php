@@ -64,4 +64,12 @@ class ValidationHelper {
     public static function step() {
         return session('validation');
     }
+
+    public function isLocalInstallation() {
+        $url = request()->url();
+        $url_path = parse_url($url);
+        $host = $url_path['host'];
+        if($host == "localhost" || $host == "127.0.0.1") return true;
+        return false;
+    }
 }

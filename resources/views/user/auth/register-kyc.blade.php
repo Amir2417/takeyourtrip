@@ -28,14 +28,14 @@
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
                             'name'          => "firstname",
-                            'placeholder'   => "First Name",
+                          'placeholder'   => __("first Name"),
                             'value'         => old("firstname"),
                         ])
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
                                     'name'          => "lastname",
-                                    'placeholder'   => "Last Name",
+                                    'placeholder'   => __("last Name"),
                                     'value'         => old("lastname"),
                         ])
                     </div>
@@ -54,7 +54,7 @@
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
                             'name'          => "city",
-                            'placeholder'   => "City ",
+                            'placeholder'   =>__( "city"),
                             'value'         => old("city"),
                         ])
                     </select>
@@ -62,7 +62,7 @@
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
                                     'name'          => "zip_code",
-                                    'placeholder'   => "Enter Zip",
+                                 'placeholder'   =>__( "enter Zip Code"),
                                     'value'         => old('zip_code',auth()->user()->address->zip ?? "")
                                 ])
                     </div>
@@ -70,19 +70,20 @@
                         <div class="input-group">
                             <div class="input-group-text phone-code">+</div>
                             <input class="phone-code" type="hidden" name="phone_code" value="" />
-                            <input type="text" class="form--control" placeholder="Enter Phone ..." name="phone" value="">
+                            <input type="text" class="form--control" placeholder="{{ __("enter Phone Number") }}" name="phone" value="">
                         </div>
                     </div>
-
-                    @include('user.components.register-kyc',compact("kyc_fields"))
+                    @if($basic_settings->kyc_verification)
+                        @include('user.components.register-kyc',compact("kyc_fields"))
+                    @endif
                     <div class="col-lg-6 col-md-4 form-group show_hide_password" id="">
-                        <input type="password" class="form--control" name="password" placeholder="Password" required>
+                        <input type="password" class="form--control" name="password"placeholder="{{ __('enter Password') }}" required>
                         <a href="javascript:void(0)" class="show-pass"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
 
 
                     </div>
                     <div class="col-lg-6 col-md-4 form-group show_hide_password-2" id="">
-                        <input type="password" class="form--control" name="password_confirmation" placeholder="Confirm Password" required>
+                        <input type="password" class="form--control" name="password_confirmation"placeholder="{{ __('confirm Password') }}" required>
                         <a href="javascript:void(0)" class="show-pass"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
 
                     </div>
@@ -91,7 +92,7 @@
                         <div class="custom-check-group">
                             <div class="custom-check-group mb-0">
                                 <input type="checkbox" id="level-1" name="agree">
-                                <label for="level-1" class="mb-0">{{ __("I have read agreed with the") }} <a href=" {{  $policies != null? setRoute('useful.link',$policies->slug):"javascript:void(0)" }}">{{__("Terms Of Use & Privacy Policy")}}</a></label>
+                                <label for="level-1" class="mb-0">{{ __("I have agreed with") }} <a href="{{  $policies != null? setRoute('useful.link',$policies->slug):"javascript:void(0)" }}">{{__("Terms Of Use & Privacy Policy")}}</a></label>
                             </div>
 
                         </div>
@@ -107,7 +108,7 @@
                     </div>
                     <div class="col-lg-12 text-center">
                         <div class="account-item">
-                            <label>{{ __("Already Have An Account?") }} <a href="{{ setRoute('user.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
+                            <label>{{ __("already Have An Account") }} <a href="{{ setRoute('user.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
                         </div>
                     </div>
                 </div>

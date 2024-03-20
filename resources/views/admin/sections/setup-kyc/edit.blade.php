@@ -27,7 +27,7 @@
                 @include('admin.components.button.custom',[
                     'type'          => "button",
                     'class'         => "add-row-btn",
-                    'text'          => "Add",
+                    'text'          => __("Add"),
                     'icon'          => "fas fa-plus",
                     'permission'    => "admin.setup.kyc.update",
                 ])
@@ -38,7 +38,7 @@
                         <div class="row add-row-wrapper align-items-end">
                             <div class="col-xl-3 col-lg-3 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'     => "Field Name*",
+                                    'label'     => __("Field Name*"),
                                     'name'      => "label[]",
                                     'attribute' => "required",
                                     'value'     => old('label[]',$item->label),
@@ -55,27 +55,27 @@
                                     @endforeach
                                 </select>
                             </div>
-            
+
                             <div class="field_type_input col-lg-4 col-xl-4">
                                 @if ($item->type == "file")
                                     <div class="row">
                                         <div class="col-xl-6 col-lg-6 form-group">
                                             @include('admin.components.form.input',[
-                                                'label'         => "Max File Size (mb)*",
+                                                'label'         => __("Max File Size (mb)*"),
                                                 'name'          => "file_max_size[]",
                                                 'type'          => "number",
                                                 'attribute'     => "required",
                                                 'value'         => old('file_max_size[]',$item->validation->max),
-                                                'placeholder'   => "ex: 10",
+                                                'placeholder'   => __("ex").": 10",
                                             ])
                                         </div>
                                         <div class="col-xl-6 col-lg-6 form-group">
                                             @include('admin.components.form.input',[
-                                                'label'         => "File Extension*",
+                                                'label'         => __("File Extension*"),
                                                 'name'          => "file_extensions[]",
                                                 'attribute'     => "required",
                                                 'value'         => old('file_extensions[]',implode(",",$item->validation->mimes)),
-                                                'placeholder'   => "ex: jpg, png, pdf",
+                                                'placeholder'   => __("ex").": jpg, png, pdf",
                                             ])
                                         </div>
                                     </div>
@@ -83,7 +83,7 @@
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Options*",
+                                                'label'     => __("Options*"),
                                                 'name'      => "select_options[]",
                                                 'attribute' => "required=true",
                                                 'value'     => old("select_options[]",implode(",",$item->validation->options)),
@@ -94,32 +94,32 @@
                                     <div class="row">
                                         <div class="col-xl-6 col-lg-6 form-group">
                                             @include('admin.components.form.input',[
-                                                'label'         => "Min Character*",
+                                                'label'         => __("Min Character*"),
                                                 'name'          => "min_char[]",
                                                 'type'          => "number",
                                                 'attribute'     => "required",
                                                 'value'         => old('min_char[]',$item->validation->min),
-                                                'placeholder'   => "ex: 6",
+                                                'placeholder'   => __("ex").": 6",
                                             ])
                                         </div>
                                         <div class="col-xl-6 col-lg-6 form-group">
                                             @include('admin.components.form.input',[
-                                                'label'         => "Max Character*",
+                                                'label'         => __("Max Character*"),
                                                 'name'          => "max_char[]",
                                                 'type'          => "number",
                                                 'attribute'     => "required",
                                                 'value'         => old('max_char[]',$item->validation->max),
-                                                'placeholder'   => "ex: 16",
+                                                'placeholder'   => __("ex").": 16",
                                             ])
                                         </div>
                                     </div>
                                 @endif
 
                             </div>
-            
+
                             <div class="col-xl-2 col-lg-2 form-group">
                                 @include('admin.components.form.switcher',[
-                                    'label'     => "Field Necessity*",
+                                    'label'     => __("Field Necessity*"),
                                     'name'      => "field_necessity[]",
                                     'options'   => ['Required' => "1",'Optional' => "0"],
                                     'value'     => old("field_necessity[]",$item->required),
@@ -136,7 +136,7 @@
                         <div class="row add-row-wrapper align-items-end">
                             <div class="col-xl-3 col-lg-3 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'     => "Field Name*",
+                                    'label'     => __("Field Name*"),
                                     'name'      => "label[]",
                                     'attribute' => "required",
                                     'value'     => old('label[]'),
@@ -153,14 +153,14 @@
                                     @endforeach
                                 </select>
                             </div>
-            
+
                             <div class="field_type_input col-lg-4 col-xl-4">
-            
+
                             </div>
-            
+
                             <div class="col-xl-2 col-lg-2 form-group">
                                 @include('admin.components.form.switcher',[
-                                    'label'     => "Field Necessity*",
+                                    'label'     => __("Field Necessity*"),
                                     'name'      => "field_necessity[]",
                                     'options'   => ['Required' => "1",'Optional' => "0"],
                                     'value'     => old("field_necessity[]","1"),
@@ -176,7 +176,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Save & Change",
+                            'text'          => __("Save & Change"),
                             'permission'    => "admin.setup.kyc.update",
                         ])
                     </div>
@@ -187,5 +187,5 @@
 @endsection
 
 @push('script')
-    
+
 @endpush

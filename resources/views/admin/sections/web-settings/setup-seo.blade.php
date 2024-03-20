@@ -33,7 +33,7 @@
                 <div class="row mb-10-none">
                     <div class="col-xl-4 col-lg-4 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Thumbnail Image:",
+                            'label'             => __( "Thumbnail Image").":",
                             'class'             => "file-holder",
                             'name'              => "image",
                             'old_files'         => $setup_seo->image,
@@ -43,7 +43,7 @@
                     <div class="col-xl-8 col-lg-8">
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'         => "Social Title*",
+                                'label'         => __("Social Title*"),
                                 'type'          => "text",
                                 'class'         => "form--control",
                                 'placeholder'   => "Title Here...",
@@ -54,7 +54,7 @@
                         </div>
                         <div class="form-group">
                             @include('admin.components.form.textarea',[
-                                'label'         => "Social Description*",
+                                'label'         => __("Social Description*"),
                                 'class'         => "form--control",
                                 'value'         => "Write Here...",
                                 'name'          => "desc",
@@ -64,7 +64,7 @@
                         </div>
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
-                        <label>{{ __("Tags*") }}</label>
+                        <label>{{ __("Tags")."*" }}</label>
                         <select name="tags[]" class="form-control select2-auto-tokenize"  multiple="multiple" required>
                             @foreach ($setup_seo->tags ?? [] as $item)
                                 <option value="{{ $item }}" selected>{{ $item }}</option>
@@ -74,7 +74,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Update",
+                            'text'          => __("update"),
                             'permission'    => "admin.web.settings.setup.seo.update",
                         ])
                     </div>
@@ -86,6 +86,6 @@
 
 @push('script')
     <script>
-        
+
     </script>
 @endpush

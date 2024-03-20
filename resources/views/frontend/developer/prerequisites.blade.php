@@ -8,9 +8,10 @@
 <div class="developer-body-wrapper">
     <div class="developer-main-wrapper">
         <h1 class="heading-title mb-20">{{ __("Prerequisites") }}</h1>
-        <p>{{ __("Before you begin integrating the ". @$basic_settings->site_name. " Developer API, make sure you have:") }}</p>
+        <p>{{ __("Before you begin integrating the") }} {{ __(@$basic_settings->site_name) }} {{ __("Developer API, make sure you have") }}:</p>
         <ol class="pt-1">
-            <li>{{ __("An active ". @$basic_settings->site_name. " merchant account.") }}</li>
+
+            <li>{{ __("An active") }} {{ __(@$basic_settings->site_name) }} {{ __("merchant account.") }}</li>
             <li>{{ __("Basic knowledge of API integration and web development with PHP & Laravel.") }}</li>
             <li>{{ __("A secure and accessible web server to handle API requests.") }}</li>
         </ol>

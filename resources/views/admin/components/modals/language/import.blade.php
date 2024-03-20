@@ -9,9 +9,9 @@
                     @csrf
                     <div class="row mb-10-none mt-2">
                         <div class="col-xl-12 col-lg-12 form-group">
-                            <label for="language">{{ __("Language*") }}</label>
+                            <label for="language">{{ __("Language") }}<span>*</span></label>
                             <select name="language" id="language" class="form--control nice-select">
-                                <option selected disabled>Select Language</option>
+                                <option selected disabled>{{ __("Select Language") }}</option>
                                 @foreach ($languages ?? [] as $item)
                                     <option value="{{ $item->code }}">{{ $item->name }}</option>
                                 @endforeach
@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group">
                             @include('admin.components.form.input-file',[
-                                'label'     => "Language File (.xlsx, .csv)*",
+                                'label'     => __("Language File")." (.xlsx, .csv)*",
                                 'name'      => "file",
                                 'class'     => "form--control",
                                 'accept'    => ".csv,.xlsx",
@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

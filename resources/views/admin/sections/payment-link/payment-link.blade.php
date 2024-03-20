@@ -30,8 +30,8 @@
                     <thead>
                         <tr>
                             <th>{{ __('User Email') }}</th>
-                            <th>{{ __('Title') }}</th>
-                            <th>{{ __('Type') }}</th>
+                            <th>{{ __("titleS") }}</th>
+                            <th>{{ __('type') }}</th>
                             <th>{{ __('Amount') }}</th>
                             <th>{{ __('Status') }}</th>
                             <th>{{ __('Created At') }}</th>
@@ -40,11 +40,11 @@
                     <tbody>
                         @forelse ($payment_links as $item)
                             <tr>
-                                <td>{{ $item->user->email }}</td>
+                                <td>{{ $item->creator->email }}</td>
                                 <td>{{ $item->title }}</td>
                                 <td>{{ $item->linkType }}</td>
                                 <td>{{ $item->amountCalculation }}</td>
-                                <td><span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span></td>
+                                <td><span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span></td>
                                 <td>{{ dateFormat('d M Y , h:i:s A', $item->created_at) }}</td>
                             </tr>
                         @empty

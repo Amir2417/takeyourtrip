@@ -36,7 +36,7 @@
 @section('content')
     <div class="custom-card">
         <div class="card-header">
-            <h6 class="title">{{ __($page_title) }}</h6>
+            <h6 class="title">{{ __($page_title) }} ({{ __("USER") }})</h6>
         </div>
         <div class="card-body">
             <form class="card-form" method="POST" action="{{ setRoute('admin.web.settings.image.assets.update') }}" enctype="multipart/form-data">
@@ -45,7 +45,7 @@
                 <div class="row mb-10-none">
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group" style="height: 300px">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Logo (Light Version)",
+                            'label'             => __("Logo (Light Version"),
                             'class'             => "file-holder",
                             'name'              => "site_logo",
                             'old_files'         => $basic_settings->site_logo,
@@ -54,7 +54,7 @@
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group image-dark">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Logo (Dark Version)",
+                            'label'             => __("Logo (Dark Version)"),
                             'class'             => "file-holder",
                             'name'              => "site_logo_dark",
                             'old_files'         => $basic_settings->site_logo_dark,
@@ -63,7 +63,7 @@
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Favicon (Light Version)",
+                            'label'             =>__("Favicon (Light Version)"),
                             'class'             => "file-holder",
                             'name'              => "site_fav",
                             'old_files'         => $basic_settings->site_fav,
@@ -72,7 +72,7 @@
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group image-dark">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Favicon (Dark Version)",
+                            'label'             => __("Favicon (Dark Version)"),
                             'class'             => "file-holder",
                             'name'              => "site_fav_dark",
                             'old_files'         => $basic_settings->site_fav_dark,
@@ -82,7 +82,119 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Update",
+                            'text'          => __("update"),
+                            'permission'    => "admin.web.settings.image.assets.update",
+                        ])
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="custom-card">
+        <div class="card-header">
+            <h6 class="title">{{ __($page_title) }} ({{ __("Agent") }})</h6>
+        </div>
+        <div class="card-body">
+            <form class="card-form" method="POST" action="{{ setRoute('admin.web.settings.image.assets.update') }}" enctype="multipart/form-data">
+                @csrf
+                @method("PUT")
+                <div class="row mb-10-none">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group" style="height: 300px">
+                        @include('admin.components.form.input-file',[
+                            'label'             => __("Logo (Light Version"),
+                            'class'             => "file-holder",
+                            'name'              => "agent_site_logo",
+                            'old_files'         => $basic_settings->agent_site_logo,
+                            'old_files_path'    => files_asset_path('image-assets'),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group image-dark">
+                        @include('admin.components.form.input-file',[
+                            'label'             => __("Logo (Dark Version)"),
+                            'class'             => "file-holder",
+                            'name'              => "agent_site_logo_dark",
+                            'old_files'         => $basic_settings->agent_site_logo_dark,
+                            'old_files_path'    => files_asset_path('image-assets'),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                        @include('admin.components.form.input-file',[
+                            'label'             =>__("Favicon (Light Version)"),
+                            'class'             => "file-holder",
+                            'name'              => "agent_site_fav",
+                            'old_files'         => $basic_settings->agent_site_fav,
+                            'old_files_path'    => files_asset_path('image-assets'),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group image-dark">
+                        @include('admin.components.form.input-file',[
+                            'label'             => __("Favicon (Dark Version)"),
+                            'class'             => "file-holder",
+                            'name'              => "agent_site_fav_dark",
+                            'old_files'         => $basic_settings->agent_site_fav_dark,
+                            'old_files_path'    => files_asset_path('image-assets'),
+                        ])
+                    </div>
+                    <div class="col-xl-12 col-lg-12 form-group">
+                        @include('admin.components.button.form-btn',[
+                            'class'         => "w-100 btn-loading",
+                            'text'          => __("update"),
+                            'permission'    => "admin.web.settings.image.assets.update",
+                        ])
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="custom-card">
+        <div class="card-header">
+            <h6 class="title">{{ __($page_title) }} ({{ __("Merchant") }})</h6>
+        </div>
+        <div class="card-body">
+            <form class="card-form" method="POST" action="{{ setRoute('admin.web.settings.image.assets.update') }}" enctype="multipart/form-data">
+                @csrf
+                @method("PUT")
+                <div class="row mb-10-none">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group" style="height: 300px">
+                        @include('admin.components.form.input-file',[
+                            'label'             => __("Logo (Light Version"),
+                            'class'             => "file-holder",
+                            'name'              => "merchant_site_logo",
+                            'old_files'         => $basic_settings->merchant_site_logo,
+                            'old_files_path'    => files_asset_path('image-assets'),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group image-dark">
+                        @include('admin.components.form.input-file',[
+                            'label'             => __("Logo (Dark Version)"),
+                            'class'             => "file-holder",
+                            'name'              => "merchant_site_logo_dark",
+                            'old_files'         => $basic_settings->merchant_site_logo_dark,
+                            'old_files_path'    => files_asset_path('image-assets'),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                        @include('admin.components.form.input-file',[
+                            'label'             =>__("Favicon (Light Version)"),
+                            'class'             => "file-holder",
+                            'name'              => "merchant_site_fav",
+                            'old_files'         => $basic_settings->merchant_site_fav,
+                            'old_files_path'    => files_asset_path('image-assets'),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group image-dark">
+                        @include('admin.components.form.input-file',[
+                            'label'             => __("Favicon (Dark Version)"),
+                            'class'             => "file-holder",
+                            'name'              => "merchant_site_fav_dark",
+                            'old_files'         => $basic_settings->merchant_site_fav_dark,
+                            'old_files_path'    => files_asset_path('image-assets'),
+                        ])
+                    </div>
+                    <div class="col-xl-12 col-lg-12 form-group">
+                        @include('admin.components.button.form-btn',[
+                            'class'         => "w-100 btn-loading",
+                            'text'          => __("update"),
                             'permission'    => "admin.web.settings.image.assets.update",
                         ])
                     </div>
@@ -93,5 +205,5 @@
 @endsection
 
 @push('script')
-    
+
 @endpush

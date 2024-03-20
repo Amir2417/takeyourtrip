@@ -21,7 +21,7 @@ class SupportTicketController extends Controller
      */
     public function index()
     {
-        $page_title = "All Ticket";
+        $page_title = __("All Ticket");
         $support_tickets = UserSupportTicket::orderByDesc("id")->get();
         return view('admin.sections.support-ticket.index', compact(
             'page_title',
@@ -32,11 +32,11 @@ class SupportTicketController extends Controller
 
     /**
      * Display The Pending List of Support Ticket
-     * 
+     *
      * @return view
      */
     public function pending() {
-        $page_title = "Pending Ticket";
+        $page_title = __("Pending Ticket");
         $support_tickets = UserSupportTicket::pending()->orderByDesc("id")->get();
         return view('admin.sections.support-ticket.index', compact(
             'page_title',
@@ -47,11 +47,11 @@ class SupportTicketController extends Controller
 
     /**
      * Display The Active List of Support Ticket
-     * 
+     *
      * @return view
      */
     public function active() {
-        $page_title = "Active Ticket";
+        $page_title = __("Active Ticket");
         $support_tickets = UserSupportTicket::active()->orderByDesc("id")->get();
         return view('admin.sections.support-ticket.index', compact(
             'page_title',
@@ -62,11 +62,11 @@ class SupportTicketController extends Controller
 
     /**
      * Display The Solved List of Support Ticket
-     * 
+     *
      * @return view
      */
     public function solved() {
-        $page_title = "Solved Ticket";
+        $page_title = __("Solved Ticket");
         $support_tickets = UserSupportTicket::solved()->orderByDesc("id")->get();
         return view('admin.sections.support-ticket.index', compact(
             'page_title',
@@ -78,7 +78,7 @@ class SupportTicketController extends Controller
     public function conversation($encrypt_id) {
         $support_ticket_id = decrypt($encrypt_id);
         $support_ticket = UserSupportTicket::findOrFail($support_ticket_id);
-        $page_title = "Support Chat";
+        $page_title = __("Support Chat");
         return view('admin.sections.support-ticket.conversation',compact(
             'page_title',
             'support_ticket',
@@ -98,7 +98,7 @@ class SupportTicketController extends Controller
         $validated = $validator->validate();
 
         $support_ticket = UserSupportTicket::notSolved($validated['support_token'])->first();
-        if(!$support_ticket) return Response::error(['error' => ['This support ticket is closed.']]);
+        if(!$support_ticket) return Response::error(['error' => [__("This support ticket is closed.")]]);
 
         $data = [
             'user_support_ticket_id'    => $support_ticket->id,
@@ -112,14 +112,14 @@ class SupportTicketController extends Controller
         try{
             $chat_data = UserSupportChat::create($data);
         }catch(Exception $e) {
-            $error = ['error' => ['SMS Sending faild! Please try again.']];
+            $error = ['error' => [__("SMS Sending failed! Please try again.")]];
             return Response::error($error,null,500);
         }
 
         try{
             event(new SupportConversationEvent($support_ticket,$chat_data));
         }catch(Exception $e) {
-            $error = ['error' => ['SMS Sending faild! Please try again.']];
+            $error = ['error' => [__("SMS Sending failed! Please try again.")]];
             return Response::error($error,null,500);
         }
 
@@ -129,7 +129,7 @@ class SupportTicketController extends Controller
                     'status'    => SupportTicketConst::ACTIVE,
                 ]);
             }catch(Exception $e) {
-                $error = ['error' => ['Faild to change status to active!']];
+                $error = ['error' => [__("Failed to change status to active!")]];
                 return Response::error($error,null,500);
             }
         }
@@ -138,21 +138,21 @@ class SupportTicketController extends Controller
 
     public function solve(Request $request) {
         $validator = Validator::make($request->all(),[
-            'target'    => 'required|string|exists:user_support_tickets,token',  
+            'target'    => 'required|string|exists:user_support_tickets,token',
         ]);
         $validated = $validator->validate();
 
         $support_ticket = UserSupportTicket::where("token",$validated['target'])->first();
-        if($support_ticket->status == SupportTicketConst::SOLVED) return back()->with(['warning' => ['This ticket is already solved!']]);
+        if($support_ticket->status == SupportTicketConst::SOLVED) return back()->with(['warning' => [__("This ticket is already solved!")]]);
 
         try{
             $support_ticket->update([
                 'status'        => SupportTicketConst::SOLVED,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Success']]);
+        return back()->with(['success' => [__("Success")]]);
     }
 }

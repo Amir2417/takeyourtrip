@@ -25,14 +25,14 @@
                                 @endphp
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Page Name*",
+                                       'label'     =>__( "Page Name")."*",
                                         'name'      => $default_lang_code . "_title",
                                         'value'     => old($default_lang_code . "_title",$data->title->language->$default_lang_code->title ?? "")
                                     ])
                                 </div>
                                 <div class="form-group">
                                      @include('admin.components.form.input-text-rich',[
-                                        'label'     => "Details*",
+                                        'label'     =>__( "Details")."*",
                                         'name'      => $default_lang_code . "_details",
                                         'value'     => old($default_lang_code . "_details",$data->details->language->$default_lang_code->details ?? "")
                                     ])
@@ -47,14 +47,14 @@
                                 <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="modal-{{ $item->name }}" role="tabpanel" aria-labelledby="modal-{{$item->name}}-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Page Name*",
+                                           'label'     =>__( "Page Name")."*",
                                             'name'      => $lang_code . "_title",
                                             'value'     => old($lang_code . "_title",$data->title->language->$lang_code->title ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input-text-rich',[
-                                            'label'     => "Details*",
+                                            'label'     =>__( "Details")."*",
                                             'name'      => $lang_code . "_details",
                                             'value'     => old($lang_code . "_details",$data->details->language->$lang_code->details ?? "")
                                         ])

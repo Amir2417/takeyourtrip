@@ -9,7 +9,7 @@ use Project\Installer\Helpers\URLHelper;
 
 class Helper {
 
-    public $cache_key = "installer_cache";
+    public $cache_key = "installer_cache_store";
 
     public function cache(array $data = []) {
         if(count($data) == 0) {
@@ -18,9 +18,9 @@ class Helper {
         if(cache()->driver('file')->get($this->cache_key)) {
             $cache = cache()->driver('file')->get($this->cache_key);
             $data = array_merge($cache,$data);
-            cache()->driver('file')->put($this->cache_key,$data,111600);
+            cache()->driver('file')->forever($this->cache_key,$data);
         }else {
-            cache()->driver('file')->put($this->cache_key,$data,111600);
+            cache()->driver('file')->forever($this->cache_key,$data);
         }
     }
 

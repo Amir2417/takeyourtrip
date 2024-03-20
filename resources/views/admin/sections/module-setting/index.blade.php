@@ -54,7 +54,7 @@
                                                                     @include('admin.components.form.switcher',[
                                                                         'name'          => 'status',
                                                                         'value'         => $item->status,
-                                                                        'options'       => ['Enable' => 1,'Disable' => 0],
+                                                                        'options'       => [__("Enable") => 1,__("Disable") => 0],
                                                                         'onload'        => true,
                                                                         'data_target'   => $item->slug,
                                                                         'permission'    => "admin.module.setting.status.update",
@@ -64,6 +64,45 @@
                                                             @endif
                                                         </tr>
 
+                                                    @empty
+                                                        @include('admin.components.alerts.empty',['colspan' => 2])
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 mb-10">
+                                <div class="table-area custom-table-area">
+                                    <div class="table-wrapper">
+                                        <div class="table-responsive">
+                                            <table class="custom-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>{{ __("Module Name") }} ( <strong>{{ __("AGENT") }}</strong> )</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse ($data ?? [] as $item)
+                                                        <tr>
+                                                            @if($item->user_type == "AGENT")
+                                                            <td>{{ ucwords(str_replace('-',' ',@$item->slug ))}}</td>
+                                                            <td>
+
+                                                                    @include('admin.components.form.switcher',[
+                                                                        'name'          => 'status',
+                                                                        'value'         => $item->status,
+                                                                        'options'       => ['Enable' => 1,'Disable' => 0],
+                                                                        'onload'        => true,
+                                                                        'data_target'   => $item->slug,
+                                                                        'permission'    => "admin.module.setting.status.update",
+                                                                    ])
+
+                                                            </td>
+                                                            @endif
+                                                        </tr>
                                                     @empty
                                                         @include('admin.components.alerts.empty',['colspan' => 2])
                                                     @endforelse
@@ -112,7 +151,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -123,7 +161,6 @@
 
 @push('script')
     <script>
-        // Switcher
         switcherAjax("{{ setRoute('admin.module.setting.status.update') }}");
     </script>
 @endpush

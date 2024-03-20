@@ -16,7 +16,7 @@ class NewsletterController extends Controller
 {
     public function index()
     {
-        $page_title = "Newsletter Section";
+        $page_title = __("Newsletter Section");
         $data = Newsletter::orderBy('id',"DESC")->paginate(20);
 
         return view('admin.sections.newsletter.index',compact(
@@ -28,17 +28,17 @@ class NewsletterController extends Controller
         $validated = Validator::make($request->all(),[
             'target'        => 'required|integer',
         ],[
-            'target.exists'     => 'Selected payment newsletter is invalid!',
+            'target.exists'     => __("Selected payment newsletter is invalid!"),
         ])->validate();
 
         try{
             $data = Newsletter::find($validated['target']);
             $data->delete();
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Newsletter deleted successfully!']]);
+        return back()->with(['success' => [__("Newsletter deleted successfully!")]]);
     }
     public function search(Request $request) {
         $validator = Validator::make($request->all(),[
@@ -70,10 +70,10 @@ class NewsletterController extends Controller
         try{
             Notification::send($data,new SendMail((object) $request->all()));
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Email successfully sended']]);
+        return back()->with(['success' => [__("Email successfully sended")]]);
 
     }
 }

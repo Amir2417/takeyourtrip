@@ -52,23 +52,26 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="english" role="tabpanel" aria-labelledby="english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Login Section Text*",
+                                            'label'     => __("Login Section Text")."*",
                                             'name'      => $default_lang_code . "_login_text",
-                                            'value'     => old($default_lang_code . "_login_text",$data->value->language->$default_lang_code->login_text ?? "")
+                                            'value'     => old($default_lang_code . "_login_text",$data->value->language->$default_lang_code->login_text ?? ""),
+                                            'placeholder'   => __("Write Here.."),
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Register Section Text*",
+                                            'label'     => __("Register Section Text")."*",
                                             'name'      => $default_lang_code . "_register_text",
-                                            'value'     => old($default_lang_code . "_register_text",$data->value->language->$default_lang_code->register_text ?? "")
+                                            'value'     => old($default_lang_code . "_register_text",$data->value->language->$default_lang_code->register_text ?? ""),
+                                            'placeholder'   => __("Write Here.."),
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Forget Section Text*",
+                                            'label'     =>__("Forget Section Text")."*",
                                             'name'      => $default_lang_code . "_forget_text",
-                                            'value'     => old($default_lang_code . "_forget_text",$data->value->language->$default_lang_code->forget_text ?? "")
+                                            'value'     => old($default_lang_code . "_forget_text",$data->value->language->$default_lang_code->forget_text ?? ""),
+                                            'placeholder'   => __("Write Here.."),
                                         ])
                                     </div>
 
@@ -81,23 +84,26 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="{{ $item->name }}" role="tabpanel" aria-labelledby="english-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Login Section Text*",
+                                                'label'     => __("Login Section Text")."*",
                                                 'name'      => $lang_code . "_login_text",
-                                                'value'     => old($lang_code . "_login_text",$data->value->language->$lang_code->login_text ?? "")
+                                                'value'     => old($lang_code . "_login_text",$data->value->language->$lang_code->login_text ?? ""),
+                                                'placeholder'   => __("Write Here.."),
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Register Section Text*",
+                                                'label'     => __("Register Section Text")."*",
                                                 'name'      => $lang_code . "_register_text",
-                                                'value'     => old($lang_code . "_register_text",$data->value->language->$lang_code->register_text ?? "")
+                                                'value'     => old($lang_code . "_register_text",$data->value->language->$lang_code->register_text ?? ""),
+                                                'placeholder'   => __("Write Here.."),
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Forget Section Text*",
+                                                'label'     =>__("Forget Section Text")."*",
                                                 'name'      => $lang_code . "_forget_text",
-                                                'value'     => old($lang_code . "_forget_text",$data->value->language->$lang_code->forget_text ?? "")
+                                                'value'     => old($lang_code . "_forget_text",$data->value->language->$lang_code->forget_text ?? ""),
+                                                'placeholder'   => __("Write Here.."),
                                             ])
                                         </div>
 
@@ -109,7 +115,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>

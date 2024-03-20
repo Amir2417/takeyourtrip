@@ -5,7 +5,7 @@
     <label for="{{ $for_id ?? "" }}">{!! $label !!}</label>
 @endif
 
-<textarea class="{{ $class ?? "form--control" }}" placeholder="{{ $placeholder ?? "Type Here..." }}" name="{{ $name ?? "" }}" {{ $attribute ?? "" }} @if (isset($data_limit))
+<textarea class="{{ $class ?? "form--control" }}" placeholder="{{ $placeholder ?? __("Write Here..") }}" name="{{ $name ?? "" }}" {{ $attribute ?? "" }} @if (isset($data_limit))
     data-limit="{{ $data_limit }}"
 @endif>{{ $value ?? "" }}</textarea>
 

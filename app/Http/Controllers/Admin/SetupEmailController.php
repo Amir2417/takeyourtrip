@@ -19,7 +19,7 @@ class SetupEmailController extends Controller
      * @return view
      */
     public function configuration() {
-        $page_title = "Email Method";
+        $page_title = __("Email Method");
         $email_config = BasicSettings::first()->mail_config;
         return view('admin.sections.setup-email.config',compact(
             'page_title',
@@ -34,7 +34,7 @@ class SetupEmailController extends Controller
      * @return view
      */
     public function defaultTemplate() {
-        $page_title = "Default Template";
+        $page_title = __("Default Template");
         return view('admin.sections.setup-email.default-template',compact(
             'page_title',
         ));
@@ -63,7 +63,7 @@ class SetupEmailController extends Controller
 
         $basic_settings = BasicSettings::first();
         if(!$basic_settings) {
-            return back()->with(['error' => ['Basic settings not found!']]);
+            return back()->with(['error' => [__("Basic settings not found!")]]);
         }
 
         // Make object of email template
@@ -83,7 +83,7 @@ class SetupEmailController extends Controller
                 'mail_config'       => $data,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         $env_modify_keys = [
@@ -102,10 +102,10 @@ class SetupEmailController extends Controller
         try{
             modifyEnv($env_modify_keys);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Information updated successfully!']]);
+        return back()->with(['success' => [__("Information updated successfully!")]]);
     }
 
 
@@ -119,8 +119,8 @@ class SetupEmailController extends Controller
         try{
             Notification::route('mail',$validated['email'])->notify(new SendTestMail());
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-        return back()->with(['success' => ['Email send successfully!']]);
+        return back()->with(['success' => [__("Email send successfully!")]]);
     }
 }

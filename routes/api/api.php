@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Api\AppSettingsController;
 use App\Http\Controllers\Api\User\AddMoneyController;
+use App\Http\Controllers\Api\User\AgentMoneyOutController;
 use App\Http\Controllers\Api\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\User\Auth\LoginController;
 use App\Http\Controllers\Api\User\AuthorizationController;
-use App\Http\Controllers\Api\User\BankAccountController;
 use App\Http\Controllers\Api\User\BillPayController;
 use App\Http\Controllers\Api\User\MakePaymentController;
 use App\Http\Controllers\Api\User\MobileTopupController;
@@ -64,19 +64,10 @@ Route::controller(AppSettingsController::class)->prefix("app-settings")->group(f
     Route::get('/','appSettings');
     Route::get('languages','languages');
 });
-
-Route::controller(SendMoneyController::class)->group(function(){
-    Route::get('success/response/{gateway}','success')->name('api.send.money.payment.success');
-    Route::get("cancel/response/{gateway}",'cancel')->name('api.send.money.payment.cancel');
-});
-
-
 Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
-    Route::get('success/response/{gateway}','success')->name('api.payment.success');
-    Route::get("cancel/response/{gateway}",'cancel')->name('api.payment.cancel');
+    Route::get('success/response/paypal/{gateway}','success')->name('api.payment.success');
+    Route::get("cancel/response/paypal/{gateway}",'cancel')->name('api.payment.cancel');
     Route::get('/flutterwave/callback', 'flutterwaveCallback')->name('api.flutterwave.callback');
-    //Razor Pay
-    Route::get('razor/callback', 'razorCallback')->name('api.razor.callback');
     //Stripe
     Route::get('stripe/payment/success/{trx}','stripePaymentSuccess')->name('api.stripe.payment.success');
     //coingate
@@ -104,8 +95,8 @@ Route::prefix('user')->group(function(){
     });
     //account re-verifications
     Route::middleware(['auth.api'])->group(function(){
-          Route::post('send-code', [AuthorizationController::class,'sendMailCode']);
-          Route::post('email-verify', [AuthorizationController::class,'mailVerify']);
+        Route::post('send-code', [AuthorizationController::class,'sendMailCode']);
+        Route::post('email-verify', [AuthorizationController::class,'mailVerify']);
     });
 
     Route::middleware(['auth.api','verification.guard.api'])->group(function(){
@@ -142,6 +133,7 @@ Route::prefix('user')->group(function(){
                     Route::get('charges','charges');
                     Route::get('details','cardDetails');
                     Route::post('create','cardBuy');
+                    Route::post('fund','cardFundConfirm');
                     Route::get('details','cardDetails');
                     Route::get('transaction','cardTransaction');
                     Route::post('block','cardBlock');
@@ -162,8 +154,8 @@ Route::prefix('user')->group(function(){
                     Route::post('make-remove/default','makeDefaultOrRemove');
                 });
             });
-             //strowallet virtual card
-             Route::middleware('virtual_card_method:strowallet')->group(function(){
+            //strowallet virtual card
+            Route::middleware('virtual_card_method:strowallet')->group(function(){
                 Route::controller(StrowalletVirtualCardController::class)->prefix('strowallet-card')->group(function(){
                     Route::get('/','index');
                     Route::get('charges','charges');
@@ -176,13 +168,6 @@ Route::prefix('user')->group(function(){
                     Route::post('make-remove/default','makeDefaultOrRemove');
                 });
             });
-            //bank account
-            Route::controller(BankAccountController::class)->prefix('bank-account')->group(function(){
-                Route::get('/','index');
-                Route::post('store','store');
-                Route::post('delete','delete');
-            });
-
              //add money
             Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
                 Route::get('/information','addMoneyInformation');
@@ -194,18 +179,37 @@ Route::prefix('user')->group(function(){
                     Route::post('crypto/confirm/{trx_id}','cryptoPaymentConfirm')->name('crypto.confirm');
                 });
 
+                //redirect with Btn Pay
+                Route::get('redirect/btn/checkout/{gateway}', 'redirectBtnPay')->name('api.user.add.money.payment.btn.pay')->withoutMiddleware(['auth:api','auth.api','CheckStatusApiUser','verification.guard.api','user.google.two.factor.api']);
+
+                // Global Gateway Response Routes
+                Route::get('success/response/{gateway}','successGlobal')->withoutMiddleware(['auth:api','auth.api','CheckStatusApiUser','verification.guard.api','user.google.two.factor.api'])->name("api.user.add.money.payment.global.success");
+                Route::get("cancel/response/{gateway}",'cancelGlobal')->withoutMiddleware(['auth:api','auth.api','CheckStatusApiUser','verification.guard.api','user.google.two.factor.api'])->name("api.user.add.money.payment.global.cancel");
+
+                // POST Route For Unauthenticated Request
+                Route::post('success/response/{gateway}', 'postSuccess')->name('api.user.add.money.payment.global.success')->withoutMiddleware(['auth:api','auth.api','CheckStatusApiUser','verification.guard.api','user.google.two.factor.api']);
+                Route::post('cancel/response/{gateway}', 'postCancel')->name('api.user.add.money.payment.global.cancel')->withoutMiddleware(['auth:api','auth.api','CheckStatusApiUser','verification.guard.api','user.google.two.factor.api']);
+
             });
             //Receive Money
             Route::controller(ReceiveMoneyController::class)->prefix('receive-money')->group(function(){
                 Route::get('/','index');
             });
              //Send Money
-            Route::controller(SendMoneyController::class)->prefix('send-money')->name('api.user.send.money.')->group(function(){
+            Route::controller(SendMoneyController::class)->prefix('send-money')->group(function(){
                 Route::get('info','sendMoneyInfo');
                 Route::post('exist','checkUser');
                 Route::post('qr/scan','qrScan');
                 Route::post('confirmed','confirmedSendMoney');
             });
+             //Agent Money Out
+            Route::controller(AgentMoneyOutController::class)->prefix('money-out')->group(function(){
+                Route::get('info','index');
+                Route::post('confirmed','confirmed')->middleware('api.kyc');
+                Route::post('check/agent','checkAgent');
+                Route::post('qr/scan','qrScan');
+            });
+
             //request Money
             Route::controller(RequestMoneyController::class)->prefix("request-money")->group(function(){
                 Route::get('/','index')->name('index');

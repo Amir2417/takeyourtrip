@@ -32,15 +32,15 @@
             <table class="custom-table">
                 <thead>
                     <tr>
-                        <th>{{ __("TRX") }}</th>
+                        <th>{{ __("web_trx_id") }}</th>
                         <th>{{ __("Fullname") }}</th>
                         <th>{{ __("User Type") }}</th>
-                        <th>{{ __("Topup Type") }}</th>
+                        <th>{{ __("TopUp Type") }}</th>
                         <th>{{ __("Mobile Number") }}</th>
                         <th>{{ __("Topup Amount") }}</th>
                         <th>{{ __(("Status")) }}</th>
                         <th>{{ __("Time") }}</th>
-                        <th>{{ __("Action") }}</th>
+                        <th>{{__("action")}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,7 +73,7 @@
                             <td ><span class="fw-bold">{{ @$item->details->mobile_number }}</span></td>
                             <td>{{ number_format($item->request_amount,2) }} {{ get_default_currency_code() }}</td>
                             <td>
-                                <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span>
+                                <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                             </td>
                             <td>{{ $item->created_at->format('d-m-y h:i:s A') }}</td>
                             <td>
@@ -85,7 +85,7 @@
                             </td>
                         </tr>
                     @empty
-                        <div class="alert alert-primary">{{ __('No data found!') }}</div>
+                         @include('admin.components.alerts.empty',['colspan' => 9])
                     @endforelse
                 </tbody>
             </table>

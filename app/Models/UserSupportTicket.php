@@ -104,7 +104,7 @@ class UserSupportTicket extends Model
         if($status == SupportTicketConst::ACTIVE) {
             $data = [
                 'class'     => "badge badge--info",
-                'value'     => "Active",
+                'value'     => "active",
             ];
         }else if($status == SupportTicketConst::DEFAULT) {
             $data = [

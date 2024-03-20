@@ -25,14 +25,14 @@
                                 @endphp
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Name*",
+                                        'label'     =>__("name")."*",
                                         'name'      => $default_lang_code . "_name",
                                         'value'     => old($default_lang_code . "_name",$data->value->language->$default_lang_code->name ?? "")
                                     ])
                                 </div>
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Designation*",
+                                     'label'     => __( "Designation")."*",
                                         'name'      => $default_lang_code . "_designation",
                                         'value'     => old($default_lang_code . "_designation",$data->value->language->$default_lang_code->designation ?? "")
                                     ])
@@ -46,14 +46,14 @@
                                 </div>
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Rating*",
+                                       'label'     => __( "Rating")."*",
                                         'name'      => $default_lang_code . "_rating",
                                         'value'     => old($default_lang_code . "_rating",$data->value->language->$default_lang_code->rating ?? "")
                                     ])
                                 </div>
                                 <div class="form-group">
                                     @include('admin.components.form.textarea',[
-                                        'label'     => "Details *",
+                                        'label'     => __( "Details")."*",
                                         'name'      => $default_lang_code . "_details",
                                         'value'     => old($default_lang_code . "_details",$data->value->language->$default_lang_code->_details ?? ""),
                                         'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -69,14 +69,14 @@
                                 <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="modal-{{ $item->name }}" role="tabpanel" aria-labelledby="modal-{{$item->name}}-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Name*",
+                                             'label'     =>__("name")."*",
                                             'name'      => $lang_code . "_name",
                                             'value'     => old($lang_code . "_name",$data->value->language->$lang_code->name ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Designation*",
+                                             'label'     => __( "Designation")."*",
                                             'name'      => $lang_code . "_designation",
                                             'value'     => old($lang_code . "_designation",$data->value->language->$lang_code->designation ?? "")
                                         ])
@@ -90,14 +90,14 @@
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Rating*",
+                                             'label'     => __( "Rating")."*",
                                             'name'      => $lang_code . "_rating",
                                             'value'     => old($lang_code . "_rating",$data->value->language->$lang_code->rating ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Details *",
+                                             'label'     => __( "Details")."*",
                                             'name'      => $lang_code . "_details",
                                             'value'     => old($lang_code . "_details",$data->value->language->$lang_code->_details ?? ""),
                                             'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -109,7 +109,7 @@
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Image:",
+                           'label'             => __("Image"),
                             'name'              => "image",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path("site-section"),

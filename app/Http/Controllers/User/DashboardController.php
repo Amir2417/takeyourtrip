@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 use App\Constants\PaymentGatewayConst;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Currency;
+use App\Models\Agent;
+use App\Models\AgentQrCode;
 use App\Models\Merchants\Merchant;
 use App\Models\Merchants\MerchantQrCode;
 use App\Models\Transaction;
@@ -28,7 +30,7 @@ class DashboardController extends Controller
         $data['billPay'] = Transaction::auth()->billPay()->where('status',1)->sum('request_amount');
         $data['topUps'] = Transaction::auth()->mobileTopup()->where('status',1)->sum('request_amount');
         $data['withdraw'] = Transaction::auth()->moneyOut()->where('status',1)->sum('request_amount');
-        $data['toatlTransactions'] = Transaction::auth()->where('status',1)->sum('request_amount');
+        $data['total_transaction'] = Transaction::auth()->where('status', 1)->count();
 
         $start = strtotime(date('Y-m-01'));
         $end = strtotime(date('Y-m-31'));
@@ -138,6 +140,21 @@ class DashboardController extends Controller
         }
         return $user->email;
     }
+    public function agentQrScan($qr_code)
+    {
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Methods: PUT, GET, POST");
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+        $qrCode = AgentQrCode::where('qr_code',$qr_code)->first();
+        if(!$qrCode){
+            return response()->json(['error'=>__("Invalid request")]);
+        }
+        $user = Agent::find($qrCode->agent_id);
+        if(!$user){
+            return response()->json(['error'=>__('Invalid Agent')]);
+        }
+        return $user->email;
+    }
     public function merchantQrScan($qr_code)
     {
         header("Access-Control-Allow-Origin: *");
@@ -161,7 +178,6 @@ class DashboardController extends Controller
         $user = auth()->user();
         $user->status = false;
         $user->email_verified = false;
-        $user->sms_verified = false;
         $user->kyc_verified = false;
         $user->deleted_at = now();
         $user->save();

@@ -1,13 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\Agent\AddMoneyController as AgentAddMoneyController;
+use App\Http\Controllers\Api\User\AddMoneyController as UserAddMoneyController;
+use App\Http\Controllers\DeveloperController;
+use App\Http\Controllers\SiteController;
+use App\Http\Controllers\User\AddMoneyController;
+use App\Http\Controllers\User\PaymentLinkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SiteController;
-use App\Http\Controllers\DeveloperController;
-use App\Http\Controllers\User\AddMoneyController;
-use App\Http\Controllers\User\SendMoneyController;
-use App\Http\Controllers\User\PaymentLinkController;
-use App\Http\Controllers\Api\User\AddMoneyController as UserAddMoneyController;
 
 
 /*
@@ -31,29 +31,16 @@ Route::controller(SiteController::class)->group(function(){
     Route::get('web/journal','blog')->name('blog');
     Route::get('web/journal/details/{id}/{slug}','blogDetails')->name('blog.details');
     Route::get('web/journal/by/category/{id}/{slug}','blogByCategory')->name('blog.by.category');
+    Route::get('agent-info','agentInfo')->name('agent');
     Route::get('merchant-info','merchant')->name('merchant');
     Route::get('contact','contact')->name('contact');
     Route::post('contact/store','contactStore')->name('contact.store');
     Route::get('change/{lang?}','changeLanguage')->name('lang');
     Route::get('page/{slug}','usefulPage')->name('useful.link');
     Route::post('newsletter','newsletterSubmit')->name('newsletter.submit');
-    Route::get('/user/success','pagaditoSuccess')->name('success');
-    Route::name('send.money.')->prefix('send-money')->group(function(){
-        Route::get('/','sendMoney')->name('index');
-        Route::post('confirm','confirm')->name('confirmed');
-        Route::post('/handle-payment-confirmation','handlePaymentConfirmation')->name('handle.payment.confirm');
-        Route::get('redirect-url/{identifier}','redirectUrl')->name('redirect.url');
-        Route::post('stripe-payment-gateway','stripePaymentGateway')->name('stripe.payment.gateway');
-
-        Route::controller(SendMoneyController::class)->group(function(){
-            Route::get('success/response/{gateway}','success')->name('payment.success');
-            Route::get("cancel/response/{gateway}",'cancel')->name('payment.cancel');
-        });
-
-    });
+    Route::get('pagadito/success','pagaditoSuccess')->name('success');
 
 });
-
 
 Route::controller(DeveloperController::class)->prefix('developer')->name('developer.')->group(function(){
     Route::get('/','index')->name('index');
@@ -86,7 +73,10 @@ Route::controller(UserAddMoneyController::class)->prefix("api/add-money")->name(
     Route::post('sslcommerz/success','sllCommerzSuccess')->name('ssl.success');
     Route::post('sslcommerz/fail','sllCommerzFails')->name('ssl.fail');
     Route::post('sslcommerz/cancel','sllCommerzCancel')->name('ssl.cancel');
-    Route::get('razor-payment/api-link/{trx_id}','razorPaymentLink')->name('razorPaymentLink');
+});
+//for Perfect Money Agent From Submit url
+Route::controller(AgentAddMoneyController::class)->prefix("agent/add-money")->name("agent.add.money.")->group(function(){
+    Route::get('redirect/form/{gateway}', 'redirectUsingHTMLForm')->name('payment.redirect.form');
 });
 
 //both merchants/users
@@ -95,63 +85,5 @@ Route::controller(PaymentLinkController::class)->prefix('/payment-link')->name('
     Route::post('/submit','paymentLinkSubmit')->name('submit')->middleware('app.mode');
     Route::get('/transaction/success/{token}','transactionSuccess')->name('transaction.success');
 });
-Route::get('create/card',function(){
-    // Replace these with your actual values
-    $flutterwaveSecretKey = 'FLWSECK_TEST-SANDBOXDEMOKEY-X';
-    $currency = 'USD';
-    $amount = 5;
-    $userFirstName = 'Example';
-    $userLastName = 'User';
-    $userDateOfBirth = '1996/12/30';
-    $userEmail = 'user@example.com';
-    $userPhone = '07030000000'; // Provide the actual phone number
-    $userTitle = 'MR'; // Provide the actual title
-    $userGender = 'M'; // Provide the actual gender
-    $callbackUrl = 'https://your-callback-url.com';
-    $userBVN = '100735067'; // Provide the actual BVN
 
-    // Construct the data array
-    $data = [
-        "currency" => $currency,
-        "amount" => $amount,
-        "billing_name" => "$userFirstName $userLastName",
-        "first_name" => $userFirstName,
-        "last_name" => $userLastName,
-        "date_of_birth" => $userDateOfBirth,
-        "email" => $userEmail,
-        "phone" => $userPhone,
-        "title" => $userTitle,
-        "gender" => $userGender,
-        "bvn" => $userBVN, // Include the BVN parameter
-        "callback_url" => $callbackUrl,
-    ];
-
-// Initialize cURL session
-$curl = curl_init();
-
-// Set cURL options
-curl_setopt_array($curl, [
-    CURLOPT_URL => 'https://api.flutterwave.com/v3/virtual-cards',
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING => '',
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => 'POST',
-    CURLOPT_POSTFIELDS => json_encode($data),
-    CURLOPT_HTTPHEADER => [
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $flutterwaveSecretKey
-    ],
-]);
-
-// Execute cURL and get the response
-$response = curl_exec($curl);
-dd($response);
-
-// Close cURL session
-curl_close($curl);
-
-});
 

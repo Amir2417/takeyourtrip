@@ -166,7 +166,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'firstname'     => "required|string|max:60",
             'lastname'      => "required|string|max:60",
-            'business_name'      => "required|string|max:60",
+            'business_name' => "required|string|max:60",
             'country'       => "required|string|max:50",
             'phone_code'    => "required|string|max:6",
             'phone'         => "required|string|max:20|unique:merchants,mobile,".$user->id,
@@ -227,7 +227,7 @@ class UserController extends Controller
 
         $basic_settings = BasicSettingsProvider::get();
         $password_rule = "required|string|min:6|confirmed";
-        if($basic_settings->secure_password) {
+        if($basic_settings->merchant_secure_password) {
             $password_rule = ["required",Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised(),"confirmed"];
         }
         $validator = Validator::make($request->all(), [
@@ -259,7 +259,6 @@ class UserController extends Controller
         $user = auth()->user();
         $user->status = false;
         $user->email_verified = false;
-        $user->sms_verified = false;
         $user->kyc_verified = false;
         $user->deleted_at = now();
         $user->save();
@@ -273,7 +272,6 @@ class UserController extends Controller
             return Helpers::error($error);
         }
     }
-
     public function transactions(){
         $transactions = Transaction::auth()->latest()->get()->map(function($item){
             $statusInfo = [

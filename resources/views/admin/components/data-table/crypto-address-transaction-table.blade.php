@@ -1,16 +1,16 @@
 <table class="custom-table transaction-search-table">
     <thead>
         <tr>
-            <th>SL NO</th>
-            <th>TXN Type</th>
-            <th>Sender</th>
-            <th>Receiver</th>
-            <th>TXN Hash</th>
-            <th>Asset</th>
-            <th>Chain</th>
-            <th>Amount</th>
-            <th>Block Number</th>
-            <th>Status</th>
+            <th>{{ __("SL NO") }}</th>
+            <th>{{ __("TXN Type") }}</th>
+            <th>{{ __("Sender") }}</th>
+            <th>{{ __("Receiver") }}</th>
+            <th>{{ __("TXN Hash") }}</th>
+            <th>{{ __("Asset") }}</th>
+            <th>{{ __("Chain") }}</th>
+            <th>{{ __("Amount") }}</th>
+            <th>{{ __("Block Number") }}</th>
+            <th>{{__("Status") }}</th>
             <th></th>
         </tr>
     </thead>

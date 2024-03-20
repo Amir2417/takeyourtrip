@@ -38,7 +38,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6  form-group">
-                                    <label>{{ __("Bill Type") }} <span class="text--base">*</span></label>
+                                    <label>{{ __("bill Type") }} <span class="text--base">*</span></label>
                                     <select class="form--control" name="bill_type">
                                         @foreach ($billType ??[] as $type)
                                         <option value="{{ $type->id }}" data-name="{{ $type->name }}">{{ $type->name }}</option>
@@ -47,15 +47,15 @@
                                     </select>
                                 </div>
                                 <div class="col-xl-6 col-lg-6  form-group">
-                                    <label>Bill Number <span class="text--base">*</span></label>
-                                    <input type="number" class="form--control" required name="bill_number" placeholder="Enter Bill Number" value="{{ old('bill_number') }}">
+                                    <label>{{ __("Bill Number") }} <span class="text--base">*</span></label>
+                                    <input type="text" class="form--control number-input" required name="bill_number" placeholder="{{ __("enter Bill Number") }}" value="{{ old('bill_number') }}">
 
                                 </div>
 
                                 <div class="col-xxl-12 col-xl-12 col-lg-12  form-group">
                                     <label>{{ __("Amount") }}<span>*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form--control" placeholder="Enter Amount" name="amount" value="{{ old("amount") }}">
+                                        <input type="text" class="form--control number-input" placeholder="{{__('enter Amount')}}" name="amount" value="{{ old("amount") }}">
                                         <select class="form--control nice-select currency" name="currency">
                                             <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                         </select>
@@ -69,7 +69,7 @@
                                 </div>
 
                                 <div class="col-xl-12 col-lg-12">
-                                    <button type="submit" class="btn--base w-100 btn-loading billPayBtn">{{ __("Pay Bill") }} <i class="fas fa-coins ms-1"></i></button>
+                                    <button type="submit" class="btn--base w-100 btn-loading billPayBtn">{{ __("pay Bill") }} <i class="fas fa-coins ms-1"></i></button>
                                 </div>
                             </div>
                         </form>
@@ -231,7 +231,7 @@
            if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
                var min_limit_calc = parseFloat(min_limit/currencyRate).toFixed(2);
                var max_limit_clac = parseFloat(max_limit/currencyRate).toFixed(2);
-               $('.limit-show').html("Limit " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
+               $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
 
                return {
                    minLimit:min_limit_calc,
@@ -304,7 +304,7 @@
            if (charges == false) {
                return false;
            }
-           $(".fees-show").html("Bill Pay: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
+           $(".fees-show").html("{{ __('Bill Pay') }}: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
        }
        function getPreview() {
                var senderAmount = $("input[name=amount]").val();

@@ -60,13 +60,13 @@
                             @endphp
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'     => "Page Name*",
+                                    'label'     =>__( "Page Name")."*",
                                     'name'      => $default_lang_code . "_title",
                                     'value'     => old($default_lang_code . "_title", $data->title->language->$default_lang_code->title ?? '')
                                 ])
                             </div>
                             <div class="form-group">
-                                <label>{{ "Details*" }}</label>
+                                <label>{{__( "Details") }}*</label>
                                 <textarea name="{{ $default_lang_code . "_details" }}" class="form--control rich-text-editor">
                                 {!! old($default_lang_code . "_details", $data->details->language->$default_lang_code->details ?? '') !!}
                                 </textarea>
@@ -81,13 +81,13 @@
                             <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="edit-modal-{{ $item->name }}" role="tabpanel" aria-labelledby="edit-modal-{{$item->name}}-tab">
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Page Name*",
+                                         'label'     =>__( "Page Name")."*",
                                         'name'      => $lang_code . "_title",
                                         'value'     => old($lang_code . "_title", $data->title->language->$lang_code->title ?? '')
                                     ])
                                 </div>
                                 <div class="form-group">
-                                    <label>{{ "Details*" }}</label>
+                                    <label>{{__( "Details") }}*</label>
                                     <textarea name="{{ $lang_code . "_details" }}" class="form--control rich-text-editor">
                                         {!! old($lang_code . "_details", $data->details->language->$lang_code->details ?? '') !!}
                                     </textarea>
@@ -99,7 +99,7 @@
 
                 <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                     <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                    <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                    <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                 </div>
             </div>
         </form>

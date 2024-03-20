@@ -4,7 +4,6 @@ namespace App\Http\Controllers\User\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Constants\GlobalConst;
-use App\Models\Admin\Currency;
 use App\Models\Admin\SetupKyc;
 use App\Providers\Admin\BasicSettingsProvider;
 use Illuminate\Http\Request;
@@ -15,8 +14,6 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
 use App\Models\UserAuthorization;
-use App\Models\UserWallet;
-use App\Notifications\User\Auth\SendAuthorizationCode;
 use App\Notifications\User\Auth\SendVerifyCode;
 use App\Traits\User\RegisteredUsers;
 use Exception;
@@ -177,16 +174,20 @@ class RegisterController extends Controller
         return redirect()->route('user.email.verify',$data['token'])->with(['success' => [__('Verification code resend success')]]);
     }
     public function registerKyc(Request $request){
+        $basic_settings   = $this->basic_settings;
         $email =   session()->get('register_email');
         if($email == null){
             return redirect()->route('user.register');
         }
-        $user_kyc = SetupKyc::userKyc()->first();
-        if(!$user_kyc) return back();
-        $kyc_data = $user_kyc->fields;
-        $kyc_fields = [];
-        if($kyc_data) {
-            $kyc_fields = array_reverse($kyc_data);
+        $kyc_fields =[];
+        if($basic_settings->kyc_verification == true){
+            $user_kyc = SetupKyc::userKyc()->first();
+            if(!$user_kyc) return back();
+            $kyc_data = $user_kyc->fields;
+            $kyc_fields = [];
+            if($kyc_data) {
+                $kyc_fields = array_reverse($kyc_data);
+            }
         }
 
         $page_title = __("User Registration KYC");
@@ -229,6 +230,11 @@ class RegisterController extends Controller
                 'phone'     => __('Phone number is already exists'),
             ]);
         }
+        $userName = make_username($validated['firstname'],$validated['lastname']);
+        $check_user_name = User::where('username',$userName)->first();
+        if($check_user_name){
+            $userName = $userName.'-'.rand(123,456);
+        }
 
         $validated['full_mobile']       = $complete_phone;
         $validated = Arr::except($validated,['agree','phone_code','phone']);
@@ -237,7 +243,7 @@ class RegisterController extends Controller
         $validated['sms_verified']      = ($basic_settings->sms_verification == true) ? false : true;
         $validated['kyc_verified']      = ($basic_settings->kyc_verification == true) ? false : true;
         $validated['password']          = Hash::make($validated['password']);
-        $validated['username']          = make_username($validated['firstname'],$validated['lastname']);
+        $validated['username']          = $userName;
         $validated['address']           = [
                                             'country' => $validated['country'],
                                             'city' => $validated['city'],

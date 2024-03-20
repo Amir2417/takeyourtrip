@@ -25,7 +25,6 @@
                     <input type="text" class="form--control" name="app_name" placeholder="Ex : localhost">
                 </div>
                 <div class="form-group">
-                    {{-- <label>Database Host</label> --}}
                     <input type="hidden" class="form--control" name="host" placeholder="Ex : localhost" required value="localhost">
                 </div>
                 <div class="form-group">

@@ -33,6 +33,8 @@ class RecipientController extends Controller
                     'lastname' => $data->lastname,
                     'mobile_code' => $data->mobile_code,
                     'mobile' => $data->mobile,
+                    'email'  => $data->email,
+                    'account_number' => $data->account_number??'',
                     'city' => $data->city,
                     'state' => $data->state,
                     'address' => $data->address,
@@ -53,6 +55,8 @@ class RecipientController extends Controller
                     'lastname' => $data->lastname,
                     'mobile_code' => $data->mobile_code,
                     'mobile' => $data->mobile,
+                    'email'  => $data->email,
+                    'account_number' => $data->account_number??'',
                     'city' => $data->city,
                     'state' => $data->state,
                     'address' => $data->address,
@@ -191,6 +195,10 @@ class RecipientController extends Controller
             [
                 'field_name' => "bank",
                 'label_name' => "Select Bank",
+            ],
+            [
+                'field_name' => "account_number",
+                'label_name' => "Account Number",
             ],
 
         ];
@@ -349,8 +357,10 @@ class RecipientController extends Controller
         $user = auth()->user();
         if($request->transaction_type == 'bank-transfer') {
             $bankRules = 'required|string';
+            $account_number = 'required|string|min:10|max:16';
         }else {
             $bankRules = 'nullable|string';
+            $account_number = 'nullable|string';
         }
 
         if($request->transaction_type == 'cash-pickup') {
@@ -373,6 +383,7 @@ class RecipientController extends Controller
             'zip'                      =>'required|string',
             'bank'                      => $bankRules,
             'cash_pickup'               => $cashPickupRules,
+            'account_number'             => $account_number,
         ]);
         if($validator->fails()){
             $error =  ['error'=>$validator->errors()->all()];
@@ -426,10 +437,11 @@ class RecipientController extends Controller
         $in['state'] = $request->state;
         $in['email'] = $request->email;
         $in['mobile_code'] = remove_speacial_char($request->mobile_code);
-        $in['mobile'] = remove_speacial_char($request->mobile_code) == "880"?(int)$request->mobile:$request->mobile ;
+      $in['mobile'] = remove_speacial_char($request->mobile_code) == "880"?(int)remove_speacial_char($request->mobile):remove_speacial_char($request->mobile) ;
         $in['city'] = $request->city;
         $in['address'] = $request->address;
         $in['zip_code'] = $request->zip;
+        $in['account_number'] = $request->account_number??null;
         $in['details'] = json_encode($details);
         try{
             Receipient::create($in);
@@ -459,6 +471,8 @@ class RecipientController extends Controller
                 'lastname' => $item->lastname,
                 'mobile_code' => $item->mobile_code,
                 'mobile' => $item->mobile,
+                'email'  => $item->email,
+                'account_number'  => $item->account_number??'',
                 'city' => $item->city,
                 'address' => $item->address,
                 'state' => $item->state,
@@ -528,8 +542,10 @@ class RecipientController extends Controller
 
         if($request->transaction_type == 'bank-transfer') {
             $bankRules = 'required|string';
+            $account_number = 'required|string|min:10|max:16';
         }else {
             $bankRules = 'nullable|string';
+            $account_number = 'nullable|string';
         }
 
         if($request->transaction_type == 'cash-pickup') {
@@ -552,6 +568,7 @@ class RecipientController extends Controller
             'zip'                      =>'required|string',
             'bank'                      => $bankRules,
             'cash_pickup'               => $cashPickupRules,
+            'account_number'             => $account_number,
         ]);
         if($validator->fails()){
             $error =  ['error'=>$validator->errors()->all()];
@@ -565,7 +582,7 @@ class RecipientController extends Controller
         }
         $checkMobile = Receipient::where('id','!=',$data->id)->where('user_id',$user->id)->where('email',$request->email)->first();
         if($checkMobile){
-            $error = ['error'=>['__(This recipient  already exist.']];
+            $error = ['error'=>[__('This recipient  already exist.')]];
             return Helpers::error($error);
         }
 
@@ -608,10 +625,11 @@ class RecipientController extends Controller
         $in['email'] = $request->email;
         $in['state'] = $request->state;
         $in['mobile_code'] = remove_speacial_char($request->mobile_code);
-        $in['mobile'] = remove_speacial_char($request->mobile_code) == "880"?(int)$request->mobile:$request->mobile ;
+      $in['mobile'] = remove_speacial_char($request->mobile_code) == "880"?(int)remove_speacial_char($request->mobile):remove_speacial_char($request->mobile) ;
         $in['city'] = $request->city;
         $in['address'] = $request->address;
         $in['zip_code'] = $request->zip;
+        $in['account_number'] = $request->account_number??null;
         $in['details'] = json_encode($details);
         try{
             $data->fill($in)->save();
@@ -619,7 +637,7 @@ class RecipientController extends Controller
             return Helpers::onlysuccess($message);
         }catch(Exception $e) {
             $error = ['error'=>[__("Something went wrong! Please try again.")]];
-                return Helpers::error($error);
+            return Helpers::error($error);
         }
 
     }

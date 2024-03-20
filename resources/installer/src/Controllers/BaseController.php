@@ -61,7 +61,7 @@ class BaseController extends Controller {
         return view('installer.pages.validation-form',compact('page_title'));
     }
 
-    public function purchaseValidationFormSubmit(Request $request, ErrorHelper $handleError, ValidationHelper $validator) {
+    public function purchaseValidationFormSubmit(Request $request, ErrorHelper $handleError, ValidationHelper $validator, Helper $helper) {
 
         $request->validate([
             'username'      => 'required|string',
@@ -69,7 +69,12 @@ class BaseController extends Controller {
         ]);
 
         try{
-            $validator->validate($request->all());
+            if($validator->isLocalInstallation()) {
+                $helper->cache($request->all());
+                $validator->setStepSession();
+            }else {
+                $validator->validate($request->all());
+            }
         }catch(Exception $e) {
             return $handleError->redirectErrorPage([$e->getMessage()]);
         }
@@ -89,7 +94,7 @@ class BaseController extends Controller {
         return view('installer.pages.database-config',compact('page_title','host_name'));
     }
 
-    public function databaseConfigSubmit(Request $request, DBHelper $db) {
+    public function databaseConfigSubmit(Request $request, DBHelper $db, Helper $helper) {
 
         $validator = Validator::make($request->all(),[
             'app_name'          => 'required|string|max:150',
@@ -134,12 +139,13 @@ class BaseController extends Controller {
         return redirect()->route('project.install.admin.setup');
     }
 
-    public function accountSetup() {
+    public function accountSetup(Helper $helper) {
         $page_title = "Installation - Admin account settings";
         if(RequirementHelper::step() !== "PASSED") return redirect()->route('project.install.requirements');
         if(ValidationHelper::step() !== "PASSED") return redirect()->route('project.install.validation.form');
         if(DBHelper::step() !== "PASSED") return redirect()->route('project.install.database.config');
         if(DBHelper::step('migrate') !== "PASSED") return redirect()->route('project.install.migration.view');
+
         return view('installer.pages.admin-setup',compact('page_title'));
     }
 
@@ -167,13 +173,15 @@ class BaseController extends Controller {
         return redirect()->route('project.install.finish');
     }
 
-    public function finish() {
+    public function finish(Helper $helper) {
         $page_title = "Installation - Finish";
         if(RequirementHelper::step() !== "PASSED") return redirect()->route('project.install.requirements');
         if(ValidationHelper::step() !== "PASSED") return redirect()->route('project.install.validation.form');
         if(DBHelper::step() !== "PASSED") return redirect()->route('project.install.database.config');
         if(DBHelper::step('migrate') !== "PASSED") return redirect()->route('project.install.migration.view');
         if(DBHelper::step('admin_account' !== "PASSED")) return redirect()->route('project.install.admin.setup');
+
+        cache()->driver("file")->forget($helper->cache_key);
 
         return view('installer.pages.finish',compact('page_title'));
     }

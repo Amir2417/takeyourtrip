@@ -7,6 +7,8 @@ use App\Constants\PaymentGatewayConst;
 use App\Exports\MobileTopUpTrxExport;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\Response;
+use App\Models\AgentNotification;
+use App\Models\AgentWallet;
 use App\Models\Merchants\MerchantNotification;
 use App\Models\Merchants\MerchantWallet;
 use App\Models\TopupCategory;
@@ -34,7 +36,7 @@ class SetupMobileTopupController extends Controller
     }
     //==============================================category start================================================
         public function topUpcategories(){
-            $page_title = "Mobile Topup Category";
+            $page_title = __("Mobile Topup Category");
             $allCategory = TopupCategory::orderByDesc('id')->paginate(10);
             return view('admin.sections.mobile-topups.category',compact(
                 'page_title',
@@ -62,9 +64,9 @@ class SetupMobileTopupController extends Controller
             $validated['slug']          = $slugData;
             try{
                 TopupCategory::create($validated);
-                return back()->with(['success' => ['Category Saved Successfully!']]);
+                return back()->with(['success' => [__("Category Saved Successfully!")]]);
             }catch(Exception $e) {
-                return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }
         public function categoryUpdate(Request $request){
@@ -81,7 +83,7 @@ class SetupMobileTopupController extends Controller
             $slugData = Str::slug($request->name);
             $makeUnique = TopupCategory::where('id',"!=",$category->id)->where('slug',  $slugData)->first();
             if($makeUnique){
-                return back()->with(['error' => [ $request->name.' '.'Category Already Exists!']]);
+                return back()->with(['error' => [__("Category Already Exists!")]]);
             }
             $admin = Auth::user();
             $validated['admin_id']      = $admin->id;
@@ -90,9 +92,9 @@ class SetupMobileTopupController extends Controller
 
             try{
                 $category->fill($validated)->save();
-                return back()->with(['success' => ['Category Updated Successfully!']]);
+                return back()->with(['success' => [__("Category Updated Successfully!")]]);
             }catch(Exception $e) {
-                return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }
 
@@ -110,7 +112,7 @@ class SetupMobileTopupController extends Controller
 
             $category = TopupCategory::where('id',$category_id)->first();
             if(!$category) {
-                $error = ['error' => ['Category record not found in our system.']];
+                $error = ['error' => [__("Category record not found in our system.")]];
                 return Response::error($error,null,404);
             }
 
@@ -119,11 +121,11 @@ class SetupMobileTopupController extends Controller
                     'status' => ($validated['status'] == true) ? false : true,
                 ]);
             }catch(Exception $e) {
-                $error = ['error' => ['Something went worng!. Please try again.']];
+                $error = ['error' => [__("Something went wrong! Please try again.")]];
                 return Response::error($error,null,500);
             }
 
-            $success = ['success' => ['Category status updated successfully!']];
+            $success = ['success' => [__("Category status updated successfully!")]];
             return Response::success($success,null,200);
         }
         public function categoryDelete(Request $request) {
@@ -136,10 +138,10 @@ class SetupMobileTopupController extends Controller
             try{
                 $category->delete();
             }catch(Exception $e) {
-                return back()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
 
-            return back()->with(['success' => ['Category deleted successfully!']]);
+            return back()->with(['success' => [__("Category deleted successfully!")]]);
         }
         public function categorySearch(Request $request) {
             $validator = Validator::make($request->all(),[
@@ -166,7 +168,7 @@ class SetupMobileTopupController extends Controller
      */
     public function index()
     {
-        $page_title = "All Logs";
+        $page_title = __("All Logs");
         $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
         )->where('type', PaymentGatewayConst::MOBILETOPUP)->latest()->paginate(20);
@@ -180,7 +182,7 @@ class SetupMobileTopupController extends Controller
      * @return view
      */
     public function pending() {
-        $page_title = "Pending Logs";
+        $page_title =__( "Pending Logs");
         $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
          )->where('type', PaymentGatewayConst::MOBILETOPUP)->where('status', 2)->latest()->paginate(20);
@@ -195,7 +197,7 @@ class SetupMobileTopupController extends Controller
      * @return view
      */
     public function complete() {
-        $page_title = "Complete Logs";
+        $page_title = __("Complete Logs");
         $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
          )->where('type', PaymentGatewayConst::MOBILETOPUP)->where('status', 1)->latest()->paginate(20);
@@ -223,7 +225,8 @@ class SetupMobileTopupController extends Controller
         $data = Transaction::where('id',$id)->with(
           'user:id,firstname,lastname,email,username,full_mobile',
         )->where('type',PaymentGatewayConst::MOBILETOPUP)->first();
-        $page_title = "Mobile Topup details for".'  '.$data->trx_id.' ('.@$data->details->topup_type_name.")";
+        $pre_title = __("Mobile Topup details for");
+        $page_title = $pre_title.'  '.$data->trx_id.' ('.@$data->details->topup_type_name.")";
         return view('admin.sections.mobile-topups.details', compact(
             'page_title',
             'data'
@@ -243,7 +246,7 @@ class SetupMobileTopupController extends Controller
            if( $approved){
             //notification
             $notification_content = [
-                'title'         => "Mobile Topup",
+                'title'         =>__( "Mobile Topup"),
                 'message'       => "Your Mobile Topup request approved by admin " .getAmount($data->request_amount,2).' '.get_default_currency_code()." & Mobile Number is: ".@$data->details->mobile_number." successful.",
                 'image'         => files_asset_path('profile-default'),
             ];
@@ -260,26 +263,45 @@ class SetupMobileTopupController extends Controller
                     'status'  => "Success",
                   ];
                 $user = $data->user;
-                if( $this->basic_settings->email_notification == true){
-                $user->notify(new Approved($user,(object)$notifyData));
-                }
                 UserNotification::create([
                     'type'      => NotificationConst::MOBILE_TOPUP,
                     'user_id'  =>  $data->user_id,
                     'message'   => $notification_content,
                 ]);
                 DB::commit();
-            }else if($data->merchant_id != null) {
-                MerchantNotification::create([
+                if( $this->basic_settings->email_notification == true){
+                    $user->notify(new Approved($user,(object)$notifyData));
+                }
+
+            }else if($data->agent_id != null) {
+                $notifyData = [
+                    'trx_id'  => $data->trx_id,
+                    'topup_type'  =>    @$data->details->topup_type_name,
+                    'mobile_number'  => $data->details->mobile_number,
+                    'request_amount'   => $data->request_amount,
+                    'charges'   => $data->charge->total_charge,
+                    'payable'  => $data->payable,
+                    'current_balance'  => getAmount($data->available_balance, 4),
+                    'status'  => "Success",
+                  ];
+                $user = $data->agent;
+                $returnWithProfit = ($user->wallet->balance +  $data->details->charges->agent_total_commission);
+                $this->updateSenderWalletBalance($user->wallet,$returnWithProfit,$data);
+                $this->agentProfitInsert($data->id,$user->wallet,(array)$data->details->charges);
+                AgentNotification::create([
                     'type'      => NotificationConst::MOBILE_TOPUP,
-                    'merchant_id'  =>  $data->merchant_id,
+                    'agent_id'  =>  $data->agent_id,
                     'message'   => $notification_content,
                 ]);
                 DB::commit();
+                if( $this->basic_settings->agent_email_notification == true){
+                    $user->notify(new Approved($user,(object)$notifyData));
+                }
+
             }
            }
 
-            return redirect()->back()->with(['success' => ['Mobile topup request approved successfully']]);
+            return redirect()->back()->with(['success' => [__('Mobile topup request approved successfully')]]);
         }catch(Exception $e){
             return back()->with(['error' => [$e->getMessage()]]);
         }
@@ -300,9 +322,10 @@ class SetupMobileTopupController extends Controller
                 $userWallet = UserWallet::where('user_id',$data->user_id)->first();
                 $userWallet->balance +=  $data->payable;
                 $userWallet->save();
-            }else if($data->merchant_id != null) {
-                $userWallet = MerchantWallet::where('merchant_id',$data->merchant_id)->first();
+            }else if($data->agent_id != null) {
+                $userWallet = AgentWallet::where('agent_id',$data->agent_id)->first();
                 $userWallet->balance +=  $data->payable;
+                $userWallet->save();
             }
             $up['status'] = 4;
             $up['reject_reason'] = $request->reject_reason;
@@ -313,7 +336,7 @@ class SetupMobileTopupController extends Controller
 
                 //user notifications
                 $notification_content = [
-                    'title'         => "Mobile Topup",
+                    'title'         => __("Mobile Topup"),
                     'message'       => "Your mobile topup request rejected by admin " .getAmount($data->request_amount,2).' '.get_default_currency_code()." & Mobile Number is: ".@$data->details->mobile_number,
                     'image'         => files_asset_path('profile-default'),
                 ];
@@ -331,28 +354,69 @@ class SetupMobileTopupController extends Controller
                         'reason'  => $request->reject_reason,
                       ];
                     $user = $data->user;
-                    if( $this->basic_settings->email_notification == true){
-                    $user->notify(new Rejected($user,(object)$notifyData));
-                    }
                     UserNotification::create([
                         'type'      => NotificationConst::MOBILE_TOPUP,
                         'user_id'  =>  $data->user_id,
                         'message'   => $notification_content,
                     ]);
                     DB::commit();
-                }else if($data->merchant_id != null) {
-                    MerchantNotification::create([
+                    if( $this->basic_settings->email_notification == true){
+                    $user->notify(new Rejected($user,(object)$notifyData));
+                    }
+
+                }else if($data->agent_id != null) {
+                    $notifyData = [
+                        'trx_id'  => $data->trx_id,
+                        'topup_type'  =>    @$data->details->topup_type_name,
+                        'mobile_number'  => $data->details->mobile_number,
+                        'request_amount'   => $data->request_amount,
+                        'charges'   => $data->charge->total_charge,
+                        'payable'  => $data->payable,
+                        'current_balance'  => getAmount($data->available_balance, 4),
+                        'status'  => "Rejected",
+                        'reason'  => $request->reject_reason,
+                      ];
+                    $user = $data->user;
+                    AgentNotification::create([
                         'type'      => NotificationConst::MOBILE_TOPUP,
-                        'merchant_id'  =>  $data->merchant_id,
+                        'agent_id'  =>  $data->agent_id,
                         'message'   => $notification_content,
                     ]);
                     DB::commit();
+                    if( $this->basic_settings->agent_email_notification == true){
+                    $user->notify(new Rejected($user,(object)$notifyData));
+                    }
                 }
             }
-            return redirect()->back()->with(['success' => ['Mobile topup request rejected successfully']]);
+            return redirect()->back()->with(['success' => [__("Mobile topup request rejected successfully")]]);
         }catch(Exception $e){
             return back()->with(['error' => [$e->getMessage()]]);
         }
+    }
+    public function agentProfitInsert($id,$authWallet,$charges) {
+        DB::beginTransaction();
+        try{
+            DB::table('agent_profits')->insert([
+                'agent_id'          => $authWallet->agent->id,
+                'transaction_id'    => $id,
+                'percent_charge'    => $charges['agent_percent_commission'],
+                'fixed_charge'      => $charges['agent_fixed_commission'],
+                'total_charge'      => $charges['agent_total_commission'],
+                'created_at'        => now(),
+            ]);
+            DB::commit();
+        }catch(Exception $e) {
+            DB::rollBack();
+            return back()->with(['error' => [$e->getMessage()]]);
+        }
+    }
+    public function updateSenderWalletBalance($senderWallet,$afterCharge,$transaction) {
+        $transaction->update([
+            'available_balance'   => $afterCharge,
+        ]);
+        $senderWallet->update([
+            'balance'   => $afterCharge,
+        ]);
     }
     public function exportData(){
         $file_name = now()->format('Y-M-d_H:i:s') . "_Mobile_Top_Up_Logs".'.xlsx';

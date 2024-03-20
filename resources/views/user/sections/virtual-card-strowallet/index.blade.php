@@ -19,7 +19,7 @@
         <div class="dashboard-header-wrapper">
             <h3 class="title">{{__(@$page_title)}}</h3>
             @if ($customer_card  < $card_limit )
-                <button class="btn--base small buyCard" >{{ __("Create") }} <i class="las la-plus ms-1"></i></button>
+                <button class="btn--base small buyCard" >{{ __("create Card") }} <i class="las la-plus ms-1"></i></button>
             @endif
         </div>
     </div>
@@ -35,11 +35,13 @@
                                     <div class="card-header-btn-wrapper d-flex align-items-center justify-content-between">
                                         <div class="dash-payment-title-area">
                                             <span class="dash-payment-badge">!</span>
-                                            <h5 class="title"> {{ @$myCard != null ?"My Card" :"Virtual Card"}}</h5>
+                                            <h5 class="title"> {{ @$myCard != null ?__("My Card") :__("Virtual Card")}}</h5>
                                         </div>
-                                        <a href="javascript:void(0)" class="small--btn">{{ __("Balance") }}:
-                                             {{ getAmount(@$myCard->balance,2) }} {{ get_default_currency_code() }}
-
+                                        @php
+                                            $live_card_data = card_details($myCard->card_id,$card_api->config->strowallet_public_key,$card_api->config->strowallet_url);
+                                        @endphp
+                                        <a href="javascript:void(0)" class="small--btn">{{ __("balance") }}:
+                                             {{ getAmount(updateStroWalletCardBalance(auth()->user(),$myCard->card_id,$live_card_data),2) }} {{ get_default_currency_code() }}
                                          </a>
                                     </div>
                                     <div class="virtual-card-wrapper d-flex justify-content-center">
@@ -63,24 +65,33 @@
                                                             <path d="M7.584 11.438c.227.031.438.144.594.312 2.953 2.863 4.781 6.875 4.781 11.313 0 4.433-1.828 8.449-4.781 11.312-.398.387-1.035.383-1.422-.016-.387-.398-.383-1.035.016-1.421 2.582-2.504 4.187-5.993 4.187-9.875 0-3.883-1.605-7.372-4.187-9.875-.321-.282-.426-.739-.266-1.133.164-.395.559-.641.984-.617h.094zM1.178 15.531c.121.02.238.063.344.125 2.633 1.414 4.437 4.215 4.437 7.407 0 3.195-1.797 5.996-4.437 7.406-.492.258-1.102.07-1.36-.422-.257-.492-.07-1.102.422-1.359 2.012-1.075 3.375-3.176 3.375-5.625 0-2.446-1.371-4.551-3.375-5.625-.441-.204-.676-.692-.551-1.165.122-.468.567-.785 1.051-.742h.094z"></path>
                                                         </svg>
 
-                                                        @php
-                                                         $card_pan = str_split($myCard->card_number, 4);
-                                                        @endphp
-                                                        <div class="card-number">
-                                                            @foreach($card_pan as $key => $value)
-                                                            <div class="section">{{ $value }}</div>
-                                                            @endforeach
-                                                        </div>
+                                                        @if ($myCard->card_number)
+                                                            @php
+                                                                $card_pan = str_split($myCard->card_number, 4);
+                                                            @endphp
+                                                            <div class="card-number">
+                                                                @foreach($card_pan as $key => $value)
+                                                                    <div class="section">{{ $value }}</div>
+                                                                @endforeach
+                                                            </div>
+                                                        @else
+                                                            <div class="card-number">
+                                                                <div class="section">----</div>
+                                                                <div class="section">----</div>
+                                                                <div class="section">----</div>
+                                                                <div class="section">----</div>
+                                                            </div>
+                                                        @endif
                                                         <div class="end">
-                                                            <span class="end-text">{{ __("exp. end:") }}</span> <span class="end-date"> {{ date("m/Y",strtotime($myCard->expiration)) }}</span>
+                                                            <span class="end-text">{{ __("exp. end:") }}</span> <span class="end-date"> {{  $myCard->expiry ?? 'mm/yyyy' }}</span>
                                                         </div>
-                                                        <div class="card-holder"> {{ auth()->user()->fullname }}</div>
+                                                        <div class="card-holder"> {{ $myCard->name_on_card??auth()->user()->fullname }}</div>
                                                     </div>
                                                     <div class="back">
                                                         <div class="strip-black"></div>
                                                         <div class="ccv">
-                                                            <label>{{ __("ccv") }}</label>
-                                                            <div>{{ $myCard->cvv??"***" }}</div>
+                                                            <label>{{ __("Cvv") }}</label>
+                                                            <div>{{$myCard->cvv ?? '---' }}</div>
 
                                                         </div>
                                                         <div class="terms">
@@ -97,11 +108,11 @@
                                     <div class="virtual-card-btn-area text-center pt-20">
                                         <a href="{{ @$myCard != null ? setRoute('user.strowallet.virtual.card.details',$myCard->card_id) : 'javascript:void(0)'  }}" class="btn--base"><i class="fas fa-info-circle me-1"></i>{{ __("Details") }}</a>
                                         @if($myCard->is_default == true )
-                                        <a href="javascript:void(0)" class="btn--base active-deactive-btn" data-id="{{ $myCard->id }}"><i class="fas fa-times-circle me-1"></i>{{ __("Remove Default") }}</a>
+                                        <a href="javascript:void(0)" class="btn--base active-deactive-btn" data-id="{{ $myCard->id }}"><i class="fas fa-times-circle me-1"></i>{{ __("remove Default") }}</a>
                                         @else
-                                        <a href="javascript:void(0)" class="btn--base active-deactive-btn" data-id="{{ $myCard->id }}"><i class="fas fa-check-circle me-1"></i>{{ __("Make Default") }}</a>
+                                        <a href="javascript:void(0)" class="btn--base active-deactive-btn" data-id="{{ $myCard->id }}"><i class="fas fa-check-circle me-1"></i>{{ __("make Default") }}</a>
                                         @endif
-                                        <a href="javascript:void(0)" class="btn--base fundCard" data-id="{{ $myCard->id }}"><i class="fas fa-hand-holding-usd me-1"></i> {{ __("Fund") }}</a>
+                                        <a href="javascript:void(0)" class="btn--base fundCard" data-id="{{ $myCard->id }}"><i class="fas fa-hand-holding-usd me-1"></i> {{ __("fund") }}</a>
                                         <a href="{{ @$myCard != null ? setRoute('user.strowallet.virtual.card.transaction',$myCard->card_id) : 'javascript:void(0)'  }}" class="btn--base"><i class="fas fa-arrows-alt-h me-1"></i>{{ __("Transactions") }}</a>
                                     </div>
                                 </div>
@@ -153,7 +164,7 @@
                                                     <div class="back">
                                                         <div class="strip-black"></div>
                                                         <div class="ccv">
-                                                            <label>{{ __("ccv") }}</label>
+                                                            <label>{{ __("Cvv") }}</label>
                                                             <div>{{ __("***") }}</div>
 
                                                         </div>
@@ -186,7 +197,7 @@
     </div>
     <div class="dashboard-list-area mt-20">
         <div class="dashboard-header-wrapper">
-            <h4 class="title ">{{__("Recent Transaction")}}</h4>
+            <h4 class="title ">{{__("recent Transactions")}}</h4>
             <div class="dashboard-btn-wrapper">
                 <div class="dashboard-btn mb-2">
                     <a href="{{ setRoute('user.transactions.index','virtual-card') }}" class="btn--base">{{__("View More")}}</a>
@@ -250,7 +261,7 @@
                                     <div class="back">
                                         <div class="strip-black"></div>
                                         <div class="ccv">
-                                            <label>{{ __("ccv") }}</label>
+                                            <label>{{ __("Cvv") }}</label>
                                             <div>000</div>
                                         </div>
                                         <div class="terms">
@@ -266,11 +277,19 @@
                     <div class=" mt-20 ">
                         <form class="card-form row" action="{{ route('user.strowallet.virtual.card.create') }}" method="POST">
                             @csrf
+
+                        <div class="col-xl-12 col-lg-12 form-group">
+                            <label>{{__("Card Holder's Name")}}<span>*</span></label>
+                            <div class="input-group">
+                                <input type="text" class="form--control" placeholder="{{ __("Enter Card Holder's Name") }}" name="name_on_card" value="{{ old('name_on_card') }}" required>
+                            </div>
+
+                        </div>
                         <div class="col-xl-12 col-lg-12 form-group">
                             <label>{{ __("Amount") }} <span class="text--danger">*</span></label>
                             <div class="input-group">
                                 <div class="input-group">
-                                    <input type="number" class="form--control" required placeholder="Enter Amount" name="card_amount" value="{{ old("card_amount") }}">
+                                    <input type="text" class="form--control number-input" required placeholder="{{__('enter Amount')}}" name="card_amount" value="{{ old("card_amount") }}">
                                     <select class="form--control nice-select currency" name="currency">
                                         <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                     </select>
@@ -288,76 +307,60 @@
                         @endphp
                          @if ($user->strowallet_customer == null)
                             <div class="col-md-6 col-lg-6 form-group">
-                                <label>{{__("First Name")}}<span>*</span></label>
+                                <label>{{__("first Name")}}<span>*</span></label>
                                 <div class="input-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form--control" placeholder="{{ __("Enter First Name") }}" name="first_name" value="{{ $user->firstname }}">
-
-                                    </div>
+                                    <input type="text" class="form--control" placeholder="{{ __("enter First Name") }}" name="first_name" value="{{ $user->firstname }}" required>
                                 </div>
 
                             </div>
                             <div class="col-md-6 col-lg-6 form-group">
-                                <label>{{__("Last Name")}}<span>*</span></label>
-                                <div class="input-group">
+                                <label>{{__("last Name")}}<span>*</span></label>
                                     <div class="input-group">
-                                        <input type="text" class="form--control" placeholder="{{ __("Enter Last Name") }}" name="last_name" value="{{ $user->lastname }}">
-                                    </div>
+                                    <input type="text" class="form--control" placeholder="{{ __("enter Last Name") }}" name="last_name" value="{{ $user->lastname }}" required>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 col-lg-6 form-group">
+                                <label>{{__("house Number")}}<span>*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form--control" placeholder="{{ __("enter House Number") }}" name="house_number" required>
                                 </div>
 
                             </div>
                             <div class="col-md-6 col-lg-6 form-group">
-                                <label>{{__("House Number")}}<span>*</span></label>
+                                <label>{{__("customer Email")}}<span>*</span></label>
                                 <div class="input-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form--control" placeholder="{{ __("Enter House Number") }}" name="house_number" >
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="col-md-6 col-lg-6 form-group">
-                                <label>{{__("Customer Email")}}<span>*</span></label>
-                                <div class="input-group">
-                                    <div class="input-group">
-                                        <input type="email" class="form--control" placeholder="{{ __("Enter Customer Email") }}" name="customer_email" value="{{ $user->email }}">
-                                    </div>
+                                    <input type="email" class="form--control" placeholder="{{ __("enter Customer Email") }}" name="customer_email" value="{{ $user->email }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-6 form-group">
-                                <label>{{__("Phone Number")}}<span>*</span></label>
+                                <label>{{__("phone Number")}}<span>*</span></label>
                                 <div class="input-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form--control" placeholder="{{ __("Enter Phone Number") }}" name="phone" value="{{ $user->full_mobile }}">
-                                    </div>
+                                    <input type="text" class="form--control" placeholder="{{ __("enter Phone Number") }}" name="phone" value="{{ $user->full_mobile }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-6 form-group">
-                                <label>{{__("Date Of Birth")}}<span>*</span></label>
+                                <label>{{__("date Of Birth")}}<span>*</span></label>
                                 <div class="input-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form--control" placeholder="{{ __("Date of birth in mm/dd/yyyy") }}" name="date_of_birth">
-                                    </div>
+                                    <input type="text" class="form--control" placeholder="{{ __("Date of birth in mm/dd/yyyy") }}" name="date_of_birth" required>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-6 form-group">
-                                <label>{{__("Zip Code")}}<span>*</span></label>
+                                <label>{{__("zip Code")}}<span>*</span></label>
                                 <div class="input-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form--control" placeholder="{{ __("Enter Zip Code") }}" name="zip_code" value="{{ $user->address->zip }}">
-                                    </div>
+                                    <input type="text" class="form--control" placeholder="{{ __("enter Zip Code") }}" name="zip_code" value="{{ $user->address->zip }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-6 form-group">
-                                <label>{{__("Line 1")}}<span>*</span></label>
+                                <label>{{__("line1")}}<span>*</span></label>
                                 <div class="input-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form--control" placeholder="{{ __("Enter Line 1") }}" name="line1" >
-                                    </div>
+                                    <input type="text" class="form--control" placeholder="{{ __("enterLine1") }}" name="line1" required>
                                 </div>
                             </div>
                         @endif
                         <div class="col-xl-12 col-lg-12 form-group">
-                            <button type="submit" class="btn--base w-100 btn-loading buyBtn">{{ __("Buy Card") }} <i class="las la-plus-circle ms-1"></i></button>
+                            <button type="submit" class="btn--base w-100 btn-loading buyBtn">{{ __("buy Card") }} <i class="las la-plus-circle ms-1"></i></button>
                         </div>
                     </form>
                     </div>
@@ -395,7 +398,7 @@
                             <div class="col-xl-12 col-lg-12 form-group">
                                 <label>{{ __("Amount") }} <span class="text--base">*</span></label>
                                 <div class="input-group">
-                                    <input type="number" class="form--control" required placeholder="Enter Amount" name="fund_amount" value="{{ old("fund_amount") }}">
+                                    <input type="text" class="form--control number-input" required placeholder="{{__('enter Amount')}}" name="fund_amount" value="{{ old("fund_amount") }}">
                                     <select class="form--control nice-select currency" name="currency">
                                         <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                     </select>
@@ -442,7 +445,8 @@
         var actionRoute =  "{{ setRoute('user.strowallet.virtual.card.make.default.or.remove') }}";
         var target = $(this).data('id');
         var btnText = $(this).text();
-        var message     = `Are you sure to <strong>${btnText}</strong> this card?`;
+        var sureText = '{{ __("Are you sure to") }}';
+        var message     = `${sureText} <strong>${btnText}</strong>?`;
         openAlertModal(actionRoute,target,message,btnText,"POST");
     });
 </script>
@@ -472,7 +476,7 @@
            if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
                var min_limit_calc = parseFloat(min_limit/currencyRate).toFixed(2);
                var max_limit_clac = parseFloat(max_limit/currencyRate).toFixed(2);
-               $('.limit-show').html("Limit " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
+               $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
 
                return {
                    minLimit:min_limit_calc,
@@ -540,7 +544,7 @@
            if (charges == false) {
                return false;
            }
-           $(".fees-show").html("Fees: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "% = " + parseFloat(charges.total).toFixed(2) + " " + currencyCode);
+           $(".fees-show").html("{{ __('Fees') }}: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "% = " + parseFloat(charges.total).toFixed(2) + " " + currencyCode);
        }
        function getPreview() {
                var senderAmount = $("input[name=card_amount]").val();
@@ -615,7 +619,7 @@
         if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
             var min_limit_calc = parseFloat(min_limit/currencyRate).toFixed(2);
             var max_limit_clac = parseFloat(max_limit/currencyRate).toFixed(2);
-            $('.limit-show').html("Limit " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
+            $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
 
             return {
                 minLimit:min_limit_calc,
@@ -633,10 +637,10 @@
 
         var currencyCode = defualCurrency;
         var currencyRate = defualCurrencyRate;
-        var currencyMinAmount ="{{getAmount($cardCharge->min_limit)}}";
-        var currencyMaxAmount = "{{getAmount($cardCharge->max_limit)}}";
-        var currencyFixedCharge = "{{getAmount($cardCharge->fixed_charge)}}";
-        var currencyPercentCharge = "{{getAmount($cardCharge->percent_charge)}}";
+        var currencyMinAmount ="{{getAmount($cardReloadCharge->min_limit)}}";
+        var currencyMaxAmount = "{{getAmount($cardReloadCharge->max_limit)}}";
+        var currencyFixedCharge = "{{getAmount($cardReloadCharge->fixed_charge)}}";
+        var currencyPercentCharge = "{{getAmount($cardReloadCharge->percent_charge)}}";
 
 
         return {
@@ -683,7 +687,7 @@
         if (charges == false) {
             return false;
         }
-        $(".fees-show").html("Fees: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "% = " + parseFloat(charges.total).toFixed(2) + " " + currencyCode);
+        $(".fees-show").html("{{ __('Fees') }}: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "% = " + parseFloat(charges.total).toFixed(2) + " " + currencyCode);
     }
     function getPreview() {
             var senderAmount = $("input[name=fund_amount]").val();
@@ -715,8 +719,8 @@
 
     }
     function enterLimit(){
-        var min_limit = parseFloat("{{getAmount($cardCharge->min_limit)}}");
-        var max_limit =parseFloat("{{getAmount($cardCharge->max_limit)}}");
+        var min_limit = parseFloat("{{getAmount($cardReloadCharge->min_limit)}}");
+        var max_limit =parseFloat("{{getAmount($cardReloadCharge->max_limit)}}");
         var currencyRate = acceptVar().currencyRate;
         var sender_amount = parseFloat($("input[name=fund_amount]").val());
 

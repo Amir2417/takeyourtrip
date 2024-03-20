@@ -32,9 +32,9 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text copytext">{{ __("Email") }}</span>
+                                <span class="input-group-text copytext"><span>{{ __("Email") }}</span></span>
                             </div>
-                            <input type="email" name="email" class="form--control checkUser email" placeholder="Enter Email" value="{{ old('email') }}">
+                            <input type="email" name="email" class="form--control checkUser email" placeholder="{{ __("enter Email Address") }}" value="{{ old('email') }}">
 
                         </div>
                         <small class="text-danger exits"></small>
@@ -48,11 +48,11 @@
                     </div>
                     @endif
                     <div class="col-lg-12 form-group text-center">
-                        <button type="submit" class="btn--base w-100 btn-loading registerBtn">{{ __("Continue") }}</button>
+                        <button type="submit" class="btn--base w-100 btn-loading registerBtn">{{ __("Continue") }} </button>
                     </div>
                     <div class="col-lg-12 text-center">
                         <div class="account-item">
-                            <label>{{ __("Already Have An Account?") }} <a href="{{ setRoute('user.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
+                            <label>{{ __("already Have An Account") }} <a href="{{ setRoute('user.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
                         </div>
                     </div>
                 </div>

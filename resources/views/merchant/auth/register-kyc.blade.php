@@ -15,8 +15,8 @@
         <div class="account-wrapper kyc">
             <div class="account-logo text-center">
                 <a href="{{ setRoute('index') }}" class="site-logo">
-                    <img src="{{ get_logo($basic_settings) }}"  data-white_img="{{ get_logo($basic_settings,'white') }}"
-                    data-dark_img="{{ get_logo($basic_settings,'dark') }}"
+                    <img src="{{ get_logo_merchant($basic_settings) }}"  data-white_img="{{ get_logo_merchant($basic_settings,'white') }}"
+                    data-dark_img="{{ get_logo_merchant($basic_settings,'dark') }}"
                         alt="site-logo">
                 </a>
             </div>
@@ -28,26 +28,26 @@
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
                             'name'          => "firstname",
-                            'placeholder'   => "First Name",
+                            'placeholder'   => __("first Name"),
                             'value'         => old("firstname"),
                         ])
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
-                                    'name'          => "lastname",
-                                    'placeholder'   => "Last Name",
-                                    'value'         => old("lastname"),
+                            'name'          => "lastname",
+                            'placeholder'   => __("last Name"),
+                            'value'         => old("lastname"),
                         ])
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
-                                    'name'          => "business_name",
-                                    'placeholder'   => "Business Name",
-                                    'value'         => old("business_name"),
+                            'name'          => "business_name",
+                            'placeholder'   => __("business Name"),
+                            'value'         => old("business_name"),
                         ])
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
-                        <select name="country" class="form--control country-select select2-basic" > </select>
+                        <select name="country" class="form--control country-select select2-basic" data-placeholder="{{ __('select Country') }}"> </select>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         <div class="input-group">
@@ -61,51 +61,53 @@
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
                             'name'          => "city",
-                            'placeholder'   => "City ",
+                            'placeholder'   =>__( "city"),
                             'value'         => old("city"),
                         ])
                     </select>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 form-group">
                         @include('admin.components.form.input',[
-                                    'name'          => "zip_code",
-                                    'placeholder'   => "Enter Zip",
-                                    'value'         => old('zip_code')
-                                ])
+                            'name'          => "zip_code",
+                         'placeholder'   =>__( "enter Zip Code"),
+                            'value'         => old('zip_code')
+                        ])
                     </div>
                     <div class="col-xl-8 col-lg-8 form-group">
                         <div class="input-group">
                             <div class="input-group-text phone-code">+</div>
                             <input class="phone-code" type="hidden" name="phone_code" value="" />
-                            <input type="text" class="form--control" placeholder="Enter Phone ..." name="phone" value="">
+                            <input type="text" class="form--control" placeholder="{{ __("enter Phone Number") }}" name="phone" value="">
                         </div>
                     </div>
+                    @if($basic_settings->merchant_kyc_verification)
+                        @include('merchant.components.register-kyc',compact("kyc_fields"))
+                    @endif
 
-                    @include('merchant.components.register-kyc',compact("kyc_fields"))
                     <div class="col-lg-6 col-md-4 form-group show_hide_password" id="">
-                        <input type="password" class="form--control" name="password" placeholder="Password" required>
+                        <input type="password" class="form--control" name="password"placeholder="{{ __('enter Password') }}" required>
                         <a href="javascript:void(0)" class="show-pass"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
 
 
                     </div>
                     <div class="col-lg-6 col-md-4 form-group show_hide_password-2" id="">
-                        <input type="password" class="form--control" name="password_confirmation" placeholder="Confirm Password" required>
+                        <input type="password" class="form--control" name="password_confirmation"placeholder="{{ __('confirm Password') }}" required>
                         <a href="javascript:void(0)" class="show-pass"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
 
                     </div>
-                    @if($basic_settings->agree_policy)
+                    @if($basic_settings->merchant_agree_policy)
                     <div class="col-lg-12 form-group">
                         <div class="custom-check-group">
                             <div class="custom-check-group mb-0">
                                 <input type="checkbox" id="level-1" name="agree">
-                                <label for="level-1" class="mb-0">{{ __("I have read agreed with the") }} <a href=" {{  $policies != null? setRoute('useful.link',$policies->slug):"javascript:void(0)" }}">{{__("Terms Of Use & Privacy Policy")}}</a></label>
+                                <label for="level-1" class="mb-0">{{ __("I have agreed with") }} <a href=" {{  $policies != null? setRoute('useful.link',$policies->slug):"javascript:void(0)" }}">{{__("Terms Of Use & Privacy Policy")}}</a></label>
                             </div>
 
                         </div>
                     </div>
                     @endif
                     <div class="col-lg-12 form-group text-center">
-                        <button type="submit" class="btn--base w-100 btn-loading">Register <i class="fas fa-arrow-alt-circle-right ms-1"></i></button>
+                        <button type="submit" class="btn--base w-100 btn-loading">{{ __("Register") }} <i class="fas fa-arrow-alt-circle-right ms-1"></i></button>
                     </div>
                     <div class="or-area">
                         <span class="or-line"></span>
@@ -114,7 +116,7 @@
                     </div>
                     <div class="col-lg-12 text-center">
                         <div class="account-item">
-                            <label>{{ __("Already Have An Account?") }} <a href="{{ setRoute('merchant.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
+                            <label>{{ __("already Have An Account") }} <a href="{{ setRoute('merchant.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
                         </div>
                     </div>
                 </div>

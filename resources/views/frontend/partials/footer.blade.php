@@ -8,6 +8,7 @@
     $appInfo = App\Models\Admin\SiteSections::getData( $app_slug)->first();
     $type =  Illuminate\Support\Str::slug(App\Constants\GlobalConst::USEFUL_LINKS);
     $policies = App\Models\Admin\SetupPage::orderBy('id')->where('type', $type)->where('status',1)->get();
+    $system_default    = $default_language_code;
 
 @endphp
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -40,10 +41,10 @@
                 </div>
                 <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-6 col-sm-6 mb-30">
                     <div class="footer-widget">
-                        <h4 class="widget-title">{{__("Usefull Links")}}</h4>
+                        <h4 class="widget-title">{{__("Useful LInks")}}</h4>
                         <ul class="footer-list">
                             @foreach ($policies ?? [] as $key=> $data)
-                            <li><a href="{{ setRoute('useful.link',$data->slug) }}">{{ @$data->title->language->$lang->title }}</a></li>
+                            <li><a href="{{ setRoute('useful.link',$data->slug) }}">{{ @$data->title->language->$lang->title??@$data->title->language->$system_default->title }}</a></li>
                             @endforeach
                         </ul>
                     </div>
@@ -66,7 +67,7 @@
                             <form action="{{ setRoute('newsletter.submit') }}" method="POST">
                                 @csrf
                             <li>
-                                <input type="text" name="fullname" placeholder="Name" class="form--control  @error('fullname') is-invalid @enderror">
+                                <input type="text" name="fullname" placeholder="{{ __("name") }}" class="form--control">
                                 <span class="input-icon"><i class="las la-user"></i></span>
                                 @error('fullname')
                                     <span class="invalid-feedback" role="alert">
@@ -75,7 +76,7 @@
                                 @enderror
                             </li>
                             <li>
-                                <input type="email" name="email" placeholder="Email" class="form--control  @error('email') is-invalid @enderror">
+                                <input type="email" name="email" placeholder="{{ __("enter Email Address") }}" class="form--control">
                                 <span class="input-icon"><i class="las la-envelope"></i></span>
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">

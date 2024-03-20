@@ -23,6 +23,8 @@ class SetupEmailSeeder extends Seeder
             "MAIL_ENCRYPTION"   => "ssl",
             "MAIL_FROM_ADDRESS" => "system@appdevs.net",
             "MAIL_FROM_NAME"    => "QRPAY",
+            "APP_NAME"          => "QRPAY",
+            "APP_TIMEZONE"      => "Asia/Dhaka"
         ];
 
         modifyEnv($env_modify_keys);

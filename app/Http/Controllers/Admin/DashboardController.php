@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Pusher\PushNotifications\PushNotifications;
 use App\Models\Admin\AdminNotification;
-use App\Constants\NotificationConst;
 use App\Constants\PaymentGatewayConst;
 use App\Http\Helpers\Response;
 use App\Models\Blog;
@@ -18,7 +17,7 @@ use App\Models\Transaction;
 use App\Models\TransactionCharge;
 use App\Models\User;
 use App\Models\UserSupportTicket;
-use App\Models\VirtualCard;
+
 
 class DashboardController extends Controller
 {
@@ -29,7 +28,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $page_title = "Dashboard";
+        $page_title = __("Dashboard");
         $transactions = Transaction::where('type', PaymentGatewayConst::TYPEADDMONEY)->latest()->take(5)->get();
         $last_month_start =  date('Y-m-01', strtotime('-1 month', strtotime(date('Y-m-d'))));
         $last_month_end =  date('Y-m-31', strtotime('-1 month', strtotime(date('Y-m-d'))));
@@ -86,17 +85,15 @@ class DashboardController extends Controller
          } else {
              $profit_percent = ($this_month_profits / ($this_month_profits + $last_month_profits)) * 100;
          }
-
           //Virtual Cards
-          $total_cards = VirtualCard::toBase()->count();
+        //   $total_cards = VirtualCard::toBase()->count();
+          $get_cards = activeCardData();
+          $total_cards =  $get_cards['virtual_cards'];
 
-          $active_cards =  VirtualCard::toBase()->where('is_active',1)->count();
-          $inactive_cards = VirtualCard::toBase()->where('is_active',0)->count();
-
-          if($inactive_cards == 0){
+          if($get_cards['inactive_cards'] == 0){
               $card_perchant = 0;
           }else{
-             $card_perchant = ($active_cards / ($active_cards + $inactive_cards)) * 100;
+             $card_perchant = ($get_cards['active_cards'] / ($get_cards['active_cards'] + $get_cards['inactive_cards'])) * 100;
           }
            //Remittance
          $total_remittance = Transaction::toBase()->where('type', PaymentGatewayConst::SENDREMITTANCE)->where('status','!=',4)->sum('request_amount');
@@ -157,8 +154,8 @@ class DashboardController extends Controller
                $ticket_perchant = ($active_tickets / ($active_tickets + $pending_tickets)) * 100;
             }
 
-            //charts
-            // Monthly Add Money
+        //charts
+        // Monthly Add Money
         $start = strtotime(date('Y-m-01'));
         $end = strtotime(date('Y-m-31'));
 
@@ -318,8 +315,8 @@ class DashboardController extends Controller
             'profit_percent'    => $profit_percent,
 
             'total_cards'    => $total_cards,
-            'active_cards'      => $active_cards,
-            'inactive_cards' => $inactive_cards,
+            'active_cards'      => $get_cards['active_cards'],
+            'inactive_cards' => $get_cards['inactive_cards'],
             'card_perchant'    => $card_perchant,
 
             'total_remittance'    => $total_remittance,
@@ -407,11 +404,9 @@ class DashboardController extends Controller
      */
     public function notificationsClear() {
         $admin = auth()->user();
-
         if(!$admin) {
             return false;
         }
-
         try{
             $notifications = AdminNotification::auth()->where('clear_at',null)->get();
             foreach( $notifications as $notify){
@@ -420,11 +415,11 @@ class DashboardController extends Controller
 
             }
         }catch(Exception $e) {
-            $error = ['error' => ['Something went worng! Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,404);
         }
 
-        $success = ['success' => ['Notifications clear successfully!']];
+        $success = ['success' => [__("Notifications clear successfully!")]];
         return Response::success($success,null,200);
     }
 }

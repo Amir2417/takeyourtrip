@@ -4,23 +4,31 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Constants\GlobalConst;
+use App\Constants\NotificationConst;
+use App\Constants\PaymentGatewayConst;
 use App\Models\Agent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Helpers\Response;
+use App\Models\Admin\AdminNotification;
 use App\Models\AgentLoginLog;
 use App\Models\AgentMailLog;
+use App\Models\AgentNotification;
+use App\Models\AgentWallet;
+use App\Models\Transaction;
 use Exception;
 use Illuminate\Support\Arr;
 use App\Notifications\User\SendMail;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
 class AgentCareController extends Controller
 {
     public function index()
     {
-        $page_title = "All Agents";
+        $page_title = __("All Agents");
         $agents = Agent::orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.agent-care.index', compact(
             'page_title',
@@ -29,7 +37,7 @@ class AgentCareController extends Controller
     }
     public function active()
     {
-        $page_title = "Active Agent";
+        $page_title = __("Active Agent");
         $agents = Agent::active()->orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.agent-care.index', compact(
             'page_title',
@@ -38,7 +46,7 @@ class AgentCareController extends Controller
     }
     public function banned()
     {
-        $page_title = "Banned Agents";
+        $page_title = __( "Banned Agents");
         $agents = Agent::banned()->orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.agent-care.index', compact(
             'page_title',
@@ -47,23 +55,16 @@ class AgentCareController extends Controller
     }
     public function emailUnverified()
     {
-        $page_title = "Email Unverified Agents";
+        $page_title = __("Email Unverified Agents");
         $agents = Agent::active()->orderBy('id', 'desc')->emailUnverified()->paginate(12);
         return view('admin.sections.agent-care.index', compact(
             'page_title',
             'agents'
         ));
     }
-    public function SmsUnverified()
-    {
-        $page_title = "SMS Unverified Agents";
-        return view('admin.sections.agent-care.index', compact(
-            'page_title',
-        ));
-    }
     public function KycUnverified()
     {
-        $page_title = "KYC Unverified Agents";
+        $page_title = __("KYC Unverified Agents");
         $agents = Agent::kycUnverified()->orderBy('id', 'desc')->paginate(8);
         return view('admin.sections.agent-care.index', compact(
             'page_title',
@@ -72,7 +73,7 @@ class AgentCareController extends Controller
     }
     public function emailAllUsers()
     {
-        $page_title = "Email To Agents";
+        $page_title = __("Email To Agents");
         return view('admin.sections.agent-care.email-to-users', compact(
             'page_title',
         ));
@@ -106,20 +107,31 @@ class AgentCareController extends Controller
         try{
             Notification::send($users,new SendMail((object) $request->all()));
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Email successfully sended']]);
+        return back()->with(['success' => [__("Email successfully sended")]]);
 
     }
     public function userDetails($username)
     {
-        $page_title = "Agent Details";
+        $page_title = __("Agent Details");
         $user = Agent::where('username', $username)->first();
         if(!$user) return back()->with(['error' => ['Opps! Agent not exists']]);
+        $balance = AgentWallet::where('agent_id', $user->id)->first()->balance ?? 0;
+        $add_money_amount = Transaction::where('agent_id', $user->id)->where('type', PaymentGatewayConst::TYPEADDMONEY)->where('status', 1)->sum('request_amount');
+        $money_out_amount = Transaction::where('agent_id', $user->id)->where('type', PaymentGatewayConst::TYPEMONEYOUT)->where('status', 1)->sum('request_amount');
+        $total_transaction = Transaction::where('agent_id', $user->id)->where('status', 1)->sum('request_amount');
+        $data = [
+            'balance'              => $balance,
+            'total_transaction'    => $total_transaction,
+            'add_money_amount'    => $add_money_amount,
+            'money_out_amount'    => $money_out_amount,
+        ];
         return view('admin.sections.agent-care.details', compact(
             'page_title',
             'user',
+            'data'
         ));
     }
     public function userDetailsUpdate(Request $request, $username)
@@ -155,21 +167,21 @@ class AgentCareController extends Controller
 
         $user = Agent::where('username', $username)->first();
 
-        if(!$user) return back()->with(['error' => ['Opps! Agent not exists']]);
+        if(!$user) return back()->with(['error' => [__("Ops! Agent not exists")]]);
 
         try {
             $user->update($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Profile Information Updated Successfully!']]);
+        return back()->with(['success' => [__("Profile Information Updated Successfully!")]]);
     }
     public function kycDetails($username) {
         $user = Agent::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! agent doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Ops! agent doesn't exists")]]);
 
-        $page_title = "KYC Profile";
+        $page_title = __("KYC Profile");
         return view('admin.sections.agent-care.kyc-details',compact("page_title","user"));
     }
 
@@ -181,7 +193,7 @@ class AgentCareController extends Controller
         ]);
         $user = Agent::where('username',$request->target)->orWhere('username',$request->username)->first();
         if($user->kyc_verified == GlobalConst::VERIFIED) return back()->with(['warning' => ['Agent already KYC verified']]);
-        if($user->kyc == null) return back()->with(['error' => ['Agent KYC information not found']]);
+        if($user->kyc == null) return back()->with(['error' => [__("Agent KYC information not found")]]);
 
         try{
             $user->update([
@@ -191,9 +203,9 @@ class AgentCareController extends Controller
             $user->update([
                 'kyc_verified'  => GlobalConst::PENDING,
             ]);
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-        return back()->with(['success' => ['Agent KYC successfully approved']]);
+        return back()->with(['success' => [__("Agent KYC successfully approved")]]);
     }
 
     public function kycReject(Request $request, $username) {
@@ -202,8 +214,8 @@ class AgentCareController extends Controller
             'reason'        => "required|string|max:500"
         ]);
         $user = Agent::where("username",$request->target)->first();
-        if(!$user) return back()->with(['error' => ['Agent doesn\'t exists']]);
-        if($user->kyc == null) return back()->with(['error' => ['Agent KYC information not found']]);
+        if(!$user) return back()->with(['error' => [__("Agent doesn't exists")]]);
+        if($user->kyc == null) return back()->with(['error' => [__("Agent KYC information not found")]]);
 
         try{
             $user->update([
@@ -220,10 +232,10 @@ class AgentCareController extends Controller
                 'reject_reason' => null,
             ]);
 
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Agent KYC information is rejected']]);
+        return back()->with(['success' => [__("Agent KYC information is rejected")]]);
     }
 
     public function search(Request $request) {
@@ -263,14 +275,14 @@ class AgentCareController extends Controller
             AgentMailLog::create($validated);
             $user->notify(new SendMail((object) $validated));
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-        return back()->with(['success' => ['Mail successfully sended']]);
+        return back()->with(['success' => [__("Mail successfully sended")]]);
     }
     public function mailLogs($username) {
         $page_title = "Agent Email Logs";
         $user = Agent::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! Aget doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Ops! Agent doesn't exists")]]);
         $logs = AgentMailLog::where("agent_id",$user->id)->paginate(12);
         return view('admin.sections.agent-care.mail-logs',compact(
             'page_title',
@@ -281,7 +293,7 @@ class AgentCareController extends Controller
     {
         $page_title = "Login Logs";
         $user = Agent::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! Agent doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Ops! Agent doesn't exists")]]);
         $logs = AgentLoginLog::where('agent_id',$user->id)->paginate(12);
         return view('admin.sections.agent-care.login-logs', compact(
             'logs',
@@ -289,7 +301,7 @@ class AgentCareController extends Controller
         ));
     }
     public function loginAsMember(Request $request,$username) {
-        return back()->with(['error' => ["Agent Panel Does Not Added Yet"]]);
+        return back()->with(['error' => [__("Agent (Web) Panel Does Not Added Yet")]]);
         $request->merge(['username' => $username]);
         $request->validate([
             'target'            => 'required|string|exists:agents,username',
@@ -302,6 +314,98 @@ class AgentCareController extends Controller
         }catch(Exception $e) {
             return back()->with(['error' => [$e->getMessage()]]);
         }
-        return redirect()->intended(route('user.dashboard'));
+        return redirect()->intended(route('agent.dashboard'));
+    }
+    public function walletBalanceUpdate(Request $request,$username) {
+        $validator = Validator::make($request->all(),[
+            'type'      => "required|string|in:add,subtract",
+            'wallet'    => "required|numeric|exists:agent_wallets,id",
+            'amount'    => "required|numeric",
+            'remark'    => "required|string|max:200",
+        ]);
+
+        if($validator->fails()) {
+            return back()->withErrors($validator)->withInput()->with('modal','wallet-balance-update-modal');
+        }
+
+        $validated = $validator->validate();
+        $user_wallet = AgentWallet::whereHas('agent',function($q) use ($username){
+            $q->where('username',$username);
+        })->find($validated['wallet']);
+        if(!$user_wallet) return back()->with(['error' => [__("Agent wallet not found!")]]);
+
+        DB::beginTransaction();
+        try{
+
+            $user_wallet_balance = 0;
+            switch($validated['type']){
+                case "add":
+                    $type = "Added";
+                    $user_wallet_balance = $user_wallet->balance + $validated['amount'];
+                    $user_wallet->balance += $validated['amount'];
+                    break;
+
+                case "subtract":
+                    $type = "Subtracted";
+                    if($user_wallet->balance >= $validated['amount']) {
+                        $user_wallet_balance = $user_wallet->balance - $validated['amount'];
+                        $user_wallet->balance -= $validated['amount'];
+                    }else {
+                        return back()->with(['error' => [__("Agent do not have sufficient balance")]]);
+                    }
+                    break;
+            }
+
+            $inserted_id = DB::table("transactions")->insertGetId([
+                'admin_id'          => auth()->user()->id,
+                'agent_id'           => $user_wallet->agent->id,
+                'agent_wallet_id'    => $user_wallet->id,
+                'type'              => PaymentGatewayConst::TYPEADDSUBTRACTBALANCE,
+                'attribute'         => PaymentGatewayConst::RECEIVED,
+                'trx_id'            => generate_unique_string("transactions","trx_id",16),
+                'request_amount'    => $validated['amount'],
+                'payable'           => $validated['amount'],
+                'available_balance' => $user_wallet_balance,
+                'remark'            => $validated['remark'],
+                'status'            => GlobalConst::SUCCESS,
+                'created_at'                    => now(),
+            ]);
+
+
+            DB::table('transaction_charges')->insert([
+                'transaction_id'    => $inserted_id,
+                'percent_charge'    => 0,
+                'fixed_charge'      => 0,
+                'total_charge'      => 0,
+                'created_at'        => now(),
+            ]);
+            $user_wallet->save();
+
+            $notification_content = [
+                'title'         => __("Update Balance"),
+                'message'       => "Your Wallet (".$user_wallet->currency->code.") Balance Has Been ". $type??"",
+                'time'          => Carbon::now()->diffForHumans(),
+                'image'         => files_asset_path('profile-default'),
+            ];
+            AgentNotification::create([
+                'type'      => NotificationConst::BALANCE_UPDATE,
+                'agent_id'  => $user_wallet->agent->id,
+                'message'   => $notification_content,
+            ]);
+
+            //admin notification
+             $notification_content['title'] = $user_wallet->agent->username."'s  Wallet (".$user_wallet->currency->code.") Balance Has Been ". $type??"";
+            AdminNotification::create([
+                'type'      => NotificationConst::BALANCE_UPDATE,
+                'admin_id'  => 1,
+                'message'   => $notification_content,
+            ]);
+            DB::commit();
+        }catch(Exception $e) {
+            DB::rollBack();
+            return back()->with(['error' => [__("Transaction Failed!")]]);
+        }
+
+        return back()->with(['success' => [__("Transaction success")]]);
     }
 }

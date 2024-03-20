@@ -50,10 +50,25 @@
                                 <div class="preview-list-left">
                                     <div class="preview-list-user-wrapper">
                                         <div class="preview-list-user-icon">
+                                            <i class="las la-hourglass-end"></i>
+                                        </div>
+                                        <div class="preview-list-user-content">
+                                            <span>{{ __("Card Brand") }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="preview-list-right">
+                                    <span class="text--warning">{{ __((ucwords(@$myCard->card_brand??"Visa"))) }}</span>
+                                </div>
+                            </div>
+                            <div class="preview-list-item">
+                                <div class="preview-list-left">
+                                    <div class="preview-list-user-wrapper">
+                                        <div class="preview-list-user-icon">
                                             <i class="las la-credit-card"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Card Id") }}</span>
+                                            <span>{{ __("cardI d") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -68,7 +83,7 @@
                                             <i class="las la-hourglass-end "></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Customer Id") }}</span>
+                                            <span>{{ __("customer Id") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -83,7 +98,7 @@
                                             <i class="las la-user-tag"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Card Number") }}</span>
+                                            <span>{{ __("card Number") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -118,7 +133,7 @@
                                             <i class="las la-business-time"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{__("Expiration")}}</span>
+                                            <span>{{__("expiration")}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +150,7 @@
                                             <i class="las la-city"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("City") }}</span>
+                                            <span>{{ __("city") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -150,7 +165,7 @@
                                             <i class="las la-city"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("State") }}</span>
+                                            <span>{{ __("state") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -166,7 +181,7 @@
                                             <i class="las la-file-archive"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{__("Zip Code")}}</span>
+                                            <span>{{__("zip Code")}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -181,7 +196,7 @@
                                             <i class="las la-battery-half"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Status") }}</span>
+                                            <span>{{__("Status") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -192,7 +207,7 @@
 
                                             'name'          => 'is_active',
                                             'value'         => old('is_active',@$myCard->is_active ),
-                                            'options'       => ['UnFreeze ' => 1,'Freeze' => 0],
+                                            'options'       => [__('UnFreeze') => 1,__('Freeze') => 0],
                                             'onload'        => true,
                                             'data_target'   => @$myCard->id,
                                         ])

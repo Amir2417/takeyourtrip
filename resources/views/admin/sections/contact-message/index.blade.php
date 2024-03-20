@@ -35,7 +35,7 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('name') }}</th>
                             <th>{{ __('Subject') }}</th>
                             <th>{{ __('Email') }}</th>
                             <th>{{ __('Phone') }}</th>
@@ -82,7 +82,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header p-3" id="contactMessageModalLabel">
-                    <h5 class="modal-title">Message</h5>
+                    <h5 class="modal-title">{{ __("Message") }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-0">
@@ -106,7 +106,7 @@
                     <div class="row mb-10-none">
                         <div class="col-xl-12 col-lg-12 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Subject*',
+                                'label'         => __("Subject")."*",
                                 'name'          => 'subject',
                                 'value'         => old('subject'),
                                 'placeholder'   => "Write Here...",
@@ -114,7 +114,7 @@
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group">
                             @include('admin.components.form.input-text-rich',[
-                                'label'         => 'Details*',
+                                 'label'         => __("Details")."*",
                                 'name'          => 'message',
                                 'value'         => old('message'),
                                 'placeholder'   => "Write Here...",
@@ -124,7 +124,7 @@
                             @include('admin.components.button.form-btn',[
                                 'class'         => "w-100 btn-loading",
                                 'permission'    => "admin.users.email.users.send",
-                                'text'          => "Send Email",
+                                'text'          => __("Send Email"),
                             ])
                         </div>
                     </div>

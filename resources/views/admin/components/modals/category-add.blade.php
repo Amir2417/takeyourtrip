@@ -8,10 +8,10 @@
                 <form class="modal-form" method="POST" action="{{ setRoute('admin.setup.sections.category.store') }}">
                     @csrf
                     <div class="row mb-10-none">
-                       
+
                         <div class="col-xl-12 col-lg-12 form-group mt-2">
                             @include('admin.components.form.input',[
-                                'label'         => "Category Name*",
+                               'label'         => __("Category Name")."*",
                                 'name'          => "name",
                                 'value'         => old("name"),
                             ])

@@ -219,7 +219,7 @@ class SetupSectionsController extends Controller
 
 //=======================================Auth section Start =======================================
     public function authView($slug) {
-        $page_title = "Auth Section";
+        $page_title = __("Auth Section");
         $section_slug = Str::slug(SiteSectionConst::AUTH_SECTION);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -245,15 +245,15 @@ class SetupSectionsController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
 
 //=======================================Auth section End ==========================================
 //=======================================App section Start =======================================
     public function appView($slug) {
-        $page_title = "App Section";
+        $page_title = __("App Section");
         $section_slug = Str::slug(SiteSectionConst::APP_SECTION);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -286,15 +286,15 @@ class SetupSectionsController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
 //=======================================App section End ==========================================
 //=======================================Merchant App section Start =======================================
     public function merchantAppView($slug) {
-        $page_title = "Merchant App Section";
+        $page_title = __("Merchant App Section");
         $section_slug = Str::slug(SiteSectionConst::MERCHANT_APP_SECTION);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -336,15 +336,15 @@ class SetupSectionsController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
 //=======================================Merchant App section End ==========================================
 //=======================================Banner section Start =====================================
     public function bannerView($slug) {
-        $page_title = "Banner Section";
+        $page_title = __("Banner Section");
         $section_slug = Str::slug(SiteSectionConst::BANNER_SECTION);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -373,15 +373,15 @@ class SetupSectionsController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
 //=======================================Banner section End ==========================================
 //=======================================merchant section Start =====================================
     public function merchantView($slug) {
-        $page_title = "Merchant Section";
+        $page_title = __("Merchant Section");
         $section_slug = Str::slug(SiteSectionConst::MERCHANT_SECTION);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -419,10 +419,10 @@ class SetupSectionsController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
     public function merchantItemStore(Request $request,$slug) {
         $basic_field_name = [
@@ -452,10 +452,10 @@ class SetupSectionsController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section item added successfully!']]);
+        return back()->with(['success' => [__("Section item added successfully")]]);
     }
     public function merchantItemUpdate(Request $request,$slug) {
         $request->validate([
@@ -470,10 +470,10 @@ class SetupSectionsController extends Controller
 
         $slug = Str::slug(SiteSectionConst::MERCHANT_SECTION);
         $section = SiteSections::getData($slug)->first();
-        if(!$section) return back()->with(['error' => ['Section not found!']]);
+        if(!$section) return back()->with(['error' => [__("Section not found!")]]);
         $section_values = json_decode(json_encode($section->value),true);
-        if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+        if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
         $language_wise_data = $this->contentValidate($request,$basic_field_name,"merchant-edit");
@@ -489,10 +489,10 @@ class SetupSectionsController extends Controller
                 'value' => $section_values,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Information updated successfully!']]);
+        return back()->with(['success' => [__("Information updated successfully!")]]);
     }
     public function merchantItemDelete(Request $request,$slug) {
         $request->validate([
@@ -500,10 +500,10 @@ class SetupSectionsController extends Controller
         ]);
         $slug = Str::slug(SiteSectionConst::MERCHANT_SECTION);
         $section = SiteSections::getData($slug)->first();
-        if(!$section) return back()->with(['error' => ['Section not found!']]);
+        if(!$section) return back()->with(['error' => [__("Section not found!")]]);
         $section_values = json_decode(json_encode($section->value),true);
-        if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+        if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
         try{
             unset($section_values['items'][$request->target]);
             $section->update([
@@ -513,12 +513,12 @@ class SetupSectionsController extends Controller
             return  $e->getMessage();
         }
 
-        return back()->with(['success' => ['Section item delete successfully!']]);
+        return back()->with(['success' => [__("Section item delete successfully!")]]);
     }
 //=======================================merchant section End ==========================================
 //=======================================developer introduction section Start =====================================
     public function developerIntroView($slug) {
-        $page_title = "Developer Introduction";
+        $page_title = __("Developer Introduction");
         $section_slug = Str::slug(SiteSectionConst::DEVELOPER_INTRO);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -556,15 +556,15 @@ class SetupSectionsController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
 //=======================================developer introduction section End ==========================================
 //=======================================overview section Start =====================================
     public function overviewView($slug) {
-        $page_title = "Overview Section";
+        $page_title = __("Overview Section");
         $section_slug = Str::slug(SiteSectionConst::OVERVIEW_SECTION);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -600,16 +600,16 @@ class SetupSectionsController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
 
 //=======================================overview section End ==========================================
 //=======================================Banner Floting section Start ================================
 public function bannerFlotingView($slug) {
-    $page_title = "Banner Floating Section";
+    $page_title = __("Banner Floating Section");
     $section_slug = Str::slug(SiteSectionConst::BANNER_FLOTING);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -644,10 +644,10 @@ public function bannerFlotingUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 public function bannerFlotingItemStore(Request $request,$slug) {
     $basic_field_name = [
@@ -675,10 +675,10 @@ public function bannerFlotingItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section item added successfully!']]);
+    return back()->with(['success' => [__("Section item added successfully")]]);
 }
 public function bannerFlotingItemUpdate(Request $request,$slug) {
     $request->validate([
@@ -691,10 +691,10 @@ public function bannerFlotingItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::BANNER_FLOTING);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
     $language_wise_data = $this->contentValidate($request,$basic_field_name,"floting-edit");
@@ -710,10 +710,10 @@ public function bannerFlotingItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
  public function bannerFlotingItemDelete(Request $request,$slug) {
         $request->validate([
@@ -721,10 +721,10 @@ public function bannerFlotingItemUpdate(Request $request,$slug) {
         ]);
         $slug = Str::slug(SiteSectionConst::BANNER_FLOTING);
         $section = SiteSections::getData($slug)->first();
-        if(!$section) return back()->with(['error' => ['Section not found!']]);
+        if(!$section) return back()->with(['error' => [__("Section not found!")]]);
         $section_values = json_decode(json_encode($section->value),true);
-        if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+        if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
         try{
             unset($section_values['items'][$request->target]);
             $section->update([
@@ -734,12 +734,12 @@ public function bannerFlotingItemUpdate(Request $request,$slug) {
             return  $e->getMessage();
         }
 
-        return back()->with(['success' => ['Section item delete successfully!']]);
+        return back()->with(['success' => [__("Section item delete successfully!")]]);
 }
 //=======================================Banner Floting section End =======================================
 //=======================================About section Start ==============================================
 public function aboutView($slug) {
-    $page_title = "About Section";
+    $page_title = __("About Section");
     $section_slug = Str::slug(SiteSectionConst::ABOUT_SECTION);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -759,7 +759,6 @@ public function aboutUpdate(Request $request,$slug) {
         'details' => "required|string",
 
     ];
-
     $slug = Str::slug(SiteSectionConst::ABOUT_SECTION);
     $section = SiteSections::where("key",$slug)->first();
     if($section != null) {
@@ -779,10 +778,10 @@ public function aboutUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 
 public function aboutItemStore(Request $request,$slug) {
@@ -813,10 +812,10 @@ public function aboutItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['About item added successfully!']]);
+    return back()->with(['success' => [__("Section item added successfully")]]);
 }
 
 
@@ -833,10 +832,10 @@ public function aboutItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::ABOUT_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
     $language_wise_data = $this->contentValidate($request,$basic_field_name,"about-edit");
@@ -852,10 +851,10 @@ public function aboutItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
 
 public function aboutItemDelete(Request $request,$slug) {
@@ -864,10 +863,10 @@ public function aboutItemDelete(Request $request,$slug) {
     ]);
     $slug = Str::slug(SiteSectionConst::ABOUT_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
     try{
         unset($section_values['items'][$request->target]);
         $section->update([
@@ -877,12 +876,12 @@ public function aboutItemDelete(Request $request,$slug) {
         return  $e->getMessage();
     }
 
-    return back()->with(['success' => ['About item delete successfully!']]);
+    return back()->with(['success' => [__("Section item delete successfully!")]]);
 }
 //=======================About  Section End===================================
 //=======================Work section Start ==================================
 public function workView($slug) {
-    $page_title = "Works Section";
+    $page_title = __("Works Section");
     $section_slug = Str::slug(SiteSectionConst::WORK_SECTION);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -919,10 +918,10 @@ public function workUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 
 public function workItemStore(Request $request,$slug) {
@@ -952,10 +951,10 @@ public function workItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Item added successfully!']]);
+    return back()->with(['success' => [__("Item added successfully!")]]);
 }
 
 
@@ -971,10 +970,10 @@ public function workItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::WORK_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
     $language_wise_data = $this->contentValidate($request,$basic_field_name,"work-edit");
@@ -990,10 +989,10 @@ public function workItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
 
 public function workItemDelete(Request $request,$slug) {
@@ -1002,10 +1001,10 @@ public function workItemDelete(Request $request,$slug) {
     ]);
     $slug = Str::slug(SiteSectionConst::WORK_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
     try{
         unset($section_values['items'][$request->target]);
         $section->update([
@@ -1015,13 +1014,13 @@ public function workItemDelete(Request $request,$slug) {
         return  $e->getMessage();
     }
 
-    return back()->with(['success' => ['Item delete successfully!']]);
+    return back()->with(['success' => [__("Section item delete successfully!")]]);
 }
 //=======================Work  Section End===================================
 
 //======================Security section Start ===============================
 public function securityView($slug) {
-    $page_title = "Security Section";
+    $page_title = __("Security Section");
     $section_slug = Str::slug(SiteSectionConst::SECURITY_SECTION);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -1058,10 +1057,10 @@ public function securityUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 
 public function securityItemStore(Request $request,$slug) {
@@ -1092,10 +1091,10 @@ public function securityItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Security item added successfully!']]);
+    return back()->with(['success' => [__("Section item added successfully")]]);
 }
 
 
@@ -1112,10 +1111,10 @@ public function securityItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::SECURITY_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
     $language_wise_data = $this->contentValidate($request,$basic_field_name,"service-edit");
@@ -1131,10 +1130,10 @@ public function securityItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
 
 public function securityItemDelete(Request $request,$slug) {
@@ -1143,10 +1142,10 @@ public function securityItemDelete(Request $request,$slug) {
     ]);
     $slug = Str::slug(SiteSectionConst::SECURITY_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
     try{
         unset($section_values['items'][$request->target]);
         $section->update([
@@ -1156,12 +1155,12 @@ public function securityItemDelete(Request $request,$slug) {
         return  $e->getMessage();
     }
 
-    return back()->with(['success' => ['Security item delete successfully!']]);
+    return back()->with(['success' => [__("Section item delete successfully!")]]);
 }
 //=======================Security  Section End===================================
 //======================Service section Start ===============================
 public function chooseView($slug) {
-    $page_title = "Why Choose Us Section";
+    $page_title = __("Why Choose Us Section");
     $section_slug = Str::slug(SiteSectionConst::CHOOSE_SECTION);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -1198,10 +1197,10 @@ public function chooseUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 
 public function chooseItemStore(Request $request,$slug) {
@@ -1232,10 +1231,10 @@ public function chooseItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section item added successfully!']]);
+    return back()->with(['success' => [__("Section item added successfully")]]);
 }
 
 
@@ -1252,10 +1251,10 @@ public function chooseItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::CHOOSE_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
     $language_wise_data = $this->contentValidate($request,$basic_field_name,"choose-edit");
@@ -1271,10 +1270,10 @@ public function chooseItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
 
 public function chooseItemDelete(Request $request,$slug) {
@@ -1283,10 +1282,10 @@ public function chooseItemDelete(Request $request,$slug) {
     ]);
     $slug = Str::slug(SiteSectionConst::CHOOSE_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
     try{
         unset($section_values['items'][$request->target]);
         $section->update([
@@ -1296,12 +1295,12 @@ public function chooseItemDelete(Request $request,$slug) {
         return  $e->getMessage();
     }
 
-    return back()->with(['success' => ['Section item delete successfully!']]);
+    return back()->with(['success' => [__("Section item delete successfully!")]]);
 }
 //=======================Choose us  Section End===================================
 //======================Service section Start ===============================
 public function serviceView($slug) {
-    $page_title = "Service Section";
+    $page_title = __("Service Section");
     $section_slug = Str::slug(SiteSectionConst::SERVICE_SECTION);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -1338,10 +1337,10 @@ public function serviceUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 
 public function serviceItemStore(Request $request,$slug) {
@@ -1372,10 +1371,10 @@ public function serviceItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Service item added successfully!']]);
+    return back()->with(['success' => [__("Section item added successfully")]]);
 }
 
 
@@ -1392,10 +1391,10 @@ public function serviceItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::SERVICE_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
     $language_wise_data = $this->contentValidate($request,$basic_field_name,"service-edit");
@@ -1411,10 +1410,10 @@ public function serviceItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
 
 public function serviceItemDelete(Request $request,$slug) {
@@ -1423,10 +1422,10 @@ public function serviceItemDelete(Request $request,$slug) {
     ]);
     $slug = Str::slug(SiteSectionConst::SERVICE_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
     try{
         unset($section_values['items'][$request->target]);
         $section->update([
@@ -1436,12 +1435,13 @@ public function serviceItemDelete(Request $request,$slug) {
         return  $e->getMessage();
     }
 
-    return back()->with(['success' => ['Service item delete successfully!']]);
+    return back()->with(['success' => [__("Section item delete successfully!")]]);
+
 }
 //=======================Service  Section End===================================
 //======================Faq section Start =================================
     public function faqView($slug) {
-        $page_title = "FAQ Section";
+        $page_title = __("FAQ Section");
         $section_slug = Str::slug(SiteSectionConst::FAQ_SECTION);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -1477,10 +1477,10 @@ public function serviceItemDelete(Request $request,$slug) {
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
     public function faqItemStore(Request $request,$slug) {
         $basic_field_name = [
@@ -1510,10 +1510,10 @@ public function serviceItemDelete(Request $request,$slug) {
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Item added successfully!']]);
+        return back()->with(['success' => [__("Item added successfully!")]]);
     }
     public function faqItemUpdate(Request $request,$slug) {
         $request->validate([
@@ -1527,10 +1527,10 @@ public function serviceItemDelete(Request $request,$slug) {
 
         $slug = Str::slug(SiteSectionConst::FAQ_SECTION);
         $section = SiteSections::getData($slug)->first();
-        if(!$section) return back()->with(['error' => ['Section not found!']]);
+        if(!$section) return back()->with(['error' => [__("Section not found!")]]);
         $section_values = json_decode(json_encode($section->value),true);
-        if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+        if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
         $language_wise_data = $this->contentValidate($request,$basic_field_name,"faq-edit");
@@ -1546,10 +1546,10 @@ public function serviceItemDelete(Request $request,$slug) {
                 'value' => $section_values,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Information updated successfully!']]);
+        return back()->with(['success' => [__("Information updated successfully!")]]);
     }
     public function faqItemDelete(Request $request,$slug) {
         $request->validate([
@@ -1557,10 +1557,10 @@ public function serviceItemDelete(Request $request,$slug) {
         ]);
         $slug = Str::slug(SiteSectionConst::FAQ_SECTION);
         $section = SiteSections::getData($slug)->first();
-        if(!$section) return back()->with(['error' => ['Section not found!']]);
+        if(!$section) return back()->with(['error' => [__("Section not found!")]]);
         $section_values = json_decode(json_encode($section->value),true);
-        if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+        if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
         try{
             unset($section_values['items'][$request->target]);
             $section->update([
@@ -1570,12 +1570,12 @@ public function serviceItemDelete(Request $request,$slug) {
             return  $e->getMessage();
         }
 
-        return back()->with(['success' => ['Item delete successfully!']]);
+        return back()->with(['success' => [__("Item delete successfully!")]]);
     }
 //=======================Faq  Section End===================================
 //======================Developer Faq section Start =================================
     public function developerFaqView($slug) {
-        $page_title = "Developer FAQ Section";
+        $page_title = __("Developer FAQ Section");
         $section_slug = Str::slug(SiteSectionConst::DEVELOPER_FAQ_SECTION);
         $data = SiteSections::getData($section_slug)->first();
         $languages = $this->languages;
@@ -1608,10 +1608,10 @@ public function serviceItemDelete(Request $request,$slug) {
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Section updated successfully!']]);
+        return back()->with(['success' => [__("Section updated successfully!")]]);
     }
     public function developerFaqItemStore(Request $request,$slug) {
         $basic_field_name = [
@@ -1639,10 +1639,10 @@ public function serviceItemDelete(Request $request,$slug) {
         try{
             SiteSections::updateOrCreate(['key' => $slug],$update_data);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Item added successfully!']]);
+        return back()->with(['success' => [__("Item added successfully!")]]);
     }
     public function developerFaqItemUpdate(Request $request,$slug) {
         $request->validate([
@@ -1656,10 +1656,10 @@ public function serviceItemDelete(Request $request,$slug) {
 
         $slug = Str::slug(SiteSectionConst::DEVELOPER_FAQ_SECTION);
         $section = SiteSections::getData($slug)->first();
-        if(!$section) return back()->with(['error' => ['Section not found!']]);
+        if(!$section) return back()->with(['error' => [__("Section not found!")]]);
         $section_values = json_decode(json_encode($section->value),true);
-        if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+        if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
 
         $language_wise_data = $this->contentValidate($request,$basic_field_name,"faq-edit");
@@ -1675,10 +1675,10 @@ public function serviceItemDelete(Request $request,$slug) {
                 'value' => $section_values,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Information updated successfully!']]);
+        return back()->with(['success' => [__("Information updated successfully!")]]);
     }
     public function developerFaqItemDelete(Request $request,$slug) {
         $request->validate([
@@ -1686,10 +1686,10 @@ public function serviceItemDelete(Request $request,$slug) {
         ]);
         $slug = Str::slug(SiteSectionConst::DEVELOPER_FAQ_SECTION);
         $section = SiteSections::getData($slug)->first();
-        if(!$section) return back()->with(['error' => ['Section not found!']]);
+        if(!$section) return back()->with(['error' => [__("Section not found!")]]);
         $section_values = json_decode(json_encode($section->value),true);
-        if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+        if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+        if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
         try{
             unset($section_values['items'][$request->target]);
             $section->update([
@@ -1699,13 +1699,13 @@ public function serviceItemDelete(Request $request,$slug) {
             return  $e->getMessage();
         }
 
-        return back()->with(['success' => ['Item delete successfully!']]);
+        return back()->with(['success' => [__("Item delete successfully!")]]);
     }
 //=======================Developer Faq  Section End===================================
 //=======================testimonial Section End===============================
 
  public function brandView($slug) {
-    $page_title = "Brand Section";
+    $page_title =__("Brand Section");
     $section_slug = Str::slug(SiteSectionConst::BRAND_SECTION);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -1737,10 +1737,10 @@ public function brandUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 public function brandItemStore(Request $request,$slug) {
     $basic_field_name = [
@@ -1773,10 +1773,10 @@ public function brandItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section item added successfully!']]);
+    return back()->with(['success' => [__("Section item added successfully")]]);
 }
 public function brandItemUpdate(Request $request,$slug) {
 
@@ -1786,10 +1786,10 @@ public function brandItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::BRAND_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
     $request->merge(['old_image' => $section_values['items'][$request->target]['image'] ?? null]);
 
     if($request->hasFile("image")) {
@@ -1801,10 +1801,10 @@ public function brandItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
 
 public function brandItemDelete(Request $request,$slug) {
@@ -1813,10 +1813,10 @@ public function brandItemDelete(Request $request,$slug) {
     ]);
     $slug = Str::slug(SiteSectionConst::BRAND_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
     try{
         $image_link = get_files_path('site-section') . '/' . $section_values['items'][$request->target]['image'];
@@ -1826,16 +1826,16 @@ public function brandItemDelete(Request $request,$slug) {
             'value'     => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section item delete successfully!']]);
+    return back()->with(['success' => [__("Section item delete successfully!")]]);
 }
 //=======================testimonial Section End===========================
  //=======================testimonial Section End===============================
 
  public function testimonialView($slug) {
-    $page_title = "Testimonial Section";
+    $page_title = __("Testimonial Section");
     $section_slug = Str::slug(SiteSectionConst::TESTIMONIAL_SECTION);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -1869,10 +1869,10 @@ public function testimonialUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 public function testimonialItemStore(Request $request,$slug) {
     $basic_field_name = [
@@ -1909,10 +1909,10 @@ public function testimonialItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section item added successfully!']]);
+    return back()->with(['success' => [__("Section item added successfully")]]);
 }
 public function testimonialItemUpdate(Request $request,$slug) {
 
@@ -1930,10 +1930,10 @@ public function testimonialItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::TESTIMONIAL_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
     $request->merge(['old_image' => $section_values['items'][$request->target]['image'] ?? null]);
 
@@ -1955,10 +1955,10 @@ public function testimonialItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
 
 public function testimonialItemDelete(Request $request,$slug) {
@@ -1967,10 +1967,10 @@ public function testimonialItemDelete(Request $request,$slug) {
     ]);
     $slug = Str::slug(SiteSectionConst::TESTIMONIAL_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
     try{
         $image_link = get_files_path('site-section') . '/' . $section_values['items'][$request->target]['image'];
@@ -1980,10 +1980,10 @@ public function testimonialItemDelete(Request $request,$slug) {
             'value'     => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section item delete successfully!']]);
+    return back()->with(['success' => [__("Section item delete successfully!")]]);
 }
 //=======================testimonial Section End===========================
 //=======================contact Section End===============================
@@ -2019,16 +2019,16 @@ public function contactUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 //=======================contact Section End===============================
 //=======================footer Section End===============================
 
 public function  footerView($slug) {
-    $page_title = "Footer Section";
+    $page_title = __("Footer Section");
     $section_slug = Str::slug(SiteSectionConst::FOOTER_SECTION);
     $data = SiteSections::getData($section_slug)->first();
 
@@ -2068,10 +2068,10 @@ public function  footerUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 public function  footerItemStore(Request $request,$slug) {
     $basic_field_name = [
@@ -2102,10 +2102,10 @@ public function  footerItemStore(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section item added successfully!']]);
+    return back()->with(['success' => [__("Section item added successfully")]]);
 }
 public function  footerItemUpdate(Request $request,$slug) {
 
@@ -2121,10 +2121,10 @@ public function  footerItemUpdate(Request $request,$slug) {
 
     $slug = Str::slug(SiteSectionConst::FOOTER_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
     $language_wise_data = $this->contentValidate($request,$basic_field_name,"icon-edit");
     if($language_wise_data instanceof RedirectResponse) return $language_wise_data;
@@ -2139,10 +2139,10 @@ public function  footerItemUpdate(Request $request,$slug) {
             'value' => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Information updated successfully!']]);
+    return back()->with(['success' => [__("Information updated successfully!")]]);
 }
 
 public function footerItemDelete(Request $request,$slug) {
@@ -2151,10 +2151,10 @@ public function footerItemDelete(Request $request,$slug) {
     ]);
     $slug = Str::slug(SiteSectionConst::FOOTER_SECTION);
     $section = SiteSections::getData($slug)->first();
-    if(!$section) return back()->with(['error' => ['Section not found!']]);
+    if(!$section) return back()->with(['error' => [__("Section not found!")]]);
     $section_values = json_decode(json_encode($section->value),true);
-    if(!isset($section_values['items'])) return back()->with(['error' => ['Section item not found!']]);
-    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['Section item is invalid!']]);
+    if(!isset($section_values['items'])) return back()->with(['error' => [__("Section item not found!")]]);
+    if(!array_key_exists($request->target,$section_values['items'])) return back()->with(['error' => ['__("Section item is invalid!")']]);
 
     try{
         unset($section_values['items'][$request->target]);
@@ -2162,75 +2162,79 @@ public function footerItemDelete(Request $request,$slug) {
             'value'     => $section_values,
         ]);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section item delete successfully!']]);
+    return back()->with(['success' => [__("Section item delete successfully!")]]);
 }
 
 //=======================footer Section End==============================
 //=======================Category  Section Start=======================
 public function categoryView(){
-    $page_title = "Setup Blog Category";
+    $page_title = __("Setup Blog Category");
     $allCategory = BlogCategory::orderByDesc('id')->paginate(10);
+    $languages = Language::get();
     return view('admin.sections.blog-category.index',compact(
         'page_title',
         'allCategory',
+        'languages'
     ));
 }
 public function storeCategory(Request $request){
+    $basic_field_name = [
+        'name'          => "required|string|max:150",
+    ];
 
-    $validator = Validator::make($request->all(),[
-        'name'      => 'required|string|max:200|unique:blog_categories,name',
-    ]);
-    if($validator->fails()) {
-        return back()->withErrors($validator)->withInput()->with('modal','category-add');
-    }
-    $validated = $validator->validate();
-    $slugData = Str::slug($request->name);
-    $makeUnique = BlogCategory::where('slug',  $slugData)->first();
-    if($makeUnique){
-        return back()->with(['error' => [ $request->name.' '.'Category Already Exists!']]);
-    }
-    $admin = Auth::user();
-
-    $validated['admin_id']      = $admin->id;
-    $validated['name']          = $request->name;
-    $validated['slug']          = $slugData;
+    $data['language']  = $this->contentValidate($request,$basic_field_name);
+    $slugData = Str::slug($data['language']['en']['name']);
     try{
-        BlogCategory::create($validated);
-        return back()->with(['success' => ['Category Saved Successfully!']]);
+        $admin = Auth::user();
+        BlogCategory::create([
+            'admin_id'      => $admin->id,
+            'name'          => $data['language']['en']['name'],
+            'data'          => $data,
+            'slug'          => $slugData,
+            'created_at'    => now(),
+            'status'        => true,
+        ]);
     }catch(Exception $e) {
-        return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
+
+    return back()->with(['success' => [__("Category Saved Successfully!")]]);
 }
 public function categoryUpdate(Request $request){
-    $target = $request->target;
-    $category = BlogCategory::where('id',$target)->first();
-    $validator = Validator::make($request->all(),[
-        'name'      => 'required|string|max:200',
+    $validated = $request->validate([
+        'target'    => "required|numeric|exists:blog_categories,id",
     ]);
-    if($validator->fails()) {
-        return back()->withErrors($validator)->withInput()->with('modal','edit-category');
-    }
-    $validated = $validator->validate();
 
-    $slugData = Str::slug($request->name);
-    $makeUnique = BlogCategory::where('id',"!=",$category->id)->where('slug',  $slugData)->first();
-    if($makeUnique){
-        return back()->with(['error' => [ $request->name.' '.'Category Already Exists!']]);
-    }
-    $admin = Auth::user();
-    $validated['admin_id']      = $admin->id;
-    $validated['name']          = $request->name;
-    $validated['slug']          = $slugData;
+    $basic_field_name = [
+        'name_edit'          => "required|string|max:250",
+    ];
+
+    $category = BlogCategory::find($validated['target']);
+
+    $language_wise_data = $this->contentValidate($request,$basic_field_name,"category-update");
+    if($language_wise_data instanceof RedirectResponse) return $language_wise_data;
+
+    $language_wise_data = array_map(function($language) {
+        return replace_array_key($language,"_edit");
+    },$language_wise_data);
+
+    $data['language']  = $language_wise_data;
+    $slugData = Str::slug($data['language']['en']['name']);
 
     try{
-        $category->fill($validated)->save();
-        return back()->with(['success' => ['Category Updated Successfully!']]);
+        $category->update([
+            'name'          => $data['language']['en']['name'],
+            'data'      => $data,
+            'slug'          => $slugData,
+        ]);
     }catch(Exception $e) {
-        return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__('Something went wrong! Please try again.')]]);
     }
+
+    return back()->with(['success' => [__("Category Updated Successfully!")]]);
 }
 public function categoryStatusUpdate(Request $request) {
     $validator = Validator::make($request->all(),[
@@ -2246,7 +2250,7 @@ public function categoryStatusUpdate(Request $request) {
 
     $category = BlogCategory::where('id',$category_id)->first();
     if(!$category) {
-        $error = ['error' => ['Category record not found in our system.']];
+        $error = ['error' => [__("Category record not found in our system.")]];
         return Response::error($error,null,404);
     }
 
@@ -2255,11 +2259,11 @@ public function categoryStatusUpdate(Request $request) {
             'status' => ($validated['status'] == true) ? false : true,
         ]);
     }catch(Exception $e) {
-        $error = ['error' => ['Something went worng!. Please try again.']];
+        $error = ['error' => [__("Something went wrong! Please try again.")]];
         return Response::error($error,null,500);
     }
 
-    $success = ['success' => ['Category status updated successfully!']];
+    $success = ['success' => [__("Category status updated successfully!")]];
     return Response::success($success,null,200);
 }
 public function categoryDelete(Request $request) {
@@ -2272,10 +2276,10 @@ public function categoryDelete(Request $request) {
     try{
         $category->delete();
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Category deleted successfully!']]);
+    return back()->with(['success' => [__("Category deleted successfully!")]]);
 }
 public function categorySearch(Request $request) {
     $validator = Validator::make($request->all(),[
@@ -2297,7 +2301,7 @@ public function categorySearch(Request $request) {
 //=======================Category  Section End=======================
 //=======================================Banner section Start =====================================
 public function blogView($slug) {
-    $page_title = "Blog Section";
+    $page_title = __("Blog Section");
     $section_slug = Str::slug(SiteSectionConst::BLOG_SECTION);
     $data = SiteSections::getData($section_slug)->first();
     $languages = $this->languages;
@@ -2325,29 +2329,26 @@ public function blogUpdate(Request $request,$slug) {
     try{
         SiteSections::updateOrCreate(['key' => $slug],$update_data);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Section updated successfully!']]);
+    return back()->with(['success' => [__("Section updated successfully!")]]);
 }
 public function blogItemStore(Request $request){
     $validator = Validator::make($request->all(),[
         'category_id'      => 'required|integer',
-        // 'en_short_title'     => "required|string",
-        'en_name'     => "required|string",
-        'en_details'     => "required|string",
-        'tags'          => 'nullable|array',
-        'tags.*'        => 'nullable|string|max:30',
         'image'         => 'required|image|mimes:png,jpg,jpeg,svg,webp',
     ]);
-
-
     $name_filed = [
         'name'     => "required|string",
     ];
     $details_filed = [
         'details'     => "required|string",
     ];
+    $tags_filed = [
+        'tags'     => "required|array",
+    ];
+
 
     if($validator->fails()) {
         return back()->withErrors($validator)->withInput()->with('modal','blog-add');
@@ -2358,17 +2359,20 @@ public function blogItemStore(Request $request){
 
     $language_wise_name = $this->contentValidate($request,$name_filed);
     $language_wise_details = $this->contentValidate($request,$details_filed);
+    $language_wise_tags = $this->contentValidate($request,$tags_filed);
+
 
     $name_data['language'] = $language_wise_name;
     $details_data['language'] = $language_wise_details;
+    $tags_data['language'] = $language_wise_tags;
 
-    $validated['category_id']        = $request->category_id;
-    $validated['admin_id']        = Auth::user()->id;
-    $validated['name']            = $name_data;
+    $validated['category_id']       = $request->category_id;
+    $validated['admin_id']          = Auth::user()->id;
+    $validated['name']              = $name_data;
     $validated['details']           = $details_data;
-    $validated['slug']            = Str::slug($name_data['language']['en']['name']);
-    $validated['tag']           = $request->tags;
-    $validated['created_at']      = now();
+    $validated['slug']              = Str::slug($name_data['language']['en']['name']);
+    $validated['lan_tags']          = $tags_data;
+    $validated['created_at']        = now();
 
 
     // Check Image File is Available or not
@@ -2377,21 +2381,19 @@ public function blogItemStore(Request $request){
         $upload = upload_files_from_path_dynamic($image,'blog');
         $validated['image'] = $upload;
     }
-
     try{
         Blog::create($validated);
     }catch(Exception $e) {
-        dd($e->getMessage());
 
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Blog item added successfully!']]);
+    return back()->with(['success' => [__("Blog item added successfully!")]]);
 
 }
 public function blogEdit($id)
     {
-        $page_title = "Blog Edit";
+        $page_title = __("Blog Edit");
         $languages = $this->languages;
         $data = Blog::findOrFail($id);
         $categories = BlogCategory::where('status',1)->latest()->get();
@@ -2408,23 +2410,18 @@ public function blogItemUpdate(Request $request) {
 
     $validator = Validator::make($request->all(),[
         'category_id'      => 'required|integer',
-        // 'en_short_title'     => "required|string",
-        'en_name'     => "required|string",
-        'en_details'     => "required|string",
-        'tags'          => 'nullable|array',
-        'tags.*'        => 'nullable|string|max:30',
         'image'         => 'nullable|image|mimes:png,jpg,jpeg,svg,webp',
         'target'        => 'required|integer',
     ]);
 
-    $short_title_field = [
-        'short_title'     => "nullable|string"
-    ];
     $name_filed = [
         'name'     => "required|string",
     ];
     $details_filed = [
         'details'     => "required|string",
+    ];
+    $tags_filed = [
+        'tags'     => "required|array",
     ];
 
     if($validator->fails()) {
@@ -2434,39 +2431,36 @@ public function blogItemUpdate(Request $request) {
     $blog = Blog::findOrFail($validated['target']);
 
     // Multiple language data set
-    $language_wise_stitle = $this->contentValidate($request,$short_title_field);
     $language_wise_name = $this->contentValidate($request,$name_filed);
     $language_wise_details = $this->contentValidate($request,$details_filed);
+    $language_wise_tags = $this->contentValidate($request,$tags_filed);
 
-    $short_title_data['language'] = $language_wise_stitle;
+
     $name_data['language'] = $language_wise_name;
     $details_data['language'] = $language_wise_details;
+    $tags_data['language'] = $language_wise_tags;
 
     $validated['category_id']        = $request->category_id;
     $validated['admin_id']        = Auth::user()->id;
-    $validated['short_title']            = $short_title_data;
     $validated['name']            = $name_data;
     $validated['details']           = $details_data;
     $validated['slug']            = Str::slug($name_data['language']['en']['name']);
-    $validated['tag']           = $request->tags;
+    $validated['lan_tags']          = $tags_data;
     $validated['created_at']      = now();
 
        // Check Image File is Available or not
        if($request->hasFile('image')) {
-
             $image = get_files_from_fileholder($request,'image');
             $upload = upload_files_from_path_dynamic($image,'blog',$blog->image);
             $validated['image'] = $upload;
-
         }
-
     try{
         $blog->update($validated);
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['Blog item updated successfully!']]);
+    return back()->with(['success' => [__("Blog item updated successfully!")]]);
 }
 
 public function blogItemDelete(Request $request) {
@@ -2481,10 +2475,10 @@ public function blogItemDelete(Request $request) {
         delete_file($image_link);
         $blog->delete();
     }catch(Exception $e) {
-        return back()->with(['error' => ['Something went worng! Please try again.']]);
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
     }
 
-    return back()->with(['success' => ['BLog delete successfully!']]);
+    return back()->with(['success' => [__("BLog delete successfully!")]]);
 }
 public function blogStatusUpdate(Request $request) {
     $validator = Validator::make($request->all(),[
@@ -2500,7 +2494,7 @@ public function blogStatusUpdate(Request $request) {
 
     $blog = Blog::where('id',$blog_id)->first();
     if(!$blog) {
-        $error = ['error' => ['Blog record not found in our system.']];
+        $error = ['error' => [__("Blog record not found in our system.")]];
         return Response::error($error,null,404);
     }
 
@@ -2509,11 +2503,11 @@ public function blogStatusUpdate(Request $request) {
             'status' => ($validated['status'] == true) ? false : true,
         ]);
     }catch(Exception $e) {
-        $error = ['error' => ['Something went worng!. Please try again.']];
+        $error = ['error' => [__("Something went wrong! Please try again.")]];
         return Response::error($error,null,500);
     }
 
-    $success = ['success' => ['Blog status updated successfully!']];
+    $success = ['success' => [__("Blog status updated successfully!")]];
     return Response::success($success,null,200);
 }
 //=======================================Banner section End ==========================================
@@ -2537,7 +2531,7 @@ public function blogStatusUpdate(Request $request) {
      * @return array $language_wise_data
      */
     public function contentValidate($request,$basic_field_name,$modal = null) {
-        $languages = $this->languages();
+        $languages = Language::get();
 
         $current_local = get_default_language_code();
         $validation_rules = [];

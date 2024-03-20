@@ -23,12 +23,6 @@ class GlobalConst {
     const FIAT = "FIAT";
     const CRYPTO = "CRYPTO";
 
-    const GOOGLE_PAY = "google-pay";
-    const PAYPAL     = "paypal";
-    const APPLE_PAY  = "apple-pay";
-
-    const TEST       = "TEST";
-    const PRODUCTION = "PRODUCTION";
 
     const TRANSFER  = "transfer";
     const EXCHANGE  = "exchange";
@@ -50,5 +44,6 @@ class GlobalConst {
     const LIVE = 'live';
     const SANDBOX = 'sandbox';
 
-    const SENDMONEY     = "Send Money";
+    const SENDER = 'SENDER';
+    const RECEIVER = 'RECEIVER';
 }

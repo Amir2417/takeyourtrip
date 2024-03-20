@@ -12,16 +12,17 @@ use App\Models\UserNotification;
 use App\Notifications\User\AddMoney\ApprovedMail;
 use Exception;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Jenssegers\Agent\Agent;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
 use Illuminate\Support\Facades\Http;
+use App\Traits\TransactionAgent;
 
 
 trait CoinGate
 {
+    use TransactionAgent;
     private $coinGate_gateway_credentials;
     private $coinGate_access_token;
 
@@ -108,11 +109,20 @@ trait CoinGate
         $temp_record_token = generate_unique_string('temporary_datas','identifier',60);
         $this->setUrlParams("token=" . $temp_record_token); // set Parameter to URL for identifying when return success/cancel
 
-        $redirection  = [
-            "return_url" => "user.add.money.coingate.payment.success",
-            "cancel_url" => "user.add.money.coingate.payment.cancel",
-            "callback_url" => "add.money.payment.callback"
-        ];
+
+        if(userGuard()['guard'] == 'web'){
+            $redirection  = [
+                "return_url" => "user.add.money.coingate.payment.success",
+                "cancel_url" => "user.add.money.coingate.payment.cancel",
+                "callback_url" => "add.money.payment.callback"
+            ];
+        }elseif(userGuard()['guard'] == 'agent'){
+            $redirection  = [
+                "return_url" => "agent.add.money.coingate.payment.success",
+                "cancel_url" => "agent.add.money.coingate.payment.cancel",
+                "callback_url" => "add.money.payment.callback"
+            ];
+        }
         $url_parameter = $this->getUrlParams();
         $endpoint = $request_base_url . "/" . $this->getCoinGateEndpoint('createOrder');
 
@@ -151,17 +161,32 @@ trait CoinGate
 
     }
     public function coinGateJunkInsert($output,$response, $temp_identifier) {
+        $output = $this->output;
+        $creator_table = $creator_id = $wallet_table = $wallet_id = null;
+        if(authGuardApi()['type']  == "AGENT"){
+            $creator_table = authGuardApi()['user']->getTable();
+            $creator_id = authGuardApi()['user']->id;
+            $creator_guard = authGuardApi()['guard'];
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }else{
+            $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
+            $creator_id = auth()->guard(get_auth_guard())->user()->id;
+            $creator_guard = get_auth_guard();
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }
         $data = [
             'gateway'                   => $output['gateway']->id,
             'currency'                  => $output['currency']->id,
             'amount'                    => json_decode(json_encode($output['amount']),true),
             'response'                  => $response,
             'temp_identifier'           => $temp_identifier,
-            'wallet_table'              => $output['wallet']->getTable(),
-            'wallet_id'                 => $output['wallet']->id,
-            'creator_table'             => auth()->guard(get_auth_guard())->user()->getTable(),
-            'creator_id'                => auth()->guard(get_auth_guard())->user()->id,
-            'creator_guard'             => get_auth_guard(),
+            'wallet_table'              => $wallet_table,
+            'wallet_id'                 => $wallet_id,
+            'creator_table'             => $creator_table,
+            'creator_id'                => $creator_id,
+            'creator_guard'             => $creator_guard,
         ];
 
 
@@ -173,7 +198,6 @@ trait CoinGate
     }
     public function coingateSuccess($output = null) {
         $reference = $output['tempData']['identifier'];
-
         $output['capture']      = $output['tempData']['data']->response ?? "";
         $output['callback_ref'] = $reference;
 
@@ -182,7 +206,12 @@ trait CoinGate
 
             // need to insert new transaction in database
             try{
-                $this->createTransactioncoinGate($output, PaymentGatewayConst::STATUSPENDING);
+                if(userGuard()['type'] == "USER"){
+                    return $this->createTransactioncoinGate($output,PaymentGatewayConst::STATUSPENDING);
+                }else{
+                    $this->createTransactionChildRecords($output, PaymentGatewayConst::STATUSPENDING);
+                 }
+
             }catch(Exception $e) {
                 throw new Exception(__("Something went wrong! Please try again."));
             }
@@ -382,7 +411,7 @@ trait CoinGate
                         'callback_ref'  => $reference,
                     ]);
 
-                    $this->updateWalletBalance($output);
+                    $this->updateWalletBalanceCoinGate($output);
                     DB::commit();
 
                 }catch(Exception $e) {
@@ -394,12 +423,16 @@ trait CoinGate
         }else { // need to create transaction and update status if needed
 
             $status = PaymentGatewayConst::STATUSPENDING;
-
             if($callback_status == $this->coinGate_status_paid) {
                 $status = PaymentGatewayConst::STATUSSUCCESS;
             }
+             if($output['tempData']->data->creator_guard == 'agent_api' || $output['tempData']->data->creator_guard == 'agent'){
+                $this->createTransactionChildRecords($output,$status);
+             }else{
+                $this->createTransactioncoinGate($output, $status);
+             }
 
-            $this->createTransactioncoinGate($output, $status);
+
         }
 
         logger("Transaction Created Successfully ::" . $callback_data['status']);
@@ -418,12 +451,23 @@ trait CoinGate
 
         $temp_record_token = generate_unique_string('temporary_datas','identifier',60);
         $this->setUrlParams("token=" . $temp_record_token); // set Parameter to URL for identifying when return success/cancel
+        if(authGuardApi()['guard'] == 'agent_api'){
+            $redirection  = [
+                "return_url" => "agent.api.coingate.payment.success",
+                "cancel_url" => "agent.api.coingate.payment.cancel",
+                "callback_url" => "add.money.payment.callback"
+            ];
 
-        $redirection  = [
-            "return_url" => "api.coingate.payment.success",
-            "cancel_url" => "api.coingate.payment.cancel",
-            "callback_url" => "add.money.payment.callback"
-        ];
+        }elseif(auth()->guard(get_auth_guard())->check()){
+            $redirection  = [
+                "return_url" => "api.coingate.payment.success",
+                "cancel_url" => "api.coingate.payment.cancel",
+                "callback_url" => "add.money.payment.callback"
+            ];
+
+        }
+
+
         $url_parameter = $this->getUrlParams();
         $endpoint = $request_base_url . "/" . $this->getCoinGateEndpoint('createOrder');
 

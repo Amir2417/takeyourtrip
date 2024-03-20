@@ -124,7 +124,7 @@ class PaymentLink extends Model
         if($status == PaymentGatewayConst::STATUSSUCCESS) {
             $data = [
                 'class'     => "badge badge--success",
-                'value'     => "Active",
+                'value'     => "active",
             ];
         }else if($status == PaymentGatewayConst::STATUSPENDING) {
             $data = [

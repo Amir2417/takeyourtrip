@@ -20,7 +20,7 @@
 @section('content')
     <div class="custom-card">
         <div class="card-header">
-            <h6 class="title">{{ __("Basic Settings") }}</h6>
+            <h6 class="title">{{ __("Basic Settings (System & User)") }}</h6>
         </div>
         <div class="card-body">
             <form class="card-form" method="POST" action="{{ setRoute('admin.web.settings.basic.settings.update') }}">
@@ -28,7 +28,7 @@
                 @method("PUT")
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 form-group">
-                        <label>Site Base Color*</label>
+                        <label>{{ __("Site Base Color") }}*</label>
                         <div class="picker">
                             <input type="color" value="{{ old('base_color',$basic_settings->base_color) }}" class="color color-picker">
                             <input type="text" autocomplete="off" spellcheck="false" class="color-input" value="{{ old('base_color',$basic_settings->base_color) }}" name="base_color">
@@ -36,59 +36,162 @@
                     </div>
                     <div class="col-xl-6 col-lg-6 form-group">
                         @include('admin.components.form.input',[
-                            'label'         => "Web Version*",
+                            'label'         => __("Web Version"),
                             'type'          => "text",
                             'class'         => "form--control",
-                            'placeholder'   => "Write Web Version...",
+                            'placeholder'   =>  __("Write Here.."),
                             'name'          => "web_version",
                             'value'         => old('web_version',$basic_settings->web_version),
                         ])
                     </div>
-                    {{-- <div class="col-xl-6 col-lg-6 form-group">
-                        <label>Site Secondary Color*</label>
-                        <div class="picker">
-                            <input type="color" value="{{ old('secondary_color',$basic_settings->secondary_color) }}" class="color color-picker">
-                            <input type="text" autocomplete="off" spellcheck="false" class="color-input" value="{{ old('secondary_color',$basic_settings->secondary_color) }}" name="secondary_color">
-                        </div>
-                    </div> --}}
                     <div class="col-xl-3 col-lg-3 form-group">
                         @include('admin.components.form.input',[
-                            'label'         => "Site Name*",
+                            'label'         => __( "Site Name"),
                             'type'          => "text",
                             'class'         => "form--control",
-                            'placeholder'   => "Write Name...",
+                            'placeholder'   =>  __("Write Here.."),
                             'name'          => "site_name",
                             'value'         => old('site_name',$basic_settings->site_name),
                         ])
                     </div>
                     <div class="col-xl-3 col-lg-3 form-group">
                         @include('admin.components.form.input',[
-                            'label'         => "Site Title*",
+                            'label'         => __( "Site Title"),
                             'type'          => "text",
                             'class'         => "form--control",
-                            'placeholder'   => "Write Name...",
+                            'placeholder'   =>  __("Write Here.."),
                             'name'          => "site_title",
                             'value'         => old('site_title',$basic_settings->site_title),
                         ])
                     </div>
                     <div class="col-xl-3 col-lg-3 form-group">
-                        <label>OTP Expiration*</label>
+                        <label>{{ __("OTP Expiration") }}*</label>
                         <div class="input-group">
-                            <input type="number" class="form--control" value="{{ old('otp_exp_seconds',$basic_settings->otp_exp_seconds) }}" name="otp_exp_seconds">
-                            <span class="input-group-text">Seconds</span>
+                            <input type="text" class="form--control number-input" value="{{ old('otp_exp_seconds',$basic_settings->otp_exp_seconds) }}" name="otp_exp_seconds">
+                            <span class="input-group-text">{{ __("seconds") }}</span>
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 form-group">
-                        <label>Timezone*</label>
+                        <label>{{ __("Timezone") }}*</label>
                         <select name="timezone" class="form--control select2-auto-tokenize timezone-select" data-old="{{ old('timezone',$basic_settings->timezone) }}">
-                            <option selected disabled>Select Timezone</option>
+                            <option selected disabled>{{ __("Select Timezone") }}</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-xl-12 col-lg-12">
                     @include('admin.components.button.form-btn',[
                         'class'         => "w-100 btn-loading",
-                        'text'          => "Update",
+                        'text'          => __("update"),
+                        'permission'    => "admin.web.settings.basic.settings.update",
+                    ])
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="custom-card">
+        <div class="card-header">
+            <h6 class="title">{{ __("Basic Settings (Agent)") }}</h6>
+        </div>
+        <div class="card-body">
+            <form class="card-form" method="POST" action="{{ setRoute('admin.web.settings.basic.settings.update.agent') }}">
+                @csrf
+                @method("PUT")
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 form-group">
+                        <label>{{ __("Site Base Color") }}*</label>
+                        <div class="picker">
+                            <input type="color" value="{{ old('agent_base_color',$basic_settings->agent_base_color) }}" class="color color-picker">
+                            <input type="text" autocomplete="off" spellcheck="false" class="color-input" value="{{ old('agent_base_color',$basic_settings->agent_base_color) }}" name="agent_base_color">
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 form-group">
+                        @include('admin.components.form.input',[
+                            'label'         => __( "Site Name"),
+                            'type'          => "text",
+                            'class'         => "form--control",
+                            'placeholder'   =>  __("Write Here.."),
+                            'name'          => "agent_site_name",
+                            'value'         => old('agent_site_name',$basic_settings->agent_site_name),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 form-group">
+                        @include('admin.components.form.input',[
+                            'label'         => __( "Site Title"),
+                            'type'          => "text",
+                            'class'         => "form--control",
+                            'placeholder'   =>  __("Write Here.."),
+                            'name'          => "agent_site_title",
+                            'value'         => old('agent_site_title',$basic_settings->agent_site_title),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 form-group">
+                        <label>{{ __("OTP Expiration") }}*</label>
+                        <div class="input-group">
+                            <input type="text" class="form--control number-input" value="{{ old('agent_otp_exp_seconds',$basic_settings->agent_otp_exp_seconds) }}" name="agent_otp_exp_seconds">
+                            <span class="input-group-text">{{ __("seconds") }}</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-xl-12 col-lg-12">
+                    @include('admin.components.button.form-btn',[
+                        'class'         => "w-100 btn-loading",
+                        'text'          => __("update"),
+                        'permission'    => "admin.web.settings.basic.settings.update",
+                    ])
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="custom-card">
+        <div class="card-header">
+            <h6 class="title">{{ __("Basic Settings (Merchant)") }}</h6>
+        </div>
+        <div class="card-body">
+            <form class="card-form" method="POST" action="{{ setRoute('admin.web.settings.basic.settings.update.merchant') }}">
+                @csrf
+                @method("PUT")
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 form-group">
+                        <label>{{ __("Site Base Color") }}*</label>
+                        <div class="picker">
+                            <input type="color" value="{{ old('merchant_base_color',$basic_settings->merchant_base_color) }}" class="color color-picker">
+                            <input type="text" autocomplete="off" spellcheck="false" class="color-input" value="{{ old('merchant_base_color',$basic_settings->merchant_base_color) }}" name="merchant_base_color">
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 form-group">
+                        @include('admin.components.form.input',[
+                            'label'         => __( "Site Name"),
+                            'type'          => "text",
+                            'class'         => "form--control",
+                            'placeholder'   =>  __("Write Here.."),
+                            'name'          => "merchant_site_name",
+                            'value'         => old('merchant_site_name',$basic_settings->merchant_site_name),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 form-group">
+                        @include('admin.components.form.input',[
+                            'label'         => __( "Site Title"),
+                            'type'          => "text",
+                            'class'         => "form--control",
+                            'placeholder'   =>  __("Write Here.."),
+                            'name'          => "merchant_site_title",
+                            'value'         => old('merchant_site_title',$basic_settings->merchant_site_title),
+                        ])
+                    </div>
+                    <div class="col-xl-3 col-lg-3 form-group">
+                        <label>{{ __("OTP Expiration") }}*</label>
+                        <div class="input-group">
+                            <input type="text" class="form--control number-input" value="{{ old('merchant_otp_exp_seconds',$basic_settings->merchant_otp_exp_seconds) }}" name="merchant_otp_exp_seconds">
+                            <span class="input-group-text">{{ __("seconds") }}</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-xl-12 col-lg-12">
+                    @include('admin.components.button.form-btn',[
+                        'class'         => "w-100 btn-loading",
+                        'text'          => __("update"),
                         'permission'    => "admin.web.settings.basic.settings.update",
                     ])
                 </div>
@@ -97,7 +200,7 @@
     </div>
     <div class="custom-card mt-15">
         <div class="card-header">
-            <h6 class="title">{{ __("Activation Settings") }}</h6>
+            <h6 class="title">{{ __("Activation Settings (System & User)") }}</h6>
         </div>
         <div class="card-body">
             <div class="custom-inner-card mt-10 mb-10">
@@ -105,100 +208,249 @@
                     <div class="row mb-10-none">
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'User Registration',
+                                'label'         => __("User Registration"),
                                 'name'          => 'user_registration',
                                 'value'         => old('user_registration',$basic_settings->user_registration),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
+                                'options'       => [__("Activated") => 1, __("Deactivated") => 0],
                                 'onload'        => true,
                                 'permission'    => "admin.web.settings.basic.settings.activation.update",
                             ])
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'Secure Password',
+                                'label'         => __("Secure Password"),
                                 'name'          => 'secure_password',
                                 'value'         => old('secure_password',$basic_settings->secure_password),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
                                 'onload'        => true,
                                 'permission'    => "admin.web.settings.basic.settings.activation.update",
                             ])
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'Agree Policy',
+                                'label'         => __( "Agree Policy"),
                                 'name'          => 'agree_policy',
                                 'value'         => old('agree_policy',$basic_settings->agree_policy),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
                                 'onload'        => true,
                                 'permission'    => "admin.web.settings.basic.settings.activation.update",
                             ])
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'Force SSL',
+                                'label'         => __( "Force SSL"),
                                 'name'          => 'force_ssl',
                                 'value'         => old('force_ssl',$basic_settings->force_ssl),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
                                 'onload'        => true,
                                 'permission'    => "admin.web.settings.basic.settings.activation.update",
                             ])
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'Email Verification',
+                                'label'         => __("email Verification"),
                                 'name'          => 'email_verification',
                                 'value'         => old('email_verification',$basic_settings->email_verification),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
                                 'onload'        => true,
                                 'permission'    => "admin.web.settings.basic.settings.activation.update",
                             ])
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'Email Notification',
+                                'label'         => __("Email Notification"),
                                 'name'          => 'email_notification',
                                 'value'         => old('email_notification',$basic_settings->email_notification),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
                                 'onload'        => true,
                                 'permission'    => "admin.web.settings.basic.settings.activation.update",
                             ])
                         </div>
-                        {{-- <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
-                            @include('admin.components.form.switcher',[
-                                'label'         => 'SMS Verification',
-                                'name'          => 'sms_verification',
-                                'value'         => old('sms_verification',$basic_settings->sms_verification),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
-                                'onload'        => true,
-                                'permission'    => "admin.web.settings.basic.settings.activation.update",
-                            ])
-                        </div> --}}
-                        {{-- <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
-                            @include('admin.components.form.switcher',[
-                                'label'         => 'SMS Notification',
-                                'name'          => 'sms_notification',
-                                'value'         => old('sms_notification',$basic_settings->sms_notification),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
-                                'onload'        => true,
-                                'permission'    => "admin.web.settings.basic.settings.activation.update",
-                            ])
-                        </div> --}}
+
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'Push Notification',
+                                'label'         => __("Push Notification"),
                                 'name'          => 'push_notification',
                                 'value'         => old('push_notification',$basic_settings->push_notification),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
                                 'onload'        => true,
                                 'permission'    => "admin.web.settings.basic.settings.activation.update",
                             ])
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'KYC Verification',
+                                'label'         => __( "KYC Verification"),
                                 'name'          => 'kyc_verification',
                                 'value'         => old('kyc_verification',$basic_settings->kyc_verification),
-                                'options'       => ['Activated' => 1,'Deactivated' => 0],
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="custom-card mt-15">
+        <div class="card-header">
+            <h6 class="title">{{ __("Activation Settings (Agent)") }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="custom-inner-card mt-10 mb-10">
+                <div class="card-inner-body">
+                    <div class="row mb-10-none">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __("Agent Registration"),
+                                'name'          => 'agent_registration',
+                                'value'         => old('agent_registration',$basic_settings->agent_registration),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "Secure Password"),
+                                'name'          => 'agent_secure_password',
+                                'value'         => old('agent_secure_password',$basic_settings->agent_secure_password),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "Agree Policy"),
+                                'name'          => 'agent_agree_policy',
+                                'value'         => old('agent_agree_policy',$basic_settings->agent_agree_policy),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __("email Verification"),
+                                'name'          => 'agent_email_verification',
+                                'value'         => old('agent_email_verification',$basic_settings->agent_email_verification),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __("Email Notification"),
+                                'name'          => 'agent_email_notification',
+                                'value'         => old('agent_email_notification',$basic_settings->agent_email_notification),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "Push Notification"),
+                                'name'          => 'agent_push_notification',
+                                'value'         => old('agent_push_notification',$basic_settings->agent_push_notification),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "KYC Verification"),
+                                'name'          => 'agent_kyc_verification',
+                                'value'         => old('agent_kyc_verification',$basic_settings->agent_kyc_verification),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="custom-card mt-15">
+        <div class="card-header">
+            <h6 class="title">{{ __("Activation Settings (Merchant)") }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="custom-inner-card mt-10 mb-10">
+                <div class="card-inner-body">
+                    <div class="row mb-10-none">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __("Merchant Registration"),
+                                'name'          => 'merchant_registration',
+                                'value'         => old('merchant_registration',$basic_settings->merchant_registration),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "Secure Password"),
+                                'name'          => 'merchant_secure_password',
+                                'value'         => old('merchant_secure_password',$basic_settings->merchant_secure_password),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "Agree Policy"),
+                                'name'          => 'merchant_agree_policy',
+                                'value'         => old('merchant_agree_policy',$basic_settings->merchant_agree_policy),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "email Verification"),
+                                'name'          => 'merchant_email_verification',
+                                'value'         => old('merchant_email_verification',$basic_settings->merchant_email_verification),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "Email Notification"),
+                                'name'          => 'merchant_email_notification',
+                                'value'         => old('merchant_email_notification',$basic_settings->merchant_email_notification),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "Push Notification"),
+                                'name'          => 'merchant_push_notification',
+                                'value'         => old('merchant_push_notification',$basic_settings->merchant_push_notification),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
+                                'onload'        => true,
+                                'permission'    => "admin.web.settings.basic.settings.activation.update",
+                            ])
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
+                            @include('admin.components.form.switcher',[
+                                'label'         => __( "KYC Verification"),
+                                'name'          => 'merchant_kyc_verification',
+                                'value'         => old('merchant_kyc_verification',$basic_settings->merchant_kyc_verification),
+                               'options'       => [__("Activated") => 1, __("Deactivated") => 0],
                                 'onload'        => true,
                                 'permission'    => "admin.web.settings.basic.settings.activation.update",
                             ])

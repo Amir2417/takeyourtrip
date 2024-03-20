@@ -54,7 +54,7 @@
                             <div class="exchange-area mb-20">
                                 <code class="d-block text-center"><span>{{ __("Current Balance") }}</span>
                                     @if($api_mode == global_const()::SANDBOX)
-                                       <span class="text--warning">{{ "TEST MODE" }}</span>
+                                       <span class="text--warning">{{ __("TEST MODE") }}</span>
                                     @elseif ($api_mode == global_const()::LIVE)
                                         {{ getAmount(@$myCard->amount,2) }} {{ get_default_currency_code() }}
                                     @endif
@@ -86,7 +86,7 @@
                                             <i class="las la-credit-card"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Card Holder") }}</span>
+                                            <span>{{ __("card Holder") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +101,7 @@
                                             <i class="las la-hand-holding-heart"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Currency") }}</span>
+                                            <span>{{ __("currency") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -116,7 +116,7 @@
                                             <i class="las la-hand-holding-heart"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Brand") }}</span>
+                                            <span>{{ __("brand") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -131,7 +131,7 @@
                                             <i class="las la-hand-holding-heart"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Type") }}</span>
+                                            <span>{{__("type")}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -146,7 +146,7 @@
                                             <i class="las la-user-tag"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Card Pan") }}</span>
+                                            <span>{{ __("card Pan") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -161,7 +161,7 @@
                                             <i class="las la-business-time"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Expiry") }}</span>
+                                            <span>{{ __("expiry Date") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -176,7 +176,7 @@
                                             <i class="las la-hourglass-start"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("CVV") }}</span>
+                                            <span>{{ __("Cvv") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -184,7 +184,7 @@
                                     <span id="cvv">{{ __("***") }}</span>
                                 </div>
                             </div>
-                          
+
                             <div class="preview-list-item">
                                 <div class="preview-list-left">
                                     <div class="preview-list-user-wrapper">
@@ -192,7 +192,7 @@
                                             <i class="las la-battery-half"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Card Status") }}</span>
+                                            <span>{{ __("Status") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -202,7 +202,7 @@
 
                                             'name'          => 'status',
                                             'value'         => old('status',@$myCard->status ),
-                                            'options'       => ['Unblock' => 1,'Block' => 0],
+                                            'options'       => [__('unblock') => 1,__('block') => 0],
                                             'onload'        => true,
                                             'data_target'   =>@$myCard->id,
                                         ])
@@ -216,7 +216,7 @@
                                             <i class="las la-eye"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Reveal Details") }}</span>
+                                            <span>{{ __("reveal Details") }}</span>
                                         </div>
                                     </div>
                                 </div>

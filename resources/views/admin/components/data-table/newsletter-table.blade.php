@@ -1,9 +1,9 @@
 <table class="custom-table newletter-search-table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Action</th>
+            <th>{{ __("name") }}</th>
+            <th>{{ __("Email") }}</th>
+            <th>{{__("action")}}</th>
         </tr>
     </thead>
     <tbody>

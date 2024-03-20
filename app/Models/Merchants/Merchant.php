@@ -42,8 +42,9 @@ class Merchant extends Authenticatable
         'ver_code'           => 'integer',
         'ver_code_send_at'           => 'datetime',
         'two_factor_verified'           => 'integer',
+        "two_factor_status"           => "integer",
+        "two_factor_secret"           => "string",
         'device_id'           => 'string',
-        'firebase_token'           => 'string',
         'remember_token'           => 'string',
         'deleted_at'           => 'datetime',
         'created_at'           => 'datetime',
@@ -165,12 +166,12 @@ class Merchant extends Authenticatable
         if($status == GlobalConst::ACTIVE) {
             $data = [
                 'class'     => "badge badge--success",
-                'value'     => "Active",
+                'value'     => "active",
             ];
         }else if($status == GlobalConst::BANNED) {
             $data = [
                 'class'     => "badge badge--danger",
-                'value'     => "Banned",
+                'value'     => "banned",
             ];
         }
         return (object) $data;

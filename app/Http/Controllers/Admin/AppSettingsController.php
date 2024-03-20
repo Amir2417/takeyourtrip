@@ -14,11 +14,11 @@ class AppSettingsController extends Controller
 
     /**
      * Display The App Splash Screen Settings Page
-     * 
+     *
      * @return view
      */
     public function splashScreen() {
-        $page_title = "Splash Screen";
+        $page_title = __("Splash Screen");
         $app_settings = AppSettings::first();
         return view('admin.sections.app-settings.splash-screen',compact(
             'page_title',
@@ -31,36 +31,48 @@ class AppSettingsController extends Controller
         $validator = Validator::make($request->all(),[
             'image'         => 'nullable|image|mimes:png,jpg,jpeg,webp,svg',
             'version'       => 'required|string|max:15',
+            'agent_image'         => 'nullable|image|mimes:png,jpg,jpeg,webp,svg',
+            'agent_version'       => 'required|string|max:15',
+            'merchant_image'         => 'nullable|image|mimes:png,jpg,jpeg,webp,svg',
+            'merchant_version'       => 'required|string|max:15',
         ]);
         $validated = $validator->validate();
         $validated = Arr::except($validated,['image']);
-
         $app_settings = AppSettings::first();
-
         if($request->hasFile('image')) {
             $image = get_files_from_fileholder($request,'image');
-            $upload_image = upload_files_from_path_static($image,'splash-images',$app_settings->splash_screen_image,true,true);
+            $upload_image = upload_files_from_path_static($image,'splash-images',checkSeederValue($app_settings->splash_screen_image),true,true);
             $validated['splash_screen_image']   = $upload_image;
+        }
+        if($request->hasFile('agent_image')) {
+            $image = get_files_from_fileholder($request,'agent_image');
+            $upload_image = upload_files_from_path_static($image,'splash-images',checkSeederValue($app_settings->agent_splash_screen_image),true,true);
+            $validated['agent_splash_screen_image']   = $upload_image;
+        }
+        if($request->hasFile('merchant_image')) {
+            $image = get_files_from_fileholder($request,'merchant_image');
+            $upload_image = upload_files_from_path_static($image,'splash-images',checkSeederValue($app_settings->merchant_splash_screen_image),true,true);
+            $validated['merchant_splash_screen_image']   = $upload_image;
         }
 
         try{
             $app_settings->updateOrCreate(['id' => 1],$validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Splash screen updated successfully!']]);
+        return back()->with(['success' => [__("Splash screen updated successfully!")]]);
 
     }
 
 
     /**
      * Display The App URL Setting Page
-     * 
+     *
      * @return view
      */
     public function urls() {
-        $page_title = "App URLs";
+        $page_title = __("App URLs");
         $app_settings = AppSettings::first();
         return view('admin.sections.app-settings.urls',compact(
             'page_title',
@@ -80,9 +92,9 @@ class AppSettingsController extends Controller
         try{
             $app_settings = AppSettings::updateOrCreate(['id' => 1],$validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['URL settings updated successfully!']]);
+        return back()->with(['success' => [__("URL settings updated successfully!")]]);
     }
 }

@@ -67,7 +67,7 @@ class RegisterController extends Controller
 
     public function sendVerifyCode(Request $request){
         $basic_settings = $this->basic_settings;
-        if($basic_settings->agree_policy){
+        if($basic_settings->merchant_agree_policy){
             $agree = 'required';
         }else{
             $agree = '';
@@ -96,13 +96,13 @@ class RegisterController extends Controller
         ];
         DB::beginTransaction();
         try{
-            if($basic_settings->email_verification == false){
+            if($basic_settings->merchant_email_verification == false){
                 Session::put('register_email',$validated['email']);
                 return redirect()->route("merchant.register.kyc");
             }
             DB::table("merchant_authorizations")->insert($data);
             Session::put('register_email',$validated['email']);
-            if($basic_settings->email_notification == true && $basic_settings->email_verification == true){
+            if($basic_settings->merchant_email_notification == true && $basic_settings->merchant_email_verification == true){
                 Notification::route("mail",$validated['email'])->notify(new SendVerifyCode($validated['email'], $code));
             }
             DB::commit();
@@ -121,7 +121,7 @@ class RegisterController extends Controller
         ]);
         $code = $request->code;
         $code = implode("",$code);
-        $otp_exp_sec = BasicSettingsProvider::get()->otp_exp_seconds ?? GlobalConst::DEFAULT_TOKEN_EXP_SEC;
+        $otp_exp_sec = BasicSettingsProvider::get()->merchant_otp_exp_seconds ?? GlobalConst::DEFAULT_TOKEN_EXP_SEC;
         $auth_column = MerchantAuthorization::where("token",$request->token)->where("code",$code)->first();
         if(!$auth_column){
             return back()->with(['error' => [__('Verification code does not match')]]);
@@ -175,18 +175,22 @@ class RegisterController extends Controller
         return redirect()->route('merchant.email.verify',$data['token'])->with(['success' => [__('Verification code resend success')]]);
     }
     public function registerKyc(Request $request){
+        $basic_settings   = $this->basic_settings;
         $email =   session()->get('register_email');
         if($email == null){
             return redirect()->route('merchant.register');
         }
-        $user_kyc = SetupKyc::merchantKyc()->first();
-
-        if(!$user_kyc) return back();
-        $kyc_data = $user_kyc->fields;
-        $kyc_fields = [];
-        if($kyc_data) {
-            $kyc_fields = array_reverse($kyc_data);
+        $kyc_fields =[];
+        if($basic_settings->merchant_kyc_verification == true){
+            $user_kyc = SetupKyc::merchantKyc()->first();
+            if(!$user_kyc) return back();
+            $kyc_data = $user_kyc->fields;
+            $kyc_fields = [];
+            if($kyc_data) {
+                $kyc_fields = array_reverse($kyc_data);
+            }
         }
+
         $page_title = __("Merchant Registration KYC");
         return view('merchant.auth.register-kyc',compact(
             'page_title','email','kyc_fields'
@@ -205,7 +209,7 @@ class RegisterController extends Controller
     {
         $basic_settings             = $this->basic_settings;
         $validated = $this->validator($request->all())->validate();
-        if($basic_settings->kyc_verification == true){
+        if($basic_settings->merchant_kyc_verification == true){
             $user_kyc_fields = SetupKyc::merchantKyc()->first()->fields ?? [];
             $validation_rules = $this->generateValidationRules($user_kyc_fields);
             $kyc_validated = Validator::make($request->all(),$validation_rules)->validate();
@@ -227,13 +231,19 @@ class RegisterController extends Controller
             ]);
         }
 
+        $userName = make_username($validated['firstname'],$validated['lastname']);
+        $check_user_name = Merchant::where('username',$userName)->first();
+        if($check_user_name){
+            $userName = $userName.'-'.rand(123,456);
+        }
+
         $validated['full_mobile']       = $complete_phone;
         $validated = Arr::except($validated,['agree','phone_code','phone']);
         $validated['email_verified']    = true;
         $validated['sms_verified']      = ($basic_settings->sms_verification == true) ? false : true;
-        $validated['kyc_verified']      = ($basic_settings->kyc_verification == true) ? false : true;
+        $validated['kyc_verified']      = ($basic_settings->merchant_kyc_verification == true) ? false : true;
         $validated['password']          = Hash::make($validated['password']);
-        $validated['username']          = make_username($validated['firstname'],$validated['lastname']);
+        $validated['username']          =  $userName;
         $validated['address']           = [
                                             'country' => $validated['country'],
                                             'city' => $validated['city'],
@@ -242,7 +252,7 @@ class RegisterController extends Controller
                                             'address' => '',
                                         ];
        $data = event(new Registered($user = $this->create($validated)));
-       if( $data  && $basic_settings->kyc_verification == true){
+       if( $data  && $basic_settings->merchant_kyc_verification == true){
         $create = [
             'merchant_id'       => $user->id,
             'data'          => json_encode($get_values),
@@ -286,10 +296,10 @@ class RegisterController extends Controller
     public function validator(array $data) {
         $basic_settings = $this->basic_settings;
         $passowrd_rule = "required|string|min:6|confirmed";
-        if($basic_settings->secure_password) {
+        if($basic_settings->merchant_secure_password) {
             $passowrd_rule = ["required","confirmed",Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()];
         }
-        if($basic_settings->agree_policy){
+        if($basic_settings->merchant_agree_policy){
             $agree = 'required';
         }else{
             $agree = '';

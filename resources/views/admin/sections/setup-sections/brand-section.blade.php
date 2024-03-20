@@ -56,7 +56,7 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="english" role="tabpanel" aria-labelledby="english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Title*",
+                                            'label'     => __( "titleS")."*",
                                             'name'      => $default_lang_code . "_title",
                                             'value'     => old($default_lang_code . "_title",$data->value->language->$default_lang_code->title ?? "")
                                         ])
@@ -70,7 +70,7 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="{{ $item->name }}" role="tabpanel" aria-labelledby="english-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Title*",
+                                                'label'     => __( "titleS")."*",
                                                 'name'      => $lang_code . "_title",
                                                 'value'     => old($lang_code . "_title",$data->value->language->$lang_code->title ?? "")
                                             ])
@@ -83,7 +83,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>
@@ -102,7 +102,7 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Image</th>
+                            <th>{{ __("Image") }}</th>
 
                             <th></th>
                         </tr>
@@ -149,7 +149,7 @@
 
                         <div class="col-xl-12 col-lg-12 form-group">
                             @include('admin.components.form.input-file',[
-                                'label'             => "Image:",
+                                'label'             =>__( "Image"),
                                 'name'              => "image",
                                 'class'             => "file-holder",
                                 'old_files_path'    => files_asset_path("site-section"),
@@ -158,7 +158,7 @@
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

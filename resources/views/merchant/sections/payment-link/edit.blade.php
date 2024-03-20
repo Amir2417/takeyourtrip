@@ -40,7 +40,7 @@
                         <div class="row">
                             <div class="col-xl-6">
                                 <div class="form-group">
-                                    <label>{{ __('Title') }}</label>
+                                    <label>{{ __("titleS") }}</label>
                                     <input type="text" class="form--control link_title" name="title" placeholder="Name of cause or service" value="{{ old('title', $payment_link->title ?? '') }}">
                                 </div>
                                 <div class="form-group">
@@ -65,7 +65,7 @@
                         <div class="row">
                             <div class="col-xl-5">
                                 <div class="form-group">
-                                    <label>{{ __("Currency") }}</label>
+                                    <label>{{ __("currency") }}</label>
                                     <select class="select2-auto-tokenize currency_link" name="currency">
                                         <option value="" disabled>{{ __('Select One') }}</option>
                                         @foreach ($currency_data as $item)
@@ -90,7 +90,7 @@
                                         <label>{{ __("Minimum amount") }}</label>
                                         <div class="input-group">
                                             <div class="input-group-text prepend currency_link_symbol">£</div>
-                                            <input type="number" class="form--control" placeholder="0.3" min="0.1" name="min_amount" value="{{ old('min_amount', $payment_link->min_amount ? get_amount($payment_link->min_amount) : '') }}">
+                                            <input type="text" class="form--control number-input" placeholder="0.3" min="0.1" name="min_amount" value="{{ old('min_amount', $payment_link->min_amount ? get_amount($payment_link->min_amount) : '') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@
                                         <label>{{ __("Maximum amount") }}</label>
                                         <div class="input-group">
                                             <div class="input-group-text prepend currency_link_symbol">£</div>
-                                            <input type="number" class="form--control" placeholder="10,000" min="0.2" name="max_amount" value="{{ old('max_amount', $payment_link->max_amount ? get_amount($payment_link->max_amount) : '') }}">
+                                            <input type="text" class="form--control number-input" placeholder="10,000" min="0.2" name="max_amount" value="{{ old('max_amount', $payment_link->max_amount ? get_amount($payment_link->max_amount) : '') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -111,11 +111,11 @@
                     <div class="payment-product-form">
                         <div class="row">
                             <div class="col-xl-12 form-group">
-                                <label>{{ __('Title') }}*</label>
+                                <label>{{ __("titleS") }}*</label>
                                 <input type="text" class="form--control link_title" name="sub_title" placeholder="Collecting Payment Platform" value="{{ old('title', $payment_link->title ?? '') }}">
                             </div>
                             <div class="col-xl-12 form-group">
-                                <label>Currency</label>
+                                <label>{{ __("currency") }}</label>
                                 <select class="select2-auto-tokenize currency_link_sub" name="sub_currency">
                                     <option value="" disabled>{{ __('Select One') }}</option>
                                     @foreach ($currency_data as $item)
@@ -126,15 +126,15 @@
                                 </select>
                             </div>
                             <div class="col-xl-6 col-lg-6 form-group">
-                                <label>Price*</label>
+                                <label>{{ __("price") }}*</label>
                                 <div class="input-group">
                                     <div class="input-group-text prepend currency_link_symbol">{{ $payment_link->currency_symbol }}</div>
-                                    <input type="number" class="form--control sub_price" placeholder="0.00" name="price" value="{{ old('sub_price', get_amount(@$payment_link->price)) }}">
+                                    <input type="text" class="form--control sub_price number-input" placeholder="0.00" name="price" value="{{ old('sub_price', get_amount(@$payment_link->price)) }}">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 form-group">
-                                <label>Quantity*</label>
-                                <input type="number" class="form--control qty_change" min="1" name="qty" value="{{ old('qty', $payment_link->qty ?? '1') }}">
+                                <label>{{ __("quantity") }}*</label>
+                                <input type="text" class="form--control qty_change number-input" min="1" name="qty" value="{{ old('qty', $payment_link->qty ?? '1') }}">
                             </div>
                         </div>
                     </div>
@@ -162,7 +162,7 @@
                             <div class="payment-preview-box-left">
                                 <form class="payment-preview-box-left-form">
                                     <div class="form-group">
-                                        <label>{{ _('Amount') }}</label>
+                                        <label>{{ __('Amount') }}</label>
                                         <div class="input-group">
                                             <div class="input-group-text prepend currency_link_symbol">{{ $payment_link->currency_symbol }}</div>
                                             <input type="text" class="form--control paylink_amount" value="{{ $payment_link->price * $payment_link->qty }}" min="0.1" readonly>
@@ -186,29 +186,29 @@
                                         </div>
                                         <div class="col-xl-12 form-group">
                                             <label>{{ __("Email") }}</label>
-                                            <input type="email" class="form--control" readonly placeholder="Email">
+                                            <input type="email" class="form--control" readonly placeholder="{{ __('Email') }}">
                                         </div>
                                         <div class="col-xl-12">
-                                            <label>{{ __("Card information") }}</label>
-                                            <input type="number" class="form--control" placeholder="1234 1234 1234 1234" readonly>
+                                            <label>{{ __("card Information") }}</label>
+                                            <input type="text" class="form--control number-input" placeholder="1234 1234 1234 1234" readonly>
                                             <div class="row mt-10">
                                                 <div class="col-xl-6 form-group">
                                                     <input type="date" class="form--control" readonly>
                                                 </div>
                                                 <div class="col-xl-6 form-group">
-                                                    <input type="number" class="form--control" placeholder="CVC" readonly>
+                                                    <input type="text" class="form--control number-input" placeholder="{{ __('cvc') }}" readonly>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-xl-12 form-group">
                                             <label>{{ __("Name on card") }}</label>
-                                            <input type="text" class="form--control" readonly placeholder="Name On Card">
+                                            <input type="text" class="form--control" readonly placeholder="{{ __('Name on card') }}">
                                         </div>
                                         <div class="col-xl-12 form-group">
                                             <div class="preview-check-group">
                                                 <div class="custom-check-group">
                                                     <input type="checkbox" id="level-2" checked>
-                                                    <label for="level-2">{{ __('Securely save my inforation for 1-click checkout') }} <span>{{ __("Pay faster on") }} {{ Auth::user()->address->company_name ?? '' }} and everywhere Link is accepted</span></label>
+                                                    <label for="level-2">{{ __('Securely save my inforation for 1-click checkout') }} <span>{{ __("Pay faster on") }} {{ Auth::user()->address->company_name ?? '' }} {{ __("and everywhere Link is accepted") }}</span></label>
                                                 </div>
                                             </div>
                                         </div>
@@ -231,7 +231,7 @@
                                         <div class="input-group-text prepend currency_link_symbol">{{ $payment_link->currency_symbol }}</div>
                                         <input type="text" class="form--control paylink_amount" placeholder="0.00" min="0.1" readonly value="{{ $payment_link->price * $payment_link->qty }}">
                                     </div>
-                                    <span class="limit-show">Limit: {{ get_amount($payment_link->min_amount) }} {{ $payment_link->currency }} - {{ get_amount($payment_link->max_amount) }} {{ $payment_link->currency }}</span>
+                                    <span class="limit-show">{{ __("limit") }}: {{ get_amount($payment_link->min_amount) }} {{ $payment_link->currency }} - {{ get_amount($payment_link->max_amount) }} {{ $payment_link->currency }}</span>
                                 </div>
                             </form>
                             <div class="payment-preview-thumb">
@@ -250,34 +250,34 @@
                                     </div>
                                     <div class="col-xl-12 form-group">
                                         <label>{{ __("Email") }}</label>
-                                        <input type="email" class="form--control" readonly placeholder="Email">
+                                        <input type="email" class="form--control" readonly placeholder="{{ __('Email') }}">
                                     </div>
                                     <div class="col-xl-12 form-group">
-                                        <label>{{ __("Card information") }}</label>
-                                        <input type="number" class="form--control" placeholder="1234 1234 1234 1234" readonly>
+                                        <label>{{ __("card Information") }}</label>
+                                        <input type="text" class="form--control number-input" placeholder="1234 1234 1234 1234" readonly>
                                         <div class="row mt-10">
                                             <div class="col-xl-6 form-group">
                                                 <input type="date" class="form--control" readonly>
                                             </div>
                                             <div class="col-xl-6 form-group">
-                                                <input type="number" class="form--control" placeholder="CVC" readonly>
+                                                <input type="text" class="form--control number-input" placeholder="{{ __('cvc') }}" readonly>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-xl-12 form-group">
                                         <label>{{ __("Name on card") }}</label>
-                                        <input type="text" class="form--control" readonly placeholder="Name On Card">
+                                        <input type="text" class="form--control" readonly placeholder="{{ __('Name on card') }}">
                                     </div>
                                     <div class="col-xl-12 form-group">
                                         <div class="preview-check-group">
                                             <div class="custom-check-group">
                                                 <input type="checkbox" id="level-3" checked>
-                                                <label for="level-3">{{ __('Securely save my inforation for 1-click checkout') }} <span>Pay faster on {{ Auth::user()->address->company_name ?? '' }} and everywhere Link is accepted</span></label>
+                                                <label for="level-3">{{ __('Securely save my inforation for 1-click checkout') }} <span>{{ __("Pay faster on") }} {{ Auth::user()->address->company_name ?? '' }} {{ __("and everywhere Link is accepted") }}</span></label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-xl-12 form-group pt-10">
-                                        <button type="submit" class="btn--base disabled  w-100" disabled>{{ _('Pay') }}</button>
+                                        <button type="submit" class="btn--base disabled  w-100" disabled>{{ __('Pay') }}</button>
                                     </div>
                                 </div>
                             </form>

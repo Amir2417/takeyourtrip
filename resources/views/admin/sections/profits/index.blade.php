@@ -22,13 +22,13 @@
     <div class="table-wrapper">
         <div class="table-header">
             <h5 class="title">{{ $page_title }}</h5>
-            <h5 class="title">Total Profits: {{ getAmount(totalAdminProfits(),3) }} {{ get_default_currency_code() }}</h5>
+            <h5 class="title">{{ __("Total Profits") }}: {{ getAmount(totalAdminProfits(),3) }} {{ get_default_currency_code() }}</h5>
         </div>
         <div class="table-responsive">
             <table class="custom-table">
                 <thead>
                     <tr>
-                        <th>{{ __("TRX") }}</th>
+                        <th>{{ __("web_trx_id") }}</th>
                         <th>{{ __("User") }}</th>
                         <th>{{ __("User Type") }}</th>
                         <th>{{ __("Transaction Type") }}</th>
@@ -70,7 +70,7 @@
 
 
                     @empty
-                        <div class="alert alert-primary">{{ __('No data found!') }}</div>
+                         @include('admin.components.alerts.empty',['colspan' => 7])
                     @endforelse
                 </tbody>
             </table>

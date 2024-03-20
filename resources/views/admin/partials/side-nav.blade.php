@@ -32,7 +32,7 @@
 
                 {{-- Section Default --}}
                 @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "Default",
+                    'group_title'       => __("DEFAULT"),
                     'group_links'       => [
                         [
                             'title'     => "Setup Currency",
@@ -53,62 +53,17 @@
                             'title'     => "PayLink Api",
                             'route'     => "admin.gateway.api.index",
                             'icon'      => "menu-icon las la-code",
-                        ],
-                        [
-                            'title'     => "Bank",
-                            'route'     => "admin.bank.index",
-                            'icon'      => "menu-icon las la-university",
-                        ], 
-                        
-                    ]
-                ])
-                @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "User Bank Account",
-                    'group_links'       => [
-                        'dropdown'      => [
-                            [
-                                'title'     => "Bank Account",
-                                'icon'      => "menu-icon las la-user-circle",
-                                'links'     => [
-                                    [
-                                        'title'     => "Pending Account",
-                                        'route'     => "admin.bank.account.pending",
-                                    ],
-                                    [
-                                        'title'     => "Approved Account",
-                                        'route'     => "admin.bank.account.approve",
-                                    ],
-                                    [
-                                        'title'     => "Rejected Account",
-                                        'route'     => "admin.bank.account.reject",
-                                    ],
-                                ],
-                            ]
-                        ],
-
-                    ]
-                ])
-
-                @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "Send Money Gateway",
-                    'group_links'       => [
-                        [
-                            'title'     => "Automatic",
-                            'route'     => "admin.send.money.gateway.index",
-                            'icon'      => "menu-icon las la-share-alt",
-                        ],
-                        
-                        
+                        ]
                     ]
                 ])
 
                 {{-- Section Transaction & Logs --}}
                 @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "Transactions & Logs",
+                    'group_title'       => __("TRANSACTIONS & LOGS"),
                     'group_links'       => [
                         'dropdown'      => [
                             [
-                                'title'     => "Add Money Logs",
+                                'title'     => __("Add Money Logs"),
                                 'icon'      => "menu-icon las la-calculator",
                                 'links'     => [
                                     [
@@ -130,7 +85,7 @@
                                 ],
                             ],
                             [
-                                'title'             => "Money Out Logs",
+                                'title'             => __("Money Out Logs"),
                                 'icon'              => "menu-icon las la-sign-out-alt",
                                 'links'     => [
                                     [
@@ -152,7 +107,7 @@
                                 ],
                             ],
                             [
-                                'title'     => "Remitance",
+                                'title'     => __("Remitance"),
                                 'icon'      => "menu-icon las la-calculator",
                                 'links'     => [
                                     [
@@ -189,7 +144,7 @@
                             ],
 
                              [
-                                'title'             => "Bill Pay Logs",
+                                'title'             => __("Bill Pay Logs"),
                                 'icon'              => "menu-icon las la-shopping-bag",
                                 'links'     => [
                                     [
@@ -216,7 +171,7 @@
                                 ],
                             ],
                             [
-                                'title'             => "Mobile Topup",
+                                'title'             =>__( "Mobile Topup"),
                                 'icon'              => "menu-icon las la-mobile",
                                 'links'     => [
                                     [
@@ -243,11 +198,11 @@
                                 ],
                             ],
                             [
-                                'title'             => "Payment Link Logs",
+                                'title'             => __("SPayment Link Logs"),
                                 'icon'              => "menu-icon las la-receipt",
                                 'links'     => [
                                     [
-                                        'title'     => "Transaction Logs",
+                                        'title'     => __("transaction Log"),
                                         'route'     => "admin.payment.link.index",
                                     ],
                                     [
@@ -265,7 +220,7 @@
                                 ],
                             ],
                             [
-                                'title'             => "Profit Logs",
+                                'title'             => __("Profit Logs"),
                                 'icon'              => "menu-icon las la-coins",
                                 'links'     => [
                                     [
@@ -280,11 +235,11 @@
                 ])
                 {{-- Interface Panel --}}
                 @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "Interface Panel",
+                    'group_title'       => __("Interface Panel"),
                     'group_links'       => [
                         'dropdown'      => [
                             [
-                                'title'     => "User Care",
+                                'title'     => __("User Care"),
                                 'icon'      => "menu-icon las la-user-edit",
                                 'links'     => [
                                     [
@@ -292,9 +247,10 @@
                                         'route'     => "admin.users.active",
                                     ],
                                     [
-                                        'title'     => "Email Unverified",
+                                        'title'     => "Email unverified",
                                         'route'     => "admin.users.email.unverified",
                                     ],
+
                                     [
                                         'title'     => "KYC Unverified",
                                         'route'     => "admin.users.kyc.unverified",
@@ -313,9 +269,38 @@
                                     ]
                                 ],
                             ],
-                            
                             [
-                                'title'     => "Merchant Care",
+                                'title'     => __("Agent Care"),
+                                'icon'      => "menu-icon las la-user-edit",
+                                'links'     => [
+                                    [
+                                        'title'     => "Active Agents",
+                                        'route'     => "admin.agents.active",
+                                    ],
+                                    [
+                                        'title'     => "Email unverified",
+                                        'route'     => "admin.agents.email.unverified",
+                                    ],
+                                    [
+                                        'title'     => "KYC Unverified",
+                                        'route'     => "admin.agents.kyc.unverified",
+                                    ],
+                                    [
+                                        'title'     => "All Agents",
+                                        'route'     => "admin.agents.index",
+                                    ],
+                                    [
+                                        'title'     => "Email To Agents",
+                                        'route'     => "admin.agents.email.agents",
+                                    ],
+                                    [
+                                        'title'     => "Banned Agents",
+                                        'route'     => "admin.agents.banned",
+                                    ]
+                                ],
+                            ],
+                            [
+                                'title'     => __("Merchant Care"),
                                 'icon'      => "menu-icon las la-user-edit",
                                 'links'     => [
                                     [
@@ -323,10 +308,10 @@
                                         'route'     => "admin.merchants.active",
                                     ],
                                     [
-                                        'title'     => "Email Unverified",
+                                        'title'     => "Email unverified",
                                         'route'     => "admin.users.email.unverified",
                                     ],
-                                    
+
                                     [
                                         'title'     => "KYC Unverified",
                                         'route'     => "admin.merchants.kyc.unverified",
@@ -346,7 +331,7 @@
                                 ],
                             ],
                             [
-                                'title'             => "Admin Care",
+                                'title'             => __("Admin Care"),
                                 'icon'              => "menu-icon las la-user-shield",
                                 'links'     => [
                                     [
@@ -375,11 +360,11 @@
 
                 {{-- Section Settings --}}
                 @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "Settings",
+                    'group_title'       => __("Settings"),
                     'group_links'       => [
                         'dropdown'      => [
                             [
-                                'title'     => "Web Settings",
+                                'title'     => __("Web Settings"),
                                 'icon'      => "menu-icon lab la-safari",
                                 'links'     => [
                                     [
@@ -397,7 +382,7 @@
                                 ],
                             ],
                             [
-                                'title'             => "App Settings",
+                                'title'             => __("App Settings"),
                                 'icon'              => "menu-icon las la-mobile",
                                 'links'     => [
                                     [
@@ -406,7 +391,7 @@
                                     ],
                                     [
                                         'title'     => "Onboard Screen",
-                                        'route'     => "admin.app.settings.onboard.screens",
+                                        'route'     => "admin.app.settings.onboard.index",
                                     ],
                                     [
                                         'title'     => "App URLs",
@@ -419,7 +404,7 @@
                 ])
                 @include('admin.components.side-nav.link',[
                     'route'     => 'admin.module.setting.index',
-                    'title'     => "Setup Module",
+                    'title'     => __("Setup Module"),
                     'icon'      => "menu-icon las la-box",
                 ])
                 @include('admin.components.side-nav.link',[
@@ -430,17 +415,21 @@
 
                 {{-- Verification Center --}}
                 @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "Verification Center",
+                    'group_title'       => __("VERIFICATION CENTER"),
                     'group_links'       => [
                         'dropdown'      => [
                             [
-                                'title'     => "Setup Email",
+                                'title'     => __("Setup Email"),
                                 'icon'      => "menu-icon las la-envelope-open-text",
                                 'links'     => [
                                     [
                                         'title'     => "Email Method",
                                         'route'     => "admin.setup.email.config",
                                     ],
+                                    // [
+                                    //     'title'     => "Default Template",
+                                    //     'route'     => "admin.setup.email.template.default",
+                                    // ]
                                 ],
                             ]
                         ],
@@ -456,7 +445,7 @@
 
 
                 @if (admin_permission_by_name("admin.setup.sections.section"))
-                    <li class="sidebar-menu-header">{{ __("Setup Web Content") }}</li>
+                    <li class="sidebar-menu-header">{{ __("SETUP WEB CONTENT") }}</li>
                     @php
                         $current_url = URL::current();
 
@@ -555,7 +544,7 @@
                                 </a>
                                 <a href="{{ setRoute('admin.setup.sections.section','merchant-section') }}" class="nav-link @if ($current_url == setRoute('admin.setup.sections.section','merchant-section')) active @endif">
                                     <i class="menu-icon las la-ellipsis-h"></i>
-                                    <span class="menu-title">{{ __("Merchant  Section") }}</span>
+                                    <span class="menu-title">{{ __("Merchant Section") }}</span>
                                 </a>
                                 <a href="{{ setRoute('admin.setup.sections.section','merchant-app') }}" class="nav-link @if ($current_url == setRoute('admin.setup.sections.section','merchant-app')) active @endif">
                                     <i class="menu-icon las la-ellipsis-h"></i>
@@ -596,12 +585,12 @@
 
                 @include('admin.components.side-nav.link',[
                     'route'     => 'admin.extensions.index',
-                    'title'     => "Extensions",
+                    'title'     => __("Extensions"),
                     'icon'      => "menu-icon las la-puzzle-piece",
                 ])
 
                 @if (admin_permission_by_name("admin.payment.gateway.view"))
-                    <li class="sidebar-menu-header">{{ __("Payment Methods") }}</li>
+                    <li class="sidebar-menu-header">{{ __("PAYMENT METHODS") }}</li>
                     @php
                         $payment_add_money_childs  = [
                             setRoute('admin.payment.gateway.view',['add-money','automatic']),
@@ -632,11 +621,12 @@
                             setRoute('admin.payment.gateway.view',['money-out','automatic']),
                             setRoute('admin.payment.gateway.view',['money-out','manual']),
                         ]
+
                     @endphp
                     <li class="sidebar-menu-item sidebar-dropdown @if (in_array($current_url,$payment_money_out_childs)) active @endif">
                         <a href="javascript:void(0)">
                             <i class="menu-icon las la-funnel-dollar"></i>
-                            <span class="menu-title">{{ __("Money out") }}</span>
+                            <span class="menu-title">{{ __("Money Out") }}</span>
                         </a>
                         <ul class="sidebar-submenu">
                             <li class="sidebar-menu-item">
@@ -655,11 +645,11 @@
 
                 {{-- Notifications --}}
                 @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "Notification",
+                    'group_title'       => __("NOTIFICATION-UPPER"),
                     'group_links'       => [
                         'dropdown'      => [
                             [
-                                'title'     => "Push Notification",
+                                'title'     => __("Push Notification"),
                                 'icon'      => "menu-icon las la-bell",
                                 'links'     => [
                                     [
@@ -686,7 +676,7 @@
                 @endphp
 
                 @if (admin_permission_by_name_array($bonus_routes))
-                    <li class="sidebar-menu-header">{{ __("Bonus") }}</li>
+                    <li class="sidebar-menu-header">{{ __("BONUS") }}</li>
                 @endif
                 @include('admin.components.side-nav.link',[
                     'route'     => 'admin.newsletter.index',
@@ -700,7 +690,7 @@
                 ])
                 @include('admin.components.side-nav.link',[
                     'route'     => 'admin.cookie.index',
-                    'title'     => "GDPR Cookie",
+                    'title'     => __("GDPR Cookie"),
                     'icon'      => "menu-icon las la-cookie-bite",
                 ])
                 @include('admin.components.side-nav.link',[

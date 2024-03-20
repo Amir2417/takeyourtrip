@@ -25,7 +25,7 @@
                                 @endphp
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Name*",
+                                        'label'     =>__( "name")."*",
                                         'name'      => $default_lang_code . "_name",
                                         'value'     => old($default_lang_code . "_name",$data->value->language->$default_lang_code->name ?? "")
                                     ])
@@ -39,7 +39,7 @@
                                 <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="modal-{{ $item->name }}" role="tabpanel" aria-labelledby="modal-{{$item->name}}-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Name*",
+                                            'label'     =>__( "name")."*",
                                             'name'      => $item->code . "_name",
                                             'value'     => old($item->code . "_name",$data->value->language->$lang_code->name ?? "")
                                         ])

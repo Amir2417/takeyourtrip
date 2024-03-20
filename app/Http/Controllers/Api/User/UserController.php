@@ -13,6 +13,7 @@ use App\Models\VirtualCardApi;
 use App\Http\Helpers\Api\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\BasicSettings;
+use App\Models\Admin\TransactionSetting;
 use App\Models\UserNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -285,7 +286,34 @@ class UserController extends Controller
                     'date_time' => $item->created_at ,
                 ];
 
+            }elseif($item->type == payment_gateway_const()::AGENTMONEYOUT){
+                return[
+                    'id' => $item->id,
+                    'type' =>$item->attribute,
+                    'trx' => $item->trx_id,
+                    'transaction_type' => $item->type,
+                    'request_amount' => get_amount($item->request_amount,$item->creator_wallet->currency->code),
+                    'payable' =>get_amount($item->payable,$item->creator_wallet->currency->code),
+                    'remark' => $item->remark??"",
+                    'status' => $item->stringStatus->value ,
+                    'date_time' => $item->created_at ,
+                ];
+
+            }elseif($item->type == payment_gateway_const()::MONEYIN){
+                return[
+                    'id' => $item->id,
+                    'type' =>$item->attribute,
+                    'trx' => $item->trx_id,
+                    'transaction_type' => $item->type,
+                    'request_amount' => get_amount($item->request_amount,$item->creator_wallet->currency->code),
+                    'payable' =>get_amount($item->request_amount,$item->creator_wallet->currency->code),
+                    'remark' => $item->remark??"",
+                    'status' => $item->stringStatus->value ,
+                    'date_time' => $item->created_at ,
+                ];
+
             }
+
 
         });
         //module access permissions
@@ -301,12 +329,38 @@ class UserController extends Controller
             'mobile_top_up' => module_access_api('mobile-top-up'),
             'request_money' => module_access_api('request-money'),
             'pay_link' => module_access_api('pay-link'),
+            'money_out' => module_access_api('money-out'),
         ];
+
+        $cardCreateCharge = TransactionSetting::where('slug','virtual_card')->where('status',1)->get()->map(function($data){
+            return [
+                'id' => $data->id,
+                'slug' => $data->slug,
+                'title' => $data->title,
+                'fixed_charge' => getAmount($data->fixed_charge,2),
+                'percent_charge' => getAmount($data->percent_charge,2),
+                'min_limit' => getAmount($data->min_limit,2),
+                'max_limit' => getAmount($data->max_limit,2),
+            ];
+        })->first();
+        $cardReloadCharge = TransactionSetting::where('slug','reload_card')->where('status',1)->get()->map(function($data){
+            return [
+                'id' => $data->id,
+                'slug' => $data->slug,
+                'title' => $data->title,
+                'fixed_charge' => getAmount($data->fixed_charge,2),
+                'percent_charge' => getAmount($data->percent_charge,2),
+                'min_limit' => getAmount($data->min_limit,2),
+                'max_limit' => getAmount($data->max_limit,2),
+            ];
+        })->first();
 
         $data =[
         'base_curr'    => get_default_currency_code(),
         'module_access'    => (object)$module_access,
         'active_virtual_system'    => activeCardSystem(),
+        'card_create_charge'    =>  $cardCreateCharge,
+        'card_reload_charge'    => $cardReloadCharge,
         'userWallet'   =>   (object)$userWallet,
         'default_image'    => "public/backend/images/default/profile-default.webp",
         "image_path"  =>  "public/frontend/user",
@@ -392,7 +446,6 @@ class UserController extends Controller
         return Helpers::onlysuccess($message);
     }
     public function passwordUpdate(Request $request) {
-
         $basic_settings = BasicSettingsProvider::get();
         $passowrd_rule = "required|string|min:6|confirmed";
         if($basic_settings->secure_password) {
@@ -427,7 +480,6 @@ class UserController extends Controller
         $user = auth()->user();
         $user->status = false;
         $user->email_verified = false;
-        $user->sms_verified = false;
         $user->kyc_verified = false;
         $user->deleted_at = now();
         $user->save();

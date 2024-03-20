@@ -37,7 +37,7 @@
                 <div class="row mb-10-none">
                     <div class="col-xl-3 col-lg-3 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Profile Image:",
+                            'label'             => __("Profile Image:"),
                             'name'              => "image",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path('admin-profile'),
@@ -47,21 +47,21 @@
                     <div class="col-xl-9 col-lg-9">
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'First Name*',
+                                'label'         => __("first Name")."*",
                                 'name'          => 'firstname',
                                 'value'         => old('firstname',$profile->firstname),
                             ])
                         </div>
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Last Name*',
+                                'label'         =>__("last Name")."*",
                                 'name'          => 'lastname',
                                 'value'         => old('lastname',$profile->lastname),
                             ])
                         </div>
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Email*',
+                                'label'         => __("Email")."*",
                                 'type'          => 'email',
                                 'name'          => 'email',
                                 'value'         => old('email',$profile->email),
@@ -70,7 +70,7 @@
                         </div>
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Phone Number',
+                                'label'         => __("phone Number")."*",
                                 'name'          => 'phone',
                                 'value'         => old('phone',$profile->phone),
                             ])
@@ -80,9 +80,9 @@
                         @php
                             $old_country = old('country',$profile->country);
                         @endphp
-                        <label>{{ __("Country") }}</label>
+                        <label>{{ __("country") }}</label>
                         <select name="country" class="form--control select2-auto-tokenize country-select">
-                            <option selected disabled>Select Country</option>
+                            <option selected disabled>{{ __("select Country") }}</option>
                             @foreach ($countries as $item)
                                 <option value="{{ $item->name }}" data-id="{{ $item->id }}" {{ ($old_country == $item->name) ? "selected" : "" }}>{{ $item->name }}</option>
                             @endforeach
@@ -92,9 +92,9 @@
                         @php
                             $old_state = old('state',$profile->state);
                         @endphp
-                        <label>{{ __("State") }}</label>
+                        <label>{{ __("state") }}</label>
                         <select name="state" class="form--control select2-auto-tokenize state-select">
-                            <option selected disabled>Select State</option>
+                            <option selected disabled>{{ __("Select State") }}</option>
                             @if ($old_state)
                                 <option selected value="{{ $old_state }}">{{ $old_state }}</option>
                             @endif
@@ -104,9 +104,9 @@
                         @php
                             $old_city = old('city',$profile->city);
                         @endphp
-                        <label>{{ __("City") }}</label>
+                        <label>{{ __("city") }}</label>
                         <select name="city" class="form--control select2-auto-tokenize city-select">
-                            <option selected disabled>Select City</option>
+                            <option selected disabled>{{ __("select City") }}</option>
                             @if ($old_city)
                                 <option selected value="{{ $old_city }}">{{ $old_city }}</option>
                             @endif
@@ -114,15 +114,16 @@
                     </div>
                     <div class="col-xl-6 col-lg-6 form-group">
                         @include('admin.components.form.input',[
-                            'label'         => 'Zip/Postal',
-                            'type'          => 'number',
+                            'label'         => __("Zip/Postal"),
+                            'type'          => 'text',
                             'name'          => 'zip_postal',
                             'value'         => old('zip_postal',$profile->zip_postal),
+                            'class'           =>  "number-input",
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input',[
-                            'label'         => 'Address',
+                            'label'         => __("address"),
                             'name'          => 'address',
                             'value'         => old('address',$profile->address),
                         ])

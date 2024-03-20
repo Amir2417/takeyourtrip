@@ -2,7 +2,6 @@
 
 namespace App\Traits\PaymentGateway;
 use Exception;
-use KingFlamez\Rave\Rave;
 use Illuminate\Support\Str;
 use App\Models\TemporaryData;
 use Illuminate\Support\Carbon;
@@ -15,14 +14,14 @@ use App\Models\Admin\AdminNotification;
 use App\Models\Admin\BasicSettings;
 use App\Notifications\User\AddMoney\ApprovedMail;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Artisan;
 use Jenssegers\Agent\Agent;
-use Illuminate\Support\Facades\Session;
 use KingFlamez\Rave\Facades\Rave as Flutterwave;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
+use App\Traits\TransactionAgent;
 
 trait FlutterwaveTrait
 {
+    use TransactionAgent;
     public function flutterwaveInit($output = null) {
         if(!$output) $output = $this->output;
 
@@ -41,7 +40,11 @@ trait FlutterwaveTrait
             $user_phone = $user->full_mobile ?? '';
             $user_name = $user->firstname.' '.$user->lastname ?? '';
         }
-        $return_url = route('user.add.money.flutterwave.callback');
+        if(userGuard()['guard'] == 'web'){
+           $return_url = route('user.add.money.flutterwave.callback');
+        }elseif(userGuard()['guard'] == 'agent'){
+            $return_url = route('agent.add.money.flutterwave.callback');
+        }
 
         // Enter the details of the payment
         $data = [
@@ -75,17 +78,23 @@ trait FlutterwaveTrait
 
         return redirect($payment['data']['link']);
     }
-
-
     public function flutterWaveJunkInsert($response) {
         $output = $this->output;
         $user = auth()->guard(get_auth_guard())->user();
         $creator_table = $creator_id = $wallet_table = $wallet_id = null;
-
-        $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
-        $creator_id = auth()->guard(get_auth_guard())->user()->id;
-        $wallet_table = $output['wallet']->getTable();
-        $wallet_id = $output['wallet']->id;
+        if(authGuardApi()['type']  == "AGENT"){
+            $creator_table = authGuardApi()['user']->getTable();
+            $creator_id = authGuardApi()['user']->id;
+            $creator_guard = authGuardApi()['guard'];
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }else{
+            $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
+            $creator_id = auth()->guard(get_auth_guard())->user()->id;
+            $creator_guard = get_auth_guard();
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }
 
             $data = [
                 'gateway'      => $output['gateway']->id,
@@ -96,12 +105,8 @@ trait FlutterwaveTrait
                 'wallet_id'     => $wallet_id,
                 'creator_table' => $creator_table,
                 'creator_id'    => $creator_id,
-                'creator_guard' => get_auth_guard(),
+                'creator_guard' => $creator_guard,
             ];
-
-
-        Session::put('identifier',$response['tx_ref']);
-        Session::put('output',$output);
 
         return TemporaryData::create([
             'type'          => PaymentGatewayConst::FLUTTER_WAVE,
@@ -109,7 +114,6 @@ trait FlutterwaveTrait
             'data'          => $data,
         ]);
     }
-
     // Get Flutter wave credentials
     public function getFlutterCredentials($output) {
         $gateway = $output['gateway'] ?? null;
@@ -183,25 +187,25 @@ trait FlutterwaveTrait
         ];
 
     }
-
     public function flutterwavePlainText($string) {
         $string = Str::lower($string);
         return preg_replace("/[^A-Za-z0-9]/","",$string);
     }
-
     public function flutterwaveSetSecreteKey($credentials){
         Config::set('flutterwave.secretKey',$credentials->secret_key);
         Config::set('flutterwave.publicKey',$credentials->public_key);
         Config::set('flutterwave.secretHash',$credentials->encryption_key);
     }
-
     public function flutterwaveSuccess($output = null) {
         if(!$output) $output = $this->output;
         $token = $this->output['tempData']['identifier'] ?? "";
         if(empty($token)) throw new Exception(__("Transaction failed. Record didn\'t saved properly. Please try again"));
-        return $this->createTransactionFlutterwave($output);
+        if(userGuard()['type'] == "USER"){
+            return $this->createTransactionFlutterwave($output);
+        }else{
+            return $this->createTransactionChildRecords($output,PaymentGatewayConst::STATUSSUCCESS);
+        }
     }
-
     public function createTransactionFlutterwave($output) {
         $basic_setting = BasicSettings::first();
         $user = auth()->user();
@@ -223,7 +227,6 @@ trait FlutterwaveTrait
         }
 
     }
-
     public function updateWalletBalanceFlutterWave($output) {
         $update_amount = $output['wallet']->balance + $output['amount']->requested_amount;
 
@@ -231,7 +234,6 @@ trait FlutterwaveTrait
             'balance'   => $update_amount,
         ]);
     }
-
     public function insertRecordFlutterwave($output,$trx_id) {
         $token = $this->output['tempData']['identifier'] ?? "";
         DB::beginTransaction();
@@ -264,7 +266,6 @@ trait FlutterwaveTrait
         }
         return $id;
     }
-
     public function insertChargesFlutterwace($output,$id) {
         if(Auth::guard(get_auth_guard())->check()){
             $user = auth()->guard(get_auth_guard())->user();
@@ -315,7 +316,6 @@ trait FlutterwaveTrait
             throw new Exception(__("Something went wrong! Please try again."));
         }
     }
-
     public function insertDeviceFlutterWave($output,$id) {
         $client_ip = request()->ip() ?? false;
         $location = geoip()->getLocation($client_ip);
@@ -346,12 +346,9 @@ trait FlutterwaveTrait
             throw new Exception(__("Something went wrong! Please try again."));
         }
     }
-
     public function removeTempDataFlutterWave($output) {
         TemporaryData::where("identifier",$output['tempData']['identifier'])->delete();
     }
-
-
     // ********* For API **********
     public function flutterwaveInitApi($output = null) {
         if(!$output) $output = $this->output;
@@ -363,14 +360,20 @@ trait FlutterwaveTrait
 
         $amount = $output['amount']->total_amount ? number_format($output['amount']->total_amount,2,'.','') : 0;
 
-        if(auth()->guard(get_auth_guard())->check()){
+        if(authGuardApi()['guard'] == 'agent_api'){
+            $user = authGuardApi()['user'];
+            $user_email = $user->email;
+            $user_phone = $user->full_mobile ?? '';
+            $user_name = $user->firstname.' '.$user->lastname ?? '';
+            $return_url = route('agent.api.flutterwave.callback', "r-source=".PaymentGatewayConst::APP);
+        }elseif(auth()->guard(get_auth_guard())->check()){
             $user = auth()->guard(get_auth_guard())->user();
             $user_email = $user->email;
             $user_phone = $user->full_mobile ?? '';
             $user_name = $user->firstname.' '.$user->lastname ?? '';
+            $return_url = route('api.flutterwave.callback', "r-source=".PaymentGatewayConst::APP);
         }
 
-        $return_url = route('api.flutterwave.callback', "r-source=".PaymentGatewayConst::APP);
 
         // Enter the details of the payment
         $data = [

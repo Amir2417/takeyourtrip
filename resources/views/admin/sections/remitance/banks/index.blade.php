@@ -29,13 +29,13 @@
     <div class="table-area">
         <div class="table-wrapper">
             <div class="table-header">
-                <h5 class="title">{{ __("Bank Deposit") }}</h5>
+                <h5 class="title">{{ __("Bank Deposits") }}</h5>
                 <div class="table-btn-area">
                     @include('admin.components.search-input',[
                         'name'  => 'bank_search',
                     ])
                     @include('admin.components.link.add-default',[
-                        'text'          => "Add Bank",
+                        'text'          => __("Add Bank"),
                         'href'          => "#bank-deposit-add",
                         'class'         => "modal-btn",
                         'permission'    => "admin.setup-sections.section.item.store",

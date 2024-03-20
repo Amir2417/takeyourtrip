@@ -55,21 +55,21 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="english" role="tabpanel" aria-labelledby="english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Title*",
+                                            'label'     => __("titleS")."*",
                                             'name'      => $default_lang_code . "_title",
                                             'value'     => old($default_lang_code . "_title",$data->value->language->$default_lang_code->title ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Heading*",
+                                            'label'     => __( "Heading*"),
                                             'name'      => $default_lang_code . "_heading",
                                             'value'     => old($default_lang_code . "_heading",$data->value->language->$default_lang_code->heading ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Sub Heading*",
+                                            'label'     => __( "Sub Heading*"),
                                             'name'      => $default_lang_code . "_sub_heading",
                                             'value'     => old($default_lang_code . "_sub_heading",$data->value->language->$default_lang_code->sub_heading ?? "")
                                         ])
@@ -85,21 +85,21 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="{{ $item->name }}" role="tabpanel" aria-labelledby="english-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Title*",
+                                                'label'     => __("titleS")."*",
                                                 'name'      => $lang_code . "_title",
                                                 'value'     => old($lang_code . "_title",$data->value->language->$lang_code->title ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Heading*",
+                                                'label'     => __( "Heading*"),
                                                 'name'      => $lang_code . "_heading",
                                                 'value'     => old($lang_code . "_heading",$data->value->language->$lang_code->heading ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Sub Heading*",
+                                                'label'     => __( "Sub Heading*"),
                                                 'name'      => $lang_code . "_sub_heading",
                                                 'value'     => old($lang_code . "_sub_heading",$data->value->language->$lang_code->sub_heading ?? "")
                                             ])
@@ -113,7 +113,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>
@@ -125,7 +125,7 @@
         <div class="table-wrapper">
             <div class="table-header justify-content-end">
                 <div class="table-btn-area">
-                    <a href="#work-add" class="btn--base modal-btn"><i class="fas fa-plus me-1"></i> {{ __("Add Item ") }}</a>
+                    <a href="#work-add" class="btn--base modal-btn"><i class="fas fa-plus me-1"></i> {{__("Add Item") }}</a>
                 </div>
             </div>
             <div class="table-responsive">
@@ -133,8 +133,8 @@
                     <thead>
                         <tr>
 
-                            <th>Name</th>
-                            <th>Icon</th>
+                            <th>{{ __("name") }}</th>
+                            <th>{{ __("Icon") }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -188,14 +188,14 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="edit-modal-english" role="tabpanel" aria-labelledby="edit-modal-english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Name*",
+                                          'label'     => __("name")."*",
                                             'name'      => $default_lang_code . "_name_edit",
                                             'value'     => old($default_lang_code . "_name_edit",$data->value->language->$default_lang_code->name ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Icon*",
+                                            'label'     => __("Icon")."*",
                                             'name'      => $default_lang_code . "_icon_edit",
                                             'value'     => old($default_lang_code . "_icon_edit",$data->value->language->$default_lang_code->icon ?? ""),
                                             'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -212,14 +212,14 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="edit-modal-{{ $item->name }}" role="tabpanel" aria-labelledby="edit-modal-{{$item->name}}-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Name*",
+                                                'label'     => __("name")."*",
                                                 'name'      => $lang_code . "_name_edit",
                                                 'value'     => old($lang_code . "_name_edit",$data->value->language->$lang_code->name ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Icon*",
+                                                'label'     => __("Icon")."*",
                                                 'name'      => $lang_code . "_icon_edit",
                                                 'value'     => old($lang_code . "_icon_edit",$data->value->language->$lang_code->icon ?? ""),
                                                 'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -234,7 +234,7 @@
 
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

@@ -15,8 +15,8 @@
         <div class="account-wrapper">
             <div class="account-logo text-center">
                 <a href="{{ setRoute('index') }}" class="site-logo">
-                    <img src="{{ get_logo($basic_settings) }}"  data-white_img="{{ get_logo($basic_settings,'white') }}"
-                            data-dark_img="{{ get_logo($basic_settings,'dark') }}"
+                    <img src="{{ get_logo_merchant($basic_settings) }}"  data-white_img="{{ get_logo_merchant($basic_settings,'white') }}"
+                            data-dark_img="{{ get_logo_merchant($basic_settings,'dark') }}"
                                 alt="site-logo">
                 </a>
             </div>
@@ -31,7 +31,7 @@
 
                     <div class="col-lg-12 form-group">
                         <div class="forgot-item">
-                            <label>{{ __("Back to ") }}<a href="{{ setRoute('merchant.dashboard') }}" class="text--base">{{ __("Dashboard") }}</a></label>
+                            <label>{{ __("Back to") }} <a href="{{ setRoute('merchant.dashboard') }}" class="text--base">{{ __("Dashboard") }}</a></label>
                         </div>
                     </div>
                     <div class="col-lg-12 form-group text-center">

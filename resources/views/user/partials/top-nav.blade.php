@@ -10,7 +10,7 @@
             @yield('breadcrumb')
         </div>
         <div class="right">
-           
+
             <div class="header-push-wrapper">
                 <button class="push-icon">
                     <i class="las la-bell"></i>

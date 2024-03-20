@@ -39,7 +39,7 @@
                 <div class="row justify-content-center mb-10-none">
                     <div class="col-xl-4 col-lg-4 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Banner Image:",
+                            'label'             => __( "Banner Image:"),
                             'name'              => "banner_image",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path("site-section"),
@@ -62,21 +62,21 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="english" role="tabpanel" aria-labelledby="english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Title*",
+                                            'label'     => __("titleS")."*",
                                             'name'      => $default_lang_code . "_title",
                                             'value'     => old($default_lang_code . "_title",$data->value->language->$default_lang_code->title ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Heading*",
+                                            'label'     => __( "Heading*"),
                                             'name'      => $default_lang_code . "_heading",
                                             'value'     => old($default_lang_code . "_heading",$data->value->language->$default_lang_code->heading ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Sub Heading*",
+                                            'label'     => __( "Sub Heading*"),
                                             'name'      => $default_lang_code . "_sub_heading",
                                             'value'     => old($default_lang_code . "_sub_heading",$data->value->language->$default_lang_code->sub_heading ?? "")
                                         ])
@@ -90,21 +90,21 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="{{ $item->name }}" role="tabpanel" aria-labelledby="english-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Title*",
+                                                'label'     => __("titleS")."*",
                                                 'name'      => $item->code . "_title",
                                                 'value'     => old($item->code . "_title",$data->value->language->$lang_code->title ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Heading*",
+                                                'label'     => __( "Heading*"),
                                                 'name'      =>$item->code . "_heading",
                                                 'value'     => old($item->code . "_heading",$data->value->language->$lang_code->heading ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.textarea',[
-                                                'label'     => "Sub Heading*",
+                                                'label'     => __( "Sub Heading*"),
                                                 'name'      => $item->code . "_sub_heading",
                                                 'value'     => old($item->code . "_sub_heading",$data->value->language->$lang_code->sub_heading ?? "")
                                             ])
@@ -118,7 +118,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>

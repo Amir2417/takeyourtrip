@@ -73,10 +73,10 @@ class LoginController extends Controller
     public function register(Request $request){
         $basic_settings = $this->basic_settings;
         $passowrd_rule = "required|string|min:6|confirmed";
-        if($basic_settings->secure_password) {
+        if($basic_settings->merchant_secure_password) {
             $passowrd_rule = ["required","confirmed",Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()];
         }
-        if( $basic_settings->agree_policy){
+        if( $basic_settings->merchant_agree_policy){
             $agree ='required';
         }else{
             $agree ='';
@@ -100,7 +100,7 @@ class LoginController extends Controller
             $error =  ['error'=>$validator->errors()->all()];
             return ApiHelpers::validation($error);
         }
-        if($basic_settings->kyc_verification == true){
+        if($basic_settings->merchant_kyc_verification == true){
             $user_kyc_fields = SetupKyc::merchantKyc()->first()->fields ?? [];
             $validation_rules = $this->generateValidationRules($user_kyc_fields);
             $validated = Validator::make($request->all(), $validation_rules);
@@ -123,6 +123,11 @@ class LoginController extends Controller
             return ApiHelpers::validation($error);
         }
 
+        $userName = make_username($data['firstname'],$data['lastname']);
+        $check_user_name = Merchant::where('username',$userName)->first();
+        if($check_user_name){
+            $userName = $userName.'-'.rand(123,456);
+        }
         //Merchant Create
         $user = new Merchant();
         $user->firstname = isset($data['firstname']) ? $data['firstname'] : null;
@@ -133,7 +138,7 @@ class LoginController extends Controller
         $user->mobile_code =  $mobile_code;
         $user->full_mobile =    $complete_phone;
         $user->password = Hash::make($data['password']);
-        $user->username = make_username($data['firstname'],$data['lastname']);
+        $user->username = $userName;
         $user->address = [
             'address' => isset($data['address']) ? $data['address'] : '',
             'city' => isset($data['city']) ? $data['city'] : '',
@@ -144,9 +149,9 @@ class LoginController extends Controller
         $user->status = 1;
         $user->email_verified =  true;
         $user->sms_verified =  ($basic_settings->sms_verification == true) ? true : true;
-        $user->kyc_verified =  ($basic_settings->kyc_verification == true) ? false : true;
+        $user->kyc_verified =  ($basic_settings->merchant_kyc_verification == true) ? false : true;
         $user->save();
-        if( $user && $basic_settings->kyc_verification == true){
+        if( $user && $basic_settings->merchant_kyc_verification == true){
             $create = [
                 'merchant_id'       => $user->id,
                 'data'          => json_encode($get_values),

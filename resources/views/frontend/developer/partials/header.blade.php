@@ -18,14 +18,14 @@
             <div class="developer-header-content">
                 <ul class="developer-header-list">
                     <li>
-                        <a href="{{ setRoute('contact') }}">{{ ("Support") }}</a>
+                        <a href="{{ setRoute('contact') }}">{{ __("Support") }}</a>
                     </li>
                 </ul>
                 <div class="developer-header-action">
                     @auth("merchant")
-                    <a href="{{ setRoute('merchant.dashboard') }}" class="btn--base"><i class="las la-user-edit me-1"></i>{{ __(" Merchant Dashboard") }}</a>
+                    <a href="{{ setRoute('merchant.dashboard') }}" class="btn--base"><i class="las la-user-edit me-1"></i>{{ __("Merchant Dashboard") }}</a>
                     @else
-                    <a href="{{ setRoute('merchant.login') }}" class="btn--base"><i class="las la-user-edit me-1"></i>{{ __(" Login in to Dashboard") }}</a>
+                    <a href="{{ setRoute('merchant.login') }}" class="btn--base"><i class="las la-user-edit me-1"></i>{{ __("Login in to Dashboard") }}</a>
                     @endauth
 
                 </div>

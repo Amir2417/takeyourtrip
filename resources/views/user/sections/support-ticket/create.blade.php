@@ -29,21 +29,21 @@
                             <input type="hidden" name="email" value="{{userGuard()['user']->email??""}}">
                             <div class="col-xl-12 col-lg-12 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Subject<span>*</span>",
+                                    'label'         => __("Subject")."<span>*</span>",
                                     'name'          => "subject",
-                                    'placeholder'   => "Enter Subject...",
+                                    'placeholder'   => __("Enter Subject"),
                                 ])
                             </div>
                             <div class="col-xl-12 col-lg-12 form-group">
                                 @include('admin.components.form.textarea',[
-                                    'label'         => "Message <span>*</span>",
+                                    'label'         => __("Message")."<span>*</span>",
                                     'name'          => "desc",
-                                    'placeholder'   => "Write Here…",
+                                    'placeholder'   => __("Write Here.."),
                                 ])
                             </div>
                             <div class="col-xl-12 col-lg-12 form-group">
                                 <label>{{ __("Attachments") }}</label>
-                                <input type="file" class="file-holder" name="attachment[]" id="attachment" multiple>
+                                <input type="file" class="file-holder" name="attachment[]" id="fileUpload" data-height="130" accept="image/*" data-max_size="20" data-file_limit="15">
                             </div>
                         </div>
                         <div class="col-xl-12 col-lg-12">

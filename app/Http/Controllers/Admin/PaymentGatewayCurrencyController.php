@@ -25,7 +25,7 @@ class PaymentGatewayCurrencyController extends Controller
         // find terget Item
         $gateway_currency = PaymentGatewayCurrency::find($validated['data_target']);
         if(!$gateway_currency) {
-            $error = ['error' => ['Payment gateway currency not found!']];
+            $error = ['error' => [__("Payment gateway currency not found!")]];
             return Response::error($error,null,404);
         }
 
@@ -36,11 +36,11 @@ class PaymentGatewayCurrencyController extends Controller
             }
             $gateway_currency->delete();
         }catch(Exception $e) {
-            $error = ['error' => ['Something went worng! Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 
-        $success = ['success' => ['Payment gateway currency deleted successfully!']];
+        $success = ['success' => [__("Payment gateway currency deleted successfully!")]];
         return Response::success($success);
 
     }

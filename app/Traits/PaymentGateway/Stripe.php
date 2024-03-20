@@ -18,10 +18,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Jenssegers\Agent\Agent;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
+use App\Traits\TransactionAgent;
 
 
 trait Stripe
 {
+    use TransactionAgent;
     public function stripeInit($output = null) {
         $basic_settings = BasicSettingsProvider::get();
         if(!$output) $output = $this->output;
@@ -35,7 +37,12 @@ trait Stripe
             $user_phone = $user->full_mobile ?? '';
             $user_name = $user->firstname.' '.$user->lastname ?? '';
         }
-        $return_url = route('user.add.money.stripe.payment.success', $reference);
+        if(userGuard()['guard']  === 'web'){
+            $return_url = route('user.add.money.stripe.payment.success', $reference);
+        }elseif(userGuard()['guard']  === 'agent'){
+            $return_url = route('agent.add.money.stripe.payment.success', $reference);
+        }
+
 
          // Enter the details of the payment
          $data = [
@@ -158,13 +165,20 @@ trait Stripe
     }
     public function stripeJunkInsert($response) {
         $output = $this->output;
-        $user = auth()->guard(get_auth_guard())->user();
         $creator_table = $creator_id = $wallet_table = $wallet_id = null;
-
-        $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
-        $creator_id = auth()->guard(get_auth_guard())->user()->id;
-        $wallet_table = $output['wallet']->getTable();
-        $wallet_id = $output['wallet']->id;
+        if(authGuardApi()['type']  == "AGENT"){
+            $creator_table = authGuardApi()['user']->getTable();
+            $creator_id = authGuardApi()['user']->id;
+            $creator_guard = authGuardApi()['guard'];
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }else{
+            $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
+            $creator_id = auth()->guard(get_auth_guard())->user()->id;
+            $creator_guard = get_auth_guard();
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }
 
             $data = [
                 'gateway'      => $output['gateway']->id,
@@ -175,7 +189,7 @@ trait Stripe
                 'wallet_id'     => $wallet_id,
                 'creator_table' => $creator_table,
                 'creator_id'    => $creator_id,
-                'creator_guard' => get_auth_guard(),
+                'creator_guard' => $creator_guard,
             ];
 
         return TemporaryData::create([
@@ -188,7 +202,12 @@ trait Stripe
         if(!$output) $output = $this->output;
         $token = $this->output['tempData']['identifier'] ?? "";
         if(empty($token)) throw new Exception(__('Transaction failed. Record didn\'t saved properly. Please try again'));
-        return $this->createTransactionStripe($output);
+        if(userGuard()['type'] == "USER"){
+            return $this->createTransactionStripe($output);
+        }else{
+            return $this->createTransactionChildRecords($output,PaymentGatewayConst::STATUSSUCCESS);
+        }
+
     }
     public function createTransactionStripe($output) {
         $basic_setting = BasicSettings::first();
@@ -216,6 +235,7 @@ trait Stripe
         $token = $this->output['tempData']['identifier'] ?? "";
         DB::beginTransaction();
         try{
+
             if(Auth::guard(get_auth_guard())->check()){
                 $user_id = auth()->guard(get_auth_guard())->user()->id;
             }
@@ -342,16 +362,19 @@ trait Stripe
         $amount = $output['amount']->total_amount ? number_format($output['amount']->total_amount,2,'.','') : 0;
         $currency = $output['currency']['currency_code']??"USD";
 
-        if(auth()->guard(get_auth_guard())->check()){
+        if(authGuardApi()['guard'] == 'agent_api'){
+            $user = authGuardApi()['user'];
+            $user_email = $user->email;
+            $user_phone = $user->full_mobile ?? '';
+            $user_name = $user->firstname.' '.$user->lastname ?? '';
+            $return_url = route('agent.api.stripe.payment.success', $reference."?r-source=".PaymentGatewayConst::APP);
+        }elseif(auth()->guard(get_auth_guard())->check()){
             $user = auth()->guard(get_auth_guard())->user();
             $user_email = $user->email;
             $user_phone = $user->full_mobile ?? '';
             $user_name = $user->firstname.' '.$user->lastname ?? '';
+            $return_url = route('api.stripe.payment.success', $reference."?r-source=".PaymentGatewayConst::APP);
         }
-
-        $return_url = route('api.stripe.payment.success', $reference."?r-source=".PaymentGatewayConst::APP);
-
-
          // Enter the details of the payment
          $data = [
             'payment_options' => 'card',
@@ -391,7 +414,7 @@ trait Stripe
                 'product' => $product_id->id??""
               ]);
        }catch(Exception $e){
-            $error = ['error'=>["Something Is Wrong, Please Contact With Owner"]];
+            $error = ['error'=>[__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
        }
        //create payment live links
@@ -409,7 +432,8 @@ trait Stripe
                 ],
             ]);
         }catch(Exception $e){
-            $error = ['error'=>["Something Is Wrong, Please Contact With Owner"]];
+
+            $error = ['error'=>[__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
         }
         $data['link'] =  $payment_link->url;

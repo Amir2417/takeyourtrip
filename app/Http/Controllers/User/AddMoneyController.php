@@ -30,6 +30,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use KingFlamez\Rave\Facades\Rave as Flutterwave;
+use Illuminate\Http\RedirectResponse;
 
 class AddMoneyController extends Controller
 {
@@ -46,7 +47,6 @@ class AddMoneyController extends Controller
         $transactions = Transaction::auth()->addMoney()->latest()->take(10)->get();
         return view('user.sections.add-money.index',compact("page_title","transactions","payment_gateways_currencies"));
     }
-
     public function submit(Request $request) {
         $basic_setting = BasicSettings::first();
         $user = auth()->user();
@@ -68,17 +68,17 @@ class AddMoneyController extends Controller
         }
         return $instance;
     }
-
     public function success(Request $request, $gateway){
         $requestData = $request->all();
         $token = $requestData['token'] ?? "";
         $checkTempData = TemporaryData::where("type",$gateway)->where("identifier",$token)->first();
         if(!$checkTempData) return redirect()->route('user.add.money.index')->with(['error' => [__('Transaction failed. Record didn\'t saved properly. Please try again')]]);
         $checkTempData = $checkTempData->toArray();
-        
+
         try{
             PaymentGatewayHelper::init($checkTempData)->type(PaymentGatewayConst::TYPEADDMONEY)->responseReceive();
         }catch(Exception $e) {
+
             return back()->with(['error' => [__('Something went wrong! Please try again.')]]);
         }
         return redirect()->route("user.add.money.index")->with(['success' => [__("Successfully Added Money")]]);
@@ -91,8 +91,6 @@ class AddMoneyController extends Controller
         }
         return redirect()->route('user.add.money.index');
     }
-
-
     public function manualPayment(){
         $tempData = Session::get('identifier');
         $hasData = TemporaryData::where('identifier', $tempData)->first();
@@ -103,7 +101,6 @@ class AddMoneyController extends Controller
         }
         return view('user.sections.add-money.manual.payment_confirmation',compact("page_title","hasData",'gateway'));
     }
-
     public function flutterwaveCallback()
     {
         $status = request()->status;
@@ -136,49 +133,6 @@ class AddMoneyController extends Controller
             return redirect()->route('user.add.money.index')->with(['error' => [__("Transaction failed")]]);
         }
     }
-
-    public function razorPayment($trx_id){
-        $identifier = $trx_id;
-        $output = TemporaryData::where('identifier', $identifier)->first();
-        if(!$output){
-            return redirect()->route('user.add.money.index')->with(['error' => [__("Transaction failed")]]);
-        }
-        $data =  $output->data->response;
-        $orderId =  $output->data->response->order_id;
-        $page_title = __('razor Pay Payment');
-
-        return view('user.sections.add-money.automatic.razor', compact('page_title','output','data','orderId'));
-    }
-    public function razorCallback()
-    {
-        $request_data = request()->all();
-        //if payment is successful
-        if (isset($request_data['razorpay_order_id'])) {
-            $token = $request_data['razorpay_order_id'];
-
-            $checkTempData = TemporaryData::where("type",PaymentGatewayConst::RAZORPAY)->where("identifier",$token)->first();
-            if(!$checkTempData) return redirect()->route('user.add.money.index')->with(['error' => [__("Transaction Failed. Record didn\'t saved properly. Please try again")]]);
-            $checkTempData = $checkTempData->toArray();
-            try{
-                PaymentGatewayHelper::init($checkTempData)->type(PaymentGatewayConst::TYPEADDMONEY)->responseReceive('razorpay');
-            }catch(Exception $e) {
-                return back()->with(['error' => [__('Something went wrong! Please try again.')]]);
-            }
-            return redirect()->route("user.add.money.index")->with(['success' => [__("Successfully Added Money")]]);
-
-        }
-        else{
-            return redirect()->route('user.add.money.index')->with(['error' => [__("Transaction failed")]]);
-        }
-    }
-    public function razorCancel($trx_id){
-        $token = $trx_id;
-        if( $token){
-            TemporaryData::where("identifier",$token)->delete();
-        }
-        return redirect()->route("user.add.money.index")->with(['error' => [__('Add money cancelled')]]);
-    }
-
     //stripe success
     public function stripePaymentSuccess($trx){
         $token = $trx;
@@ -289,7 +243,6 @@ class AddMoneyController extends Controller
         }
     }
     //coingate response end
-
     public function cryptoPaymentAddress(Request $request, $trx_id) {
         $page_title =__( "Crypto Payment Address");
         $transaction = Transaction::where('trx_id', $trx_id)->firstOrFail();
@@ -302,7 +255,6 @@ class AddMoneyController extends Controller
 
         return abort(404);
     }
-
     public function cryptoPaymentConfirm(Request $request, $trx_id)
     {
         $transaction = Transaction::where('trx_id',$trx_id)->where('status', PaymentGatewayConst::STATUSWAITING)->firstOrFail();
@@ -403,5 +355,79 @@ class AddMoneyController extends Controller
         }
 
         return back()->with(['success' => [__('Payment Confirmation Success')]]);
+    }
+    /**
+     * Redirect Users for collecting payment via Button Pay (JS Checkout)
+     */
+    public function redirectBtnPay(Request $request, $gateway)
+    {
+        try{
+            return PaymentGatewayHelper::init([])->handleBtnPay($gateway, $request->all());
+        }catch(Exception $e) {
+            return redirect()->route('user.add.money.index')->with(['error' => [$e->getMessage()]]);
+        }
+    }
+    public function successGlobal(Request $request, $gateway){
+        try{
+            $token = PaymentGatewayHelper::getToken($request->all(),$gateway);
+            $temp_data = TemporaryData::where("identifier",$token)->first();
+            if(Transaction::where('callback_ref', $token)->exists()) {
+                if(!$temp_data) return redirect()->route('user.add.money.index')->with(['success' => [__('Transaction request sended successfully!')]]);
+            }else {
+                if(!$temp_data) return redirect()->route('user.add.money.index')->with(['error' => [__('Transaction failed. Record didn\'t saved properly. Please try again')]]);
+            }
+            $update_temp_data = json_decode(json_encode($temp_data->data),true);
+            $update_temp_data['callback_data']  = $request->all();
+            $temp_data->update([
+                'data'  => $update_temp_data,
+            ]);
+            $temp_data = $temp_data->toArray();
+            $instance = PaymentGatewayHelper::init($temp_data)->type(PaymentGatewayConst::TYPEADDMONEY)->responseReceive($temp_data['type']);
+            if($instance instanceof RedirectResponse) return $instance;
+        }catch(Exception $e) {
+            return back()->with(['error' => [$e->getMessage()]]);
+        }
+        return redirect()->route("user.add.money.index")->with(['success' => [__('Successfully Added Money')]]);
+    }
+    public function cancelGlobal(Request $request, $gateway) {
+        $token = PaymentGatewayHelper::getToken($request->all(),$gateway);
+        if($temp_data = TemporaryData::where("identifier",$token)->first()) {
+            $temp_data->delete();
+        }
+        return redirect()->route('user.add.money.index');
+    }
+    public function postSuccess(Request $request, $gateway)
+    {
+
+        try{
+            $token = PaymentGatewayHelper::getToken($request->all(),$gateway);
+            $temp_data = TemporaryData::where("identifier",$token)->first();
+            Auth::guard($temp_data->data->creator_guard)->loginUsingId($temp_data->data->creator_id);
+        }catch(Exception $e) {
+            return redirect()->route('index');
+        }
+        return $this->successGlobal($request, $gateway);
+    }
+    public function postCancel(Request $request, $gateway)
+    {
+        try{
+            $token = PaymentGatewayHelper::getToken($request->all(),$gateway);
+            $temp_data = TemporaryData::where("identifier",$token)->first();
+            Auth::guard($temp_data->data->creator_guard)->loginUsingId($temp_data->data->creator_id);
+        }catch(Exception $e) {
+            return redirect()->route('index');
+        }
+        return $this->cancelGlobal($request, $gateway);
+    }
+
+    public function redirectUsingHTMLForm(Request $request, $gateway)
+    {
+        $temp_data = TemporaryData::where('identifier', $request->token)->first();
+        if(!$temp_data || $temp_data->data->action_type != PaymentGatewayConst::REDIRECT_USING_HTML_FORM) return back()->with(['error' => ['Request token is invalid!']]);
+        $redirect_form_data = $temp_data->data->redirect_form_data;
+        $action_url         = $temp_data->data->action_url;
+        $form_method        = $temp_data->data->form_method;
+
+        return view('payment-gateway.redirect-form', compact('redirect_form_data', 'action_url', 'form_method'));
     }
 }

@@ -19,7 +19,7 @@ class ExtensionsController extends Controller
      */
     public function index()
     {
-        $page_title = "Extensions";
+        $page_title = __("Extensions");
         $extensions = Extension::orderBy('id', 'desc')->paginate(8);
         return view('admin.sections.extensions.index', compact(
             'page_title',
@@ -42,7 +42,7 @@ class ExtensionsController extends Controller
         }
         $extension->shortcode = $shortcode;
         $extension->update();
-        return back()->with(['success' => ['Extension has been udpate successfully']]);
+        return back()->with(['success' => [__("Extension has been updated successfully")]]);
     }
 
 
@@ -62,7 +62,7 @@ class ExtensionsController extends Controller
 
         $extension = Extension::find($item_id);
         if (!$extension) {
-            $error = ['error' => ['Extension is not found!.']];
+            $error = ['error' => [__("Extension is not found!")]];
             return Response::error($error,null,404);
         }
 
@@ -71,11 +71,11 @@ class ExtensionsController extends Controller
                 'status' => ($validated['status'] == true) ? false : true,
             ]);
         } catch (Exception $e) {
-            $error = ['error' => ['Something went worng!. Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 
-        $success = ['success' => ['Extension status is updated successfully!']];
+        $success = ['success' => [__("Extension status is updated successfully!")]];
         return Response::success($success,null,200);
     }
 }

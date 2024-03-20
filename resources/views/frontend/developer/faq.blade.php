@@ -27,8 +27,8 @@
     </div>
     <div class="page-change-area">
         <div class="navigation-wrapper">
-            <a href="{{ setRoute('developer.examples') }}" class="left"><i class="las la-arrow-left me-1"></i> Examples</a>
-            <a href="{{setRoute('developer.support') }}" class="right">Support <i class="las la-arrow-right ms-1"></i></a>
+            <a href="{{ setRoute('developer.examples') }}" class="left"><i class="las la-arrow-left me-1"></i> {{ __("Examples") }}</a>
+            <a href="{{setRoute('developer.support') }}" class="right">{{ __("Support") }} <i class="las la-arrow-right ms-1"></i></a>
         </div>
     </div>
 </div>

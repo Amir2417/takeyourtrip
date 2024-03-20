@@ -35,7 +35,7 @@
                     @include('admin.components.payment-gateway.manual.charges')
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-text-rich',[
-                            'label'     => "Instruction*",
+                             'label'     =>__( "Instructions")."*",
                             'name'      => "desc",
                             'value'     => old("desc"),
                         ])

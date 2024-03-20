@@ -10,16 +10,16 @@
                     <div class="row mb-10-none">
                         <div class="col-xl-12 col-lg-12 form-group mt-2">
                             @include('admin.components.form.input',[
-                                'label'         => "Permission Name*",
+                                'label'         => __("Permission Name")."*",
                                 'name'          => "name",
                                 'value'         => old("name"),
                             ])
                         </div>
 
                         <div class="col-xl-12 col-lg-12 form-group mt-2">
-                            <label for="selectRole">Select Role</label>
+                            <label for="selectRole">{{ __("Select Role") }}</label>
                             <select name="role" id="selectRole" class="nice-select form--control">
-                                <option disabled selected>Choose One</option>
+                                <option disabled selected>{{ __("Choose One") }}</option>
                                 @foreach ($roles as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach

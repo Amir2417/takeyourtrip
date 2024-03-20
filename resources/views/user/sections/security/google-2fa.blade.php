@@ -81,7 +81,9 @@
             var actionRoute =  "{{ setRoute('user.security.google.2fa.status.update') }}";
             var target      = 1;
             var btnText = $(this).text();
-            var message     = `Are you sure to <strong>${btnText}</strong> 2 factor authentication (Powered by google)?`;
+            var sureText = '{{ __("Are you sure to") }}';
+            var lastText = '{{ __("2 factor authentication (Powered by google)") }}';
+            var message     = `${sureText} <strong>${btnText}</strong> ${lastText}?`;
             openAlertModal(actionRoute,target,message,btnText,"POST");
         });
         $('.copytext').on('click',function(){

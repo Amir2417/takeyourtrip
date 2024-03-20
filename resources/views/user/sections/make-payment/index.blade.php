@@ -38,12 +38,12 @@
                                     </div>
                                 </div>
                                 <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
-                                    <label>{{ __("Email Address") }} ({{ __("Merchant") }})<span class="text--base">*</span></label>
+                                    <label>{{ __("email Address") }} ({{ __("Merchant") }})<span class="text--base">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text copytext">{{ __("Email") }}</span>
+                                            <span class="input-group-text copytext"><span>{{ __("Email") }}</span></span>
                                         </div>
-                                        <input type="email" name="email" class="form--control checkUser" id="username" placeholder="Enter Email Address" value="{{ old('email') }}" />
+                                        <input type="email" name="email" class="form--control checkUser" id="username" placeholder="{{ __("enter Email Address") }}" value="{{ old('email') }}" />
                                     </div>
                                     <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
                                     <label class="exist text-start"></label>
@@ -53,7 +53,7 @@
                                 <div class="col-xxl-6 col-xl-12 col-lg-6 form-group">
                                     <label>{{ __("Amount") }}<span>*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form--control" required placeholder="Enter Amount" name="amount" value="{{ old("amount") }}">
+                                        <input type="text" class="form--control number-input" required placeholder="{{ __("enter Amount") }}" name="amount" value="{{ old("amount") }}">
                                         <select class="form--control nice-select currency" name="currency">
                                             <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                         </select>
@@ -75,7 +75,7 @@
                 <div class="dash-payment-item active">
                     <div class="dash-payment-title-area">
                         <span class="dash-payment-badge">!</span>
-                        <h5 class="title">{{__("Payment Preview")}}</h5>
+                        <h5 class="title">{{__("Preview")}}</h5>
                     </div>
                     <div class="dash-payment-body">
                         <div class="preview-list-wrapper">
@@ -271,7 +271,7 @@
             if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
                 var min_limit_calc = parseFloat(min_limit/currencyRate).toFixed(2);
                 var max_limit_clac = parseFloat(max_limit/currencyRate).toFixed(2);
-                $('.limit-show').html("Limit " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
+                $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
 
                 return {
                     minLimit:min_limit_calc,
@@ -338,7 +338,7 @@
             if (charges == false) {
                 return false;
             }
-            $(".fees-show").html("Payment Fee: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
+            $(".fees-show").html("{{ __('Payment Fee') }}: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
         }
         function getPreview() {
                 var senderAmount = $("input[name=amount]").val();

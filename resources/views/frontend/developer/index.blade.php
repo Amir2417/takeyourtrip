@@ -14,7 +14,7 @@
             <img class="w-75" src="{{ get_image(@$intro->value->images->intro_image,'site-section') }}" alt="image">
         </div>
         <p>{{ __(@$intro->value->language->$lang->details) }}</p>
-        <h1 class="heading-title mb-20 mt-40">{{ __("1. Introduction") }}</h1>
+        <h1 class="heading-title mb-20 mt-40">1. {{__("Introduction") }}</h1>
         <p>{{ __(@$intro->value->language->$lang->intro_details) }}</p>
     </div>
     <div class="page-change-area">

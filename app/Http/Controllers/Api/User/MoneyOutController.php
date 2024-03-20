@@ -37,7 +37,7 @@ class MoneyOutController extends Controller
                 ];
             })->first();
 
-            $transactions = Transaction::auth()->moneyOut()->latest()->take(5)->get()->map(function($item){
+            $transactions = Transaction::agentAuth()->moneyOut()->latest()->take(5)->get()->map(function($item){
                     $statusInfo = [
                         "success" =>      1,
                         "pending" =>      2,
@@ -282,7 +282,7 @@ class MoneyOutController extends Controller
             try{
                 //send notifications
                 $user = auth()->user();
-                $inserted_id = $this->insertRecordManual($moneyOutData,$gateway,$get_values);
+                $inserted_id = $this->insertRecordManual($moneyOutData,$gateway,$get_values,$reference= null,PaymentGatewayConst::STATUSPENDING);
                 $this->insertChargesManual($moneyOutData,$inserted_id);
                 $this->insertDeviceManual($moneyOutData,$inserted_id);
                 $track->delete();
@@ -319,7 +319,7 @@ class MoneyOutController extends Controller
         //flutterwave automatic
          if($track->data->gateway_name == "flutterwave"){
             $validator = Validator::make($request->all(), [
-                'bank_name' => 'required|numeric|gt:0',
+                'bank_name' => 'required',
                 'account_number' => 'required'
             ]);
             if($validator->fails()){
@@ -337,15 +337,14 @@ class MoneyOutController extends Controller
 
     }
 
-    public function insertRecordManual($moneyOutData,$gateway,$get_values) {
-        if($moneyOutData->gateway_type == "AUTOMATIC"){
-            $status = 1;
-        }else{
-            $status = 2;
-        }
+    public function insertRecordManual($moneyOutData,$gateway,$get_values,$reference,$status) {
         $trx_id = $moneyOutData->trx_id ??'MO'.getTrxNum();
         $authWallet = UserWallet::where('id',$moneyOutData->wallet_id)->where('user_id',$moneyOutData->user_id)->first();
-        $afterCharge = ($authWallet->balance - ($moneyOutData->amount));
+        if($moneyOutData->gateway_type != "AUTOMATIC"){
+            $afterCharge = ($authWallet->balance - ($moneyOutData->amount));
+        }else{
+            $afterCharge = $authWallet->balance;
+        }
         DB::beginTransaction();
         try{
             $id = DB::table("transactions")->insertGetId([
@@ -360,9 +359,12 @@ class MoneyOutController extends Controller
                 'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPEMONEYOUT," ")) . " by " .$gateway->name,
                 'details'                       => json_encode($get_values),
                 'status'                        => $status,
+                'callback_ref'                  => $reference??null,
                 'created_at'                    => now(),
             ]);
-            $this->updateWalletBalanceManual($authWallet,$afterCharge);
+            if($moneyOutData->gateway_type != "AUTOMATIC"){
+                $this->updateWalletBalanceManual($authWallet,$afterCharge);
+            }
 
             DB::commit();
         }catch(Exception $e) {
@@ -503,17 +505,18 @@ class MoneyOutController extends Controller
         $data = null;
         $secret_key = getPaymentCredentials($credentials,'Secret key');
         $base_url = getPaymentCredentials($credentials,'Base Url');
-        $callback_url = getPaymentCredentials($credentials,'Callback Url');
+        $callback_url = url('/').'/flutterwave/withdraw_webhooks';
 
         $ch = curl_init();
         $url =  $base_url.'/transfers';
+        $reference =  generateTransactionReference();
         $data = [
             "account_bank" => $request->bank_name,
             "account_number" => $request->account_number,
             "amount" => $moneyOutData->will_get,
             "narration" => "Withdraw from wallet",
             "currency" => $moneyOutData->gateway_currency,
-            "reference" => generateTransactionReference(),
+            "reference" => $reference,
             "callback_url" => $callback_url,
             "debit_currency" => $moneyOutData->gateway_currency
         ];
@@ -535,7 +538,7 @@ class MoneyOutController extends Controller
             if($result['status'] && $result['status'] == 'success'){
                 try{
                     $user = auth()->user();
-                    $inserted_id = $this->insertRecordManual($moneyOutData,$gateway,$get_values = null);
+                    $inserted_id = $this->insertRecordManual($moneyOutData,$gateway,$get_values = null,$reference,PaymentGatewayConst::STATUSWAITING);
                     $this->insertChargesAutomatic($moneyOutData,$inserted_id);
                     $this->insertDeviceManual($moneyOutData,$inserted_id);
                     $track->delete();
@@ -584,6 +587,7 @@ class MoneyOutController extends Controller
     });
 
     $allBanks = getFlutterwaveBanks($country->iso2);
+
     $data =[
         'bank_info' =>$allBanks??[]
     ];

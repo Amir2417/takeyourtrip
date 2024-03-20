@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\Api\Helpers;
 use App\Models\Merchants\Merchant;
 use App\Models\Merchants\MerchantPasswordReset;
-use App\Models\UserPasswordReset;
 use App\Notifications\Merchant\Auth\PasswordResetEmail as AuthPasswordResetEmail;
-use App\Notifications\User\Auth\PasswordResetEmail;
 use App\Providers\Admin\BasicSettingsProvider;
 use Exception;
 use Illuminate\Http\Request;
@@ -68,7 +66,7 @@ class ForgotPasswordController extends Controller
         }
         $code = $request->code;
         $basic_settings = BasicSettingsProvider::get();
-        $otp_exp_seconds = $basic_settings->otp_exp_seconds ?? 0;
+        $otp_exp_seconds = $basic_settings->merchant_otp_exp_seconds ?? 0;
         $password_reset = MerchantPasswordReset::where("code", $code)->where('email',$request->email)->first();
         if(!$password_reset) {
             $error = ['error'=>[__('Verification Otp is Invalid')]];
@@ -90,7 +88,7 @@ class ForgotPasswordController extends Controller
     public function resetPassword(Request $request) {
         $basic_settings = BasicSettingsProvider::get();
         $passowrd_rule = "required|string|min:6|confirmed";
-        if($basic_settings->secure_password) {
+        if($basic_settings->merchant_secure_password) {
             $passowrd_rule = ["required",Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised(),"confirmed"];
         }
 

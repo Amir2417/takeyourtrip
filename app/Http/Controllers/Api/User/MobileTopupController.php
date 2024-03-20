@@ -158,7 +158,7 @@ class MobileTopupController extends Controller
             if( $basic_setting->email_notification == true){
                 $user->notify(new TopupMail($user,(object)$notifyData));
             }
-            $message =  ['success'=>[__('Mobile topup request send to admin successful successful')]];
+            $message =  ['success'=>[__('Mobile topup request send to admin successful')]];
             return Helpers::onlysuccess($message);
         }catch(Exception $e) {
             $error = ['error'=>[__("Something went wrong! Please try again.")]];
@@ -223,7 +223,7 @@ class MobileTopupController extends Controller
             //notification
             $notification_content = [
                 'title'         =>__("Mobile Topup"),
-                'message'       => __('Mobile topup request send to admin successful')." " .$amount.' '.get_default_currency_code()." ".__("Successful"),
+                'message'       => __('Mobile topup request send to admin')." " .$amount.' '.get_default_currency_code()." ".__("Successful"),
                 'image'         => files_asset_path('profile-default'),
             ];
 
@@ -233,7 +233,7 @@ class MobileTopupController extends Controller
                 'message'   => $notification_content,
             ]);
             //admin notification
-            $notification_content['title'] = __("Mobile topup request send to admin successful")." ".$amount.' '.get_default_currency_code().' '.__("Successful").' ('.$user->username.')';
+            $notification_content['title'] = __("Mobile topup request send to admin")." ".$amount.' '.get_default_currency_code().' '.__("Successful").' ('.$user->username.')';
            AdminNotification::create([
                'type'      => NotificationConst::MOBILE_TOPUP,
                'admin_id'  => 1,

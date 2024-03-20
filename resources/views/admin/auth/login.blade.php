@@ -13,7 +13,7 @@
             @csrf
             <div class="form-group">
                 <input type="text" class="@error('email') is-invalid @enderror" title="Enter Username" required name="email" value="{{ old('email') }}" autofocus>
-                <label>{{ __("Email Address") }}</label>
+                <label>{{ __("email Address") }}</label>
 
                 @error('email')
                     <div class="alert alert-danger">{{ $message }}</div>
@@ -26,7 +26,7 @@
             </div>
             <div class="form-group">
                 <div class="forgot-item">
-                    <p><a href="{{ setRoute('admin.password.forgot') }}" class="text--base">{{ __("Forgot Password?") }}</a></p>
+                    <p><a href="{{ setRoute('admin.password.forgot') }}" class="text--base">{{ __("Forgot Password") }}?</a></p>
                 </div>
             </div>
             <button type="submit" class="btn--base w-100 btn-loading">{{ __("Login") }}</button>

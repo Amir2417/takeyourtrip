@@ -1,23 +1,26 @@
 <<<<<<<< Update Guide >>>>>>>>>>>
 
-Immediate Older Version: 3.1.0
-Current Version: 3.2.0
+Immediate Older Version: 4.1.0
+Current Version: 4.2.0
 
 Feature Update:
-1. Strowallet Api in admin panel
-2. Strowallet System added for user web
-3. Added Card Limit Option In Admin Panel(Virtual Card Api)
-4. Added Card Limit Option All Virtual Card Web & Api
-5. Convert Single Card Creation To Multiple Card(Flutterwave)
-6. Fixed Send Remittance Response Type
-7. Make Default System For All Virtual Cards (Web & APi)
-8. Added Tatum Payment Gateway
-9. Update RazorPay Payment Gateway
-10. Translate All Text By Language
-
+1. Updated Language Key & Values For All User Panels.
+2. Updated Agent Remittance Section.
+3. Updated Strowallet Virtual Card Section.
+4. Added Withdraw Webhooks Callback Api
 
 
 
 Please Use This Commands On Your Terminal To Update Full System
 1. To Run project Please Run This Command On Your Terminal
-    composer update && composer dumpautoload && php artisan migrate:fresh --seed && php artisan passport::install --force
+    composer update && composer dumpautoload && php artisan migrate
+
+
+2. To Update Web & App Version Please Run This Command On Your Terminal
+    php artisan db:seed --class=Database\\Seeders\\Update\\AppSettingsSeeder
+    php artisan db:seed --class=Database\\Seeders\\Update\\BasicSettingsSeeder
+    php artisan db:seed --class=Database\\Seeders\\Update\\UpdateCategoriesSeeder
+    php artisan db:seed --class=Database\\Seeders\\Update\\UpdateBlogsSeeder
+    php artisan db:seed --class=Database\\Seeders\\Admin\\TransactionSettingSeeder
+    php artisan db:seed --class=Database\\Seeders\\Update\\SetupPageSeeder
+

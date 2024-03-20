@@ -31,13 +31,14 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>{{ __("name") }}</th>
+                            <th>{{__("Status") }}</th>
+                            <th>{{__("action")}}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($extensions as $key => $item)
+
                             <tr data-image="{{ $item->support_image }}">
                                 <td>
                                     <ul class="user-list">
@@ -50,7 +51,7 @@
                                         'name' => 'status',
                                         'data_target' => $item->id,
                                         'value' => $item->status,
-                                        'options' => ['Enable' => 1, 'Disabled' => 0],
+                                        'options' => [__("Enable") => 1, __("Disabled") => 0],
                                         'onload' => true,
                                         'permission' => "admin.extension.status.update",
                                     ])
@@ -58,7 +59,7 @@
                                 <td>
                                     @if (admin_permission_by_name("admin.extension.update"))
                                         <button type="button" class="btn btn--base edit-button" data-name="{{ __($item->name) }}"
-                                            data-shortcode="{{ json_encode($item->shortcode) }}"
+                                            data-shortcode="{{ json_encode($item->shortCodes) }}"
                                             data-action="{{ setRoute('admin.extension.update', $item->id) }}">
                                             <i class="las la-pencil-alt"></i>
                                         </button>
@@ -96,7 +97,7 @@
     <script>
         (function($) {
             "use strict";
-            
+
             $('.helpButton').on('click', function() {
                 var modal = $('#instruction-modal');
                 var image = $(this).parents("tr").attr('data-image');

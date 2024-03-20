@@ -22,13 +22,13 @@ class AdminRolePermission extends Model
 
     public function getStringStatusAttribute() {
         $status = [
-            true    => "Active",
+            true    => "active",
             false   => "Deactive",
         ];
 
         return $status[$this->status];
     }
-    
+
     public function getEditDataAttribute() {
         $data = [
             'id'        => $this->id,

@@ -44,6 +44,10 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
+        'agent' => [
+            'driver' => 'session',
+            'provider' => 'agents',
+        ],
         'merchant' => [
             'driver' => 'session',
             'provider' => 'merchants',
@@ -56,6 +60,10 @@ return [
             'driver' => 'passport',
             'provider' => 'merchants',
         ],
+        'agent_api' => [
+            'driver' => 'passport',
+            'provider' => 'agents',
+        ]
 
     ],
 
@@ -84,6 +92,10 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin\Admin::class,
+        ],
+        'agents' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Agent::class,
         ],
         'merchants' => [
             'driver' => 'eloquent',
@@ -127,6 +139,11 @@ return [
         'merchants' => [
             'provider' => 'merchants',
             'table' => 'merchant_password_resets',
+            'expire' => 60,
+        ],
+        'agents' => [
+            'provider' => 'agents',
+            'table' => 'agent_password_resets',
             'expire' => 60,
         ],
 

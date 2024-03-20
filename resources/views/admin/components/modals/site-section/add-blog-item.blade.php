@@ -9,12 +9,11 @@
                 @csrf
                 <div class="row mb-10-none mt-3">
                     <div class="col-xl-12 col-lg-12 form-group">
-                        <label>{{ __("Blog Category*") }}</label>
+                        <label>{{ __("Blog Category") }}*</label>
                         <select name="category_id" class="form-control" required>
-                            <option value="">Select Category</option>
+                            <option value="">{{ __("Select Category") }}</option>
                             @foreach ($categories as $key => $cat)
-                            <option value="{{$cat->id}}">{{ $cat->name }}</option>
-
+                            <option value="{{$cat->id}}">{{ $cat->data?->language?->$system_default_lang?->name ?? $cat->data?->language?->$system_default?->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -34,27 +33,25 @@
                                 @php
                                     $default_lang_code = language_const()::NOT_REMOVABLE;
                                 @endphp
-                                {{-- <div class="form-group">
-                                    @include('admin.components.form.input',[
-                                        'label'     => "Short Title*",
-                                        'name'      => $default_lang_code . "_short_title",
-                                        'value'     => old($default_lang_code . "_short_title",$data->value->language->$default_lang_code->short_title ?? "")
-                                    ])
-                                </div> --}}
+
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Name*",
+                                        'label'     =>__( "name")."*",
                                         'name'      => $default_lang_code . "_name",
-                                        'value'     => old($default_lang_code . "_name",$data->value->language->$default_lang_code->name ?? "")
+                                        'value'     => old($default_lang_code . "_name")
                                     ])
                                 </div>
 
                                 <div class="form-group">
                                      @include('admin.components.form.input-text-rich',[
-                                        'label'     => "Description*",
+                                      'label'     =>__( "Description")."*",
                                         'name'      => $default_lang_code . "_details",
-                                        'value'     => old($default_lang_code . "_details",$data->value->language->$default_lang_code->details ?? "")
+                                        'value'     => old($default_lang_code . "_details")
                                     ])
+                                </div>
+                                <div class="form-group">
+                                    <label>{{ __("Tags") }}<span>*</span></label>
+                                    <select name="{{ $default_lang_code }}_tags[]" class="form-control select2-auto-tokenize"  multiple="multiple" data-placeholder="{{ __('Add Tags') }}"></select>
                                 </div>
 
                             </div>
@@ -64,26 +61,26 @@
                                     $lang_code = $item->code;
                                 @endphp
                                 <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="modal-{{ $item->name }}" role="tabpanel" aria-labelledby="modal-{{$item->name}}-tab">
-                                    {{-- <div class="form-group">
-                                        @include('admin.components.form.input',[
-                                            'label'     => "Short Title*",
-                                            'name'      => $lang_code . "_short_title",
-                                            // 'value'     => old($lang_code . "_short_title",$data->value->language->$lang_code->short_title ?? "")
-                                        ])
-                                    </div> --}}
+
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Name*",
+                                            'label'     =>__( "name")."*",
                                             'name'      => $lang_code . "_name",
-                                            // 'value'     => old($lang_code . "_name",$data->value->language->$lang_code->name ?? "")
+
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input-text-rich',[
-                                            'label'     => "Description*",
-                                            'name'      => $lang_code . "_details",
-                                            // 'value'     => old($lang_code . "_details",$data->value->language->$lang_code->details ?? "")
+                                          'label'     =>__( "Description")."*",
+                                          'name'      => $lang_code . "_details",
+                                          'value'      => "",
+
                                         ])
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>{{ __("Tags") }}<span>*</span></label>
+                                        <select name="{{ $lang_code."_tags[]" }}" class="form-control select2-auto-tokenize"  multiple="multiple" data-placeholder="{{ __('Add Tags') }}"></select>
                                     </div>
                                 </div>
                             @endforeach
@@ -91,18 +88,8 @@
                     </div>
 
                     <div class="col-xl-12 col-lg-12 form-group">
-                        <label>{{ __("Tags*") }}</label>
-                        <select name="tags[]" class="form-control select2-auto-tokenize"  multiple="multiple" required>
-                            <option disabled>Select Blog Tags</option>
-                            {{-- @foreach ($setup_seo->tags ?? [] as $item)
-                                <option value="{{ $item }}" selected>{{ $item }}</option>
-                            @endforeach --}}
-                        </select>
-                    </div>
-
-                    <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Image:",
+                           'label'             => __("Image"),
                             'name'              => "image",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path("site-section"),

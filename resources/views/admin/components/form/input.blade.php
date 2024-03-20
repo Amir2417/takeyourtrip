@@ -5,7 +5,7 @@
     <label for="{{ $for_id ?? "" }}">{!! $label !!}</label>
 @endif
 
-<input type="{{ $type ?? "text" }}" placeholder="{{ $placeholder ?? "Type Here..." }}" name="{{ $name ?? "" }}" class="form--control {{ $class ?? "" }} @error($name ?? false) is-invalid @enderror" {{ $attribute ?? "" }} value="{{ $value ?? "" }}" @isset($data_limit)
+<input type="{{ $type ?? "text" }}" placeholder="{{ $placeholder ?? __("Write Here..") }}" name="{{ $name ?? "" }}" class="form--control {{ $class ?? "" }} @error($name ?? false) is-invalid @enderror" {{ $attribute ?? "" }} value="{{ $value ?? "" }}" @isset($data_limit)
     data-limit = {{ $data_limit }}
 @endisset @isset($required)
     required

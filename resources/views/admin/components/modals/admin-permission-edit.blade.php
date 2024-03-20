@@ -1,4 +1,4 @@
-@if (admin_permission_by_name("admin.admins.role.permission.update")) 
+@if (admin_permission_by_name("admin.admins.role.permission.update"))
     <div id="permission-edit" class="mfp-hide large">
         <div class="modal-data">
             <div class="modal-header px-0">
@@ -12,7 +12,7 @@
                     <div class="row mb-10-none">
                         <div class="col-xl-12 col-lg-12 form-group mt-2">
                             @include('admin.components.form.input',[
-                                'label'         => "Permission Name*",
+                              'label'         => __("Permission Name")."*",
                                 'name'          => "edit_name",
                                 'value'         => old("edit_name"),
                             ])
@@ -20,7 +20,7 @@
 
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

@@ -29,11 +29,11 @@
                 <div class="row align-items-center mb-10-none">
                     <div class="col-xl-4 col-lg-4 form-group">
                         <ul class="user-profile-list-three">
-                            <li class="bg--base one">Full Name: <span>{{ $user->fullname }}</span></li>
-                            <li class="bg--info two">Username: <span>{{ "@".$user->username }}</span></li>
-                            <li class="bg--success three">Email: <span>{{ $user->email }}</span></li>
-                            <li class="bg--warning four">Status: <span>{{ $user->stringStatus->value }}</span></li>
-                            <li class="bg--danger five">Last Login: <span>{{ $user->lastLogin }}</span></li>
+                            <li class="bg--base one">{{ __("Full Name") }}: <span>{{ $user->fullname }}</span></li>
+                            <li class="bg--info two">{{ __("Username") }}: <span>{{ "@".$user->username }}</span></li>
+                            <li class="bg--success three">{{ __("Email") }}: <span>{{ $user->email }}</span></li>
+                            <li class="bg--warning four">{{__("Status") }}: <span>{{ __($user->stringStatus->value) }}</span></li>
+                            <li class="bg--danger five">{{ __("Last Login") }}: <span>{{ $user->lastLogin }}</span></li>
                         </ul>
                     </div>
                     <div class="col-xl-4 col-lg-4 form-group">
@@ -43,11 +43,11 @@
                     </div>
                     <div class="col-xl-4 col-lg-4 form-group">
                         <ul class="user-profile-list">
-                            <li class="bg--danger one">State: <span>{{ $user->address->state ?? "-" }}</span></li>
-                            <li class="bg--warning two">Phone Number: <span>{{ $user->full_mobile }}</span></li>
-                            <li class="bg--success three">Zip/Postal: <span>{{ $user->address->zip ?? "-" }}</span></li>
-                            <li class="bg--info four">City: <span>{{ $user->address->city ?? "-" }}</span></li>
-                            <li class="bg--base five">Country: <span>{{ $user->address->country ?? "-" }}</span></li>
+                            <li class="bg--danger one">{{ __('State') }}: <span>{{ $user->address->state ?? "-" }}</span></li>
+                            <li class="bg--warning two">{{ __('Phone Number') }}: <span>{{ $user->full_mobile }}</span></li>
+                            <li class="bg--success three">{{ __('Zip/Postal') }}: <span>{{ $user->address->zip ?? "-" }}</span></li>
+                            <li class="bg--info four">{{ __('City') }}: <span>{{ $user->address->city ?? "-" }}</span></li>
+                            <li class="bg--base five">{{ __('Country') }}: <span>{{ $user->address->country ?? "-" }}</span></li>
                         </ul>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
             <span class="{{ $user->kycStringStatus->class }}">{{ $user->kycStringStatus->value }}</span>
             @include('admin.components.link.custom',[
                 'href'          => setRoute('admin.users.details',$user->username),
-                'text'          => "Profile",
+                'text'          =>__( "Profile"),
                 'class'         => "btn btn--base",
                 'permission'    => "admin.users.details",
             ])
@@ -79,7 +79,7 @@
                                     <span>{{ __("File not found!") }}</span>
                                     @continue
                                 @endif
-                                
+
                                 @if (its_image($item->value))
                                     <span class="product-sales-thumb">
                                         <a class="img-popup" data-rel="lightcase:myCollection" href="{{ $file_link }}">
@@ -99,7 +99,7 @@
                             </li>
                         @else
                             <li>
-                                <span class="kyc-title">{{ $item->label }}:</span> 
+                                <span class="kyc-title">{{ $item->label }}:</span>
                                 <span>{{ $item->value }}</span>
                             </li>
                         @endif
@@ -110,7 +110,7 @@
                         @include('admin.components.button.custom',[
                             'type'          => "button",
                             'class'         => "approve-btn w-100",
-                            'text'          => "Approve",
+                            'text'          => __("Approve"),
                             'permission'    => "admin.users.kyc.approve",
                         ])
                     @endif
@@ -119,7 +119,7 @@
                         @include('admin.components.button.custom',[
                             'type'          => "button",
                             'class'         => "bg--danger reject-btn w-100",
-                            'text'          => "Reject",
+                            'text'          => __("Reject"),
                             'permission'    => "admin.users.kyc.reject",
                         ])
                     @endif

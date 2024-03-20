@@ -28,7 +28,7 @@
                 @method("PUT")
                 <div class="row mb-10-none">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 form-group">
-                        <label>{{ __("Secret Key*") }}</label>
+                        <label>{{ __("secret Key") }}*</label>
                         <div class="input-group append">
                             <span class="input-group-text"><i class="las la-key"></i></span>
                             <input type="text" class="form--control" name="secret_key" value="{{ @$api->secret_key }}" required value="{{ old('secret_key') }}">
@@ -44,7 +44,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Update",
+                            'text'          => __("update"),
                             'permission'    => "admin.virtual.card.api.update"
                         ])
                     </div>

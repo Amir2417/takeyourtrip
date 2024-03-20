@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Helpers\Response;
 use App\Models\Admin\AdminNotification;
 use App\Models\Admin\BasicSettings;
-use App\Models\AgentLoginLog;
-use App\Models\AgentMailLog;
 use App\Models\Merchants\Merchant;
 use App\Models\Merchants\MerchantLoginLog;
 use App\Models\Merchants\MerchantMailLog;
@@ -36,7 +34,7 @@ class MerchantCareController extends Controller
 {
     public function index()
     {
-        $page_title = "All Merchants";
+        $page_title = __("All Merchants");
         $merchants = Merchant::orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.merchant-care.index', compact(
             'page_title',
@@ -45,7 +43,7 @@ class MerchantCareController extends Controller
     }
     public function active()
     {
-        $page_title = "Active Merchants";
+        $page_title = __("Active Merchants");
         $merchants = Merchant::active()->orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.merchant-care.index', compact(
             'page_title',
@@ -54,7 +52,7 @@ class MerchantCareController extends Controller
     }
     public function banned()
     {
-        $page_title = "Banned Merchants";
+        $page_title = __("Banned Merchants");
         $merchants = Merchant::banned()->orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.merchant-care.index', compact(
             'page_title',
@@ -63,7 +61,7 @@ class MerchantCareController extends Controller
     }
     public function emailUnverified()
     {
-        $page_title = "Email Unverified Merchants";
+        $page_title = __("Email Unverified Merchants");
         $merchants =  Merchant::emailUnverified()->orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.merchant-care.index', compact(
             'page_title',
@@ -72,7 +70,7 @@ class MerchantCareController extends Controller
     }
     public function SmsUnverified()
     {
-        $page_title = "SMS Unverified Merchants";
+        $page_title = __("SMS Unverified Merchants");
         $merchants =  Merchant::smsUnverified()->orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.merchant-care.index', compact(
             'page_title',
@@ -81,7 +79,7 @@ class MerchantCareController extends Controller
     }
     public function KycUnverified()
     {
-        $page_title = "KYC Unverified Merchants";
+        $page_title = __("KYC Unverified Merchants");
         $merchants = Merchant::kycUnverified()->orderBy('id', 'desc')->paginate(8);
         return view('admin.sections.merchant-care.index', compact(
             'page_title',
@@ -90,7 +88,7 @@ class MerchantCareController extends Controller
     }
     public function emailAllUsers()
     {
-        $page_title = "Email To Merchants";
+        $page_title = __("Email To Merchants");
         return view('admin.sections.merchant-care.email-to-users', compact(
             'page_title',
         ));
@@ -126,17 +124,17 @@ class MerchantCareController extends Controller
              Notification::send($users,new SendMail((object) $request->all()));
             }
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Email successfully sended']]);
+        return back()->with(['success' => [__("Email successfully sended")]]);
 
     }
     public function userDetails($username)
     {
-        $page_title = "Merchants Details";
+        $page_title = __("Merchants Details");
         $user = Merchant::where('username', $username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! Merchant not exists']]);
+        if(!$user) return back()->with(['error' => [__("Oops! Merchant not exists")]]);
         $balance = MerchantWallet::where('merchant_id', $user->id)->first()->balance ?? 0;
         $money_out_amount = Transaction::toBase()->where('merchant_id', $user->id)->where('type', PaymentGatewayConst::TYPEMONEYOUT)->where('status', 1)->sum('request_amount');
         $total_transaction = Transaction::toBase()->where('merchant_id', $user->id)->where('status', 1)->sum('request_amount');
@@ -185,21 +183,21 @@ class MerchantCareController extends Controller
 
         $user = Merchant::where('username', $username)->first();
 
-        if(!$user) return back()->with(['error' => ['Opps! Merchant not exists']]);
+        if(!$user) return back()->with(['error' => [__("Oops! Merchant not exists")]]);
 
         try {
             $user->update($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Profile Information Updated Successfully!']]);
+        return back()->with(['success' => [__("Profile Information Updated Successfully!")]]);
     }
     public function kycDetails($username) {
         $user = Merchant::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! Merchant doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Oops! Merchant doesn't exists")]]);
 
-        $page_title = "KYC Profile";
+        $page_title = __("KYC Profile");
         return view('admin.sections.merchant-care.kyc-details',compact("page_title","user"));
     }
 
@@ -225,9 +223,9 @@ class MerchantCareController extends Controller
             $user->update([
                 'kyc_verified'  => GlobalConst::PENDING,
             ]);
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-        return back()->with(['success' => ['Merchants KYC successfully approved']]);
+        return back()->with(['success' => [__("Merchants KYC successfully approved")]]);
     }
 
     public function kycReject(Request $request, $username) {
@@ -237,8 +235,8 @@ class MerchantCareController extends Controller
         ]);
         $basic_setting = BasicSettings::first();
         $user = Merchant::where("username",$request->target)->first();
-        if(!$user) return back()->with(['error' => ['Merchant doesn\'t exists']]);
-        if($user->kyc == null) return back()->with(['error' => ['Merchant KYC information not found']]);
+        if(!$user) return back()->with(['error' => [__("Merchant doesn't exists")]]);
+        if($user->kyc == null) return back()->with(['error' => [__("Merchant KYC information not found")]]);
 
         try{
             if( $basic_setting->email_notification == true){
@@ -258,10 +256,10 @@ class MerchantCareController extends Controller
                 'reject_reason' => null,
             ]);
 
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Merchant KYC information is rejected']]);
+        return back()->with(['success' => [__("Merchant KYC information is rejected")]]);
     }
 
     public function search(Request $request) {
@@ -304,14 +302,14 @@ class MerchantCareController extends Controller
             $user->notify(new SendMail((object) $validated));
             }
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-        return back()->with(['success' => ['Mail successfully sended']]);
+        return back()->with(['success' => [__("Mail successfully sended")]]);
     }
     public function mailLogs($username) {
-        $page_title = "Merchant Email Logs";
+        $page_title = __("Merchant Email Logs");
         $user = Merchant::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! Merchant doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Oops! Merchant doesn't exists")]]);
         $logs = MerchantMailLog::where("merchant_id",$user->id)->paginate(12);
         return view('admin.sections.merchant-care.mail-logs',compact(
             'page_title',
@@ -320,9 +318,9 @@ class MerchantCareController extends Controller
     }
     public function loginLogs($username)
     {
-        $page_title = "Login Logs";
+        $page_title = __("Login Logs");
         $user = Merchant::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! Merchant doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Oops! Merchant doesn't exists")]]);
         $logs = MerchantLoginLog::where('merchant_id',$user->id)->paginate(12);
         return view('admin.sections.merchant-care.login-logs', compact(
             'logs',
@@ -361,7 +359,7 @@ class MerchantCareController extends Controller
         $user_wallet = MerchantWallet::whereHas('merchant',function($q) use ($username){
             $q->where('username',$username);
         })->find($validated['wallet']);
-        if(!$user_wallet) return back()->with(['error' => ['Merchant wallet not found!']]);
+        if(!$user_wallet) return back()->with(['error' => [__("Merchant wallet not found!")]]);
         DB::beginTransaction();
         try{
             $user_wallet_balance = 0;
@@ -379,7 +377,7 @@ class MerchantCareController extends Controller
                         $user_wallet_balance = $user_wallet->balance - $validated['amount'];
                         $user_wallet->balance -= $validated['amount'];
                     }else {
-                        return back()->with(['error' => ['Merchant do not have sufficient balance']]);
+                        return back()->with(['error' => [__("Merchant do not have sufficient balance")]]);
                     }
                     break;
             }
@@ -434,7 +432,7 @@ class MerchantCareController extends Controller
             $user_wallet->save();
 
             $notification_content = [
-                'title'         => "Update Balance",
+                'title'         => __("Update Balance"),
                 'message'       => "Your Wallet (".$user_wallet->currency->code.") Balance Has Been ". $type??"",
                 'time'          => Carbon::now()->diffForHumans(),
                 'image'         => files_asset_path('profile-default'),
@@ -457,9 +455,9 @@ class MerchantCareController extends Controller
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
-            return back()->with(['error' => ['Transaction Failed! '. $e->getMessage()]]);
+            return back()->with(['error' => [__("Transaction Failed!")]]);
         }
 
-        return back()->with(['success' => ['Transaction success']]);
+        return back()->with(['success' => [__("Transaction success")]]);
     }
 }

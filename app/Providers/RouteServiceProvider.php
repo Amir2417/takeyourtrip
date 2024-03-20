@@ -37,6 +37,11 @@ class RouteServiceProvider extends ServiceProvider
             ->prefix('merchant-api')
                 ->group(base_path('routes/api/merchant_api.php'));
 
+            Route::middleware('api')
+                ->prefix('agent-api')
+                ->group(base_path('routes/api/agent_api.php'));
+
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
 
@@ -48,6 +53,9 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware(['web','auth:merchant','verification.guard.merchant','merchant.google.two.factor'])
             ->group(base_path('routes/merchant.php'));
+
+            Route::middleware(['web','auth:agent','verification.guard.agent','agent.google.two.factor'])
+            ->group(base_path('routes/agent.php'));
 
             Route::middleware('web')
                 ->group(base_path('routes/auth.php'));

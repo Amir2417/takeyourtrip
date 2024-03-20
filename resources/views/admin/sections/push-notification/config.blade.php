@@ -29,13 +29,13 @@
                 <div class="row mb-10-none">
                     <div class="col-xl-12 col-lg-12">
                         <div class="form-group">
-                            <label>{{ __("Method*") }}</label>
+                            <label>{{ __("Method") }}*</label>
                             @php
                                 $selectOptions = ['pusher' => "Pusher (Message Bird)"];
                                 $old_value = old('method',$push_notification->method ?? "");
                             @endphp
                             <select class="form--control nice-select mb-10" name="method">
-                                <option selected disabled>Select Method</option>
+                                <option selected disabled>{{ __("Select Method") }}</option>
                                 @foreach ($selectOptions as $value => $name)
                                     <option value="{{ $value }}" @if ($old_value == $value)
                                         @selected(true)
@@ -47,14 +47,14 @@
                         <div class="pusher-view input-field-group" style="display: none">
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Instance ID*",
+                                    'label'         => __("Instance ID*"),
                                     'name'          => "instance_id",
                                     'value'         => old("instance_id", $push_notification->instance_id ?? ""),
                                 ])
                             </div>
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Primary key*",
+                                     'label'         => __("primary Key")."*",
                                     'name'          => "primary_key",
                                     'value'         => old("primary_key", $push_notification->primary_key ?? ""),
                                 ])
@@ -64,7 +64,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Update",
+                            'text'          => __("update"),
                             'permission'    => "admin.push.notification.update",
                         ])
                     </div>
@@ -84,13 +84,13 @@
                 <div class="row mb-10-none">
                     <div class="col-xl-12 col-lg-12">
                         <div class="form-group">
-                            <label>{{ __("Method*") }}</label>
+                            <label>{{ __("Method") }}*</label>
                             @php
                                 $selectOptions = ['pusher' => "Pusher (Message Bird)"];
                                 $old_value = old('broadcast_method',$broadcast_config->method ?? "");
                             @endphp
                             <select class="form--control nice-select mb-10" name="broadcast_method">
-                                <option selected disabled>Select Method</option>
+                                <option selected disabled>{{ __("Select Method") }}</option>
                                 @foreach ($selectOptions as $value => $name)
                                     <option value="{{ $value }}" @if ($old_value == $value)
                                         @selected(true)
@@ -102,28 +102,28 @@
                         <div class="pusher-view input-field-group" style="display: none">
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "APP ID*",
+                                    'label'         => __("APP ID*"),
                                     'name'          => "broadcast_app_id",
                                     'value'         => old("broadcast_app_id", $broadcast_config->app_id ?? ""),
                                 ])
                             </div>
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Primary key*",
+                                    'label'         => __("primary Key")."*",
                                     'name'          => "broadcast_primary_key",
                                     'value'         => old("broadcast_primary_key", $broadcast_config->primary_key ?? ""),
                                 ])
                             </div>
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Secret key*",
+                                   'label'         => __("secret Key")."*",
                                     'name'          => "broadcast_secret_key",
                                     'value'         => old("broadcast_secret_key", $broadcast_config->secret_key ?? ""),
                                 ])
                             </div>
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Cluster*",
+                                    'label'         => __("Cluster*"),
                                     'name'          => "broadcast_cluster",
                                     'value'         => old("broadcast_cluster", $broadcast_config->cluster ?? ""),
                                 ])
@@ -133,7 +133,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Update",
+                            'text'          => __("update"),
                             'permission'    => "admin.broadcast.config.update",
                         ])
                     </div>

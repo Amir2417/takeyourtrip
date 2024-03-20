@@ -20,7 +20,7 @@
 @section('content')
     <div class="custom-card">
         <div class="card-header">
-            <h6 class="title">{{ __("App Urls") }}</h6>
+            <h6 class="title">{{ __("App URLs") }}</h6>
         </div>
         <div class="card-body">
             <form class="card-form" method="POST" action="{{ setRoute('admin.app.settings.urls.update') }}">
@@ -30,31 +30,34 @@
                     <div class="col-xl-12 col-lg-12">
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'             => "Title*",
+                                'label'             => __("titleS")."*",
                                 'name'              => "url_title",
                                 'value'             => old('url_title',$app_settings->url_title),
                                 'attribute'         => "data-limit=255",
+                                'placeholder'   => __( "Write Here.."),
                             ])
                         </div>
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'             => "Android App URL*",
+                                'label'             => __("Android App URL*"),
                                 'name'              => "android_url",
                                 'value'             => old('android_url',$app_settings->android_url),
                                 'attribute'         => "data-limit=255",
+                                'placeholder'   => __( "Write Here.."),
                             ])
                         </div>
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'             => "iOS App URL",
+                                'label'             => __("iOS App URL"),
                                 'name'              => "iso_url",
                                 'value'             => old('iso_url',$app_settings->iso_url),
                                 'attribute'         => "data-limit=255",
+                                'placeholder'   => __( "Write Here.."),
                             ])
                         </div>
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
-                        <button type="submit" class="btn--base w-100 btn-loading">{{ __("Update") }}</button>
+                        <button type="submit" class="btn--base w-100 btn-loading">{{ __("update") }}</button>
                     </div>
                 </div>
             </form>
@@ -63,5 +66,5 @@
 @endsection
 
 @push('script')
-    
+
 @endpush

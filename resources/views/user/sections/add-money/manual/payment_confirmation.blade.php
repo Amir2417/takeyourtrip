@@ -117,7 +117,7 @@
                 <div class="dash-payment-item active">
                     <div class="dash-payment-title-area">
                         <span class="dash-payment-badge">!</span>
-                        <h5 class="title">{{_("Payment Information")}}</h5>
+                        <h5 class="title">{{__("Payment Information")}}</h5>
                     </div>
                     <div class="dash-payment-body">
                         <div class="preview-list-wrapper">

@@ -35,27 +35,80 @@
                 @csrf
                 @method("PUT")
                 <div class="row mb-10-none">
-                    <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 form-group">
-                        @include('admin.components.form.input-file',[
-                            'label'             => 'Image: <span class="text--danger">(414*896)</span>',
-                            'class'             => "file-holder",
-                            'name'              => "image",
-                            'old_files_path'    => files_asset_path('splash-images'),
-                            'old_files'         => $app_settings->splash_screen_image,
-                        ])
+                    <div class="col-xl-4">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-2 col-md-3 col-sm-4 form-group">
+                                @include('admin.components.form.input-file',[
+                                    'label'             => __("Image (User)").': <span class="text--danger">(414*896)</span>',
+                                    'class'             => "file-holder",
+                                    'name'              => "image",
+                                    'old_files_path'    => files_asset_path('splash-images'),
+                                    'old_files'         => $app_settings->splash_screen_image,
+                                ])
+                            </div>
+                            <div class="col-xl-6 col-lg-10 col-md-9 col-sm-8">
+                                <div class="form-group">
+                                    @include('admin.components.form.input',[
+                                        'label'         => __("App Version* (User)"),
+                                        'name'          => "version",
+                                        'attribute'     => "data-limit=15",
+                                        'value'         => old('version',$app_settings->version),
+                                        'placeholder'   => __( "Write Here.."),
+                                    ])
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-xl-10 col-lg-10 col-md-9 col-sm-8">
-                        <div class="form-group">
-                            @include('admin.components.form.input',[
-                                'label'         => "App Version*",
-                                'name'          => "version",
-                                'attribute'     => "data-limit=15",
-                                'value'         => old('version',$app_settings->version),
-                            ])
+                    <div class="col-xl-4">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-2 col-md-3 col-sm-4 form-group">
+                                @include('admin.components.form.input-file',[
+                                    'label'             => __("Image (Agent):").' <span class="text--danger">(414*896)</span>',
+                                    'class'             => "file-holder",
+                                    'name'              => "agent_image",
+                                    'old_files_path'    => files_asset_path('splash-images'),
+                                    'old_files'         => $app_settings->agent_splash_screen_image,
+                                ])
+                            </div>
+                            <div class="col-xl-6 col-lg-10 col-md-9 col-sm-8">
+                                <div class="form-group">
+                                    @include('admin.components.form.input',[
+                                        'label'         => __("App Version* (Agent)"),
+                                        'name'          => "agent_version",
+                                        'attribute'     => "data-limit=15",
+                                        'value'         => old('agent_version',$app_settings->agent_version),
+                                        'placeholder'   => __( "Write Here.."),
+                                    ])
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-2 col-md-3 col-sm-4 form-group">
+                                @include('admin.components.form.input-file',[
+                                    'label'             => __("Image (Merchant)").': <span class="text--danger">(414*896)</span>',
+                                    'class'             => "file-holder",
+                                    'name'              => "merchant_image",
+                                    'old_files_path'    => files_asset_path('splash-images'),
+                                    'old_files'         => $app_settings->merchant_splash_screen_image,
+                                ])
+                            </div>
+                            <div class="col-xl-6 col-lg-10 col-md-9 col-sm-8">
+                                <div class="form-group">
+                                    @include('admin.components.form.input',[
+                                        'label'         => __("App Version* (Merchant)"),
+                                        'name'          => "merchant_version",
+                                        'attribute'     => "data-limit=15",
+                                        'value'         => old('merchant_version',$app_settings->merchant_version),
+                                        'placeholder'   => __( "Write Here.."),
+                                    ])
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
-                        <button type="submit" class="btn--base w-100 btn-loading">{{ __("Update") }}</button>
+                        <button type="submit" class="btn--base w-100 btn-loading">{{ __("update") }}</button>
                     </div>
                 </div>
             </form>
@@ -64,5 +117,5 @@
 @endsection
 
 @push('script')
-    
+
 @endpush

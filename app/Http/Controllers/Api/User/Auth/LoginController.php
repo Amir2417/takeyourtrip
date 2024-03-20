@@ -130,7 +130,11 @@ class LoginController extends Controller
             $error = ['error'=>[__('Mobile number already exist')]];
             return ApiHelpers::validation($error);
         }
-
+        $userName = make_username($data['firstname'],$data['lastname']);
+        $check_user_name = User::where('username',$userName)->first();
+        if($check_user_name){
+            $userName = $userName.'-'.rand(123,456);
+        }
         //User Create
         $user = new User();
         $user->firstname = isset($data['firstname']) ? $data['firstname'] : null;
@@ -140,7 +144,7 @@ class LoginController extends Controller
         $user->mobile_code =  $mobile_code;
         $user->full_mobile =    $complete_phone;
         $user->password = Hash::make($data['password']);
-        $user->username = make_username($data['firstname'],$data['lastname']);
+        $user->username = $userName;
         // $user->image = 'default.png';
         $user->address = [
             'address' => isset($data['address']) ? $data['address'] : '',

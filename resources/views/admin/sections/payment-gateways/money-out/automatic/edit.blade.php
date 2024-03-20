@@ -32,12 +32,13 @@
         <div class="custom-card credentials">
             <div class="card-header">
                 <h6 class="title">{{ __("Update Gateway") }} : {{ $gateway->name }}</h6>
+               
             </div>
             <div class="card-body">
                 <div class="row mb-10-none">
                     <div class="col-xl-3 col-lg-3 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Gateway Image*",
+                            'label'             => __("Gateway Image*"),
                             'name'              => "image",
                             'class'             => "file-holder",
                             'old_files'         => $gateway->image,
@@ -49,7 +50,7 @@
                          {{-- Production/Sandbox Switcher --}}
                          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 form-group">
                             @include('admin.components.form.switcher', [
-                                'label'         => 'Gateway Environment',
+                                'label'         => __("Gateway Environment"),
                                 'value'         => old('mode',$gateway->env),
                                 'name'          => "mode",
                                 'options'       => ['Production' => payment_gateway_const()::ENV_PRODUCTION, 'Sandbox' => payment_gateway_const()::ENV_SANDBOX],
@@ -72,7 +73,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Update",
+                            'text'          => __("update"),
                             'permission'    => "admin.payment.gateway.update",
                         ])
                     </div>
@@ -81,25 +82,7 @@
         </div>
 
     </form>
-    {{-- @if($gateway->name == "Flutterwave")
-        <div class="row">
-            <div class="custom-card mt-15">
-                <div class="card-header"><h6 class="title">Supported Banks</h6></div>
-                @php
-                    $credentials = $gateway->credentials;
-                    $secret_key = getPaymentCredentials($credentials,'Secret key');
-                    $banks = getFlutterwaveBanks($secret_key)??[];
-                @endphp
-                <div class="card-body">
-                    @foreach ($banks as $bank)
-                    <span class="badge badge--success"><span class="text-dark">{{ $bank['name'] }}</span></span>
-                    @endforeach
 
-
-                </div>
-            </div>
-        </div>
-    @endif --}}
 
 @endsection
 

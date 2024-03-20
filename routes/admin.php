@@ -1,51 +1,49 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
-use App\Http\Controllers\Admin\BankController;
-use App\Providers\Admin\BasicSettingsProvider;
-use Pusher\PushNotifications\PushNotifications;
-use App\Http\Controllers\Admin\CookieController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\AddMoneyController;
 use App\Http\Controllers\Admin\CurrencyController;
-use App\Http\Controllers\Admin\LanguageController;
-use App\Http\Controllers\Admin\MoneyOutController;
-use App\Http\Controllers\Admin\SetupKycController;
-use App\Http\Controllers\Admin\UserCareController;
-use App\Http\Controllers\Admin\AdminCareController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\RemitanceController;
+use App\Http\Controllers\Admin\TrxSettingsController;
+use App\Http\Controllers\Admin\AddMoneyController;
+use App\Http\Controllers\Admin\AdminCareController;
+use App\Http\Controllers\Admin\AgentCareController;
+use App\Http\Controllers\Admin\AppOnboardScreensController;
+use App\Http\Controllers\Admin\AppSettingsController;
+use App\Http\Controllers\Admin\BroadcastingController;
+use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\Admin\CookieController;
+use App\Http\Controllers\Admin\CryptoAssetController;
 use App\Http\Controllers\Admin\ExtensionsController;
 use App\Http\Controllers\Admin\GatewayApiController;
-use App\Http\Controllers\Admin\NewsletterController;
-use App\Http\Controllers\Admin\ProfitLogsController;
-use App\Http\Controllers\Admin\ServerInfoController;
-use App\Http\Controllers\Admin\SetupEmailController;
-use App\Http\Controllers\Admin\SetupPagesController;
-use App\Http\Controllers\Admin\UsefulLInkController;
-use App\Http\Controllers\Admin\AppSettingsController;
-use App\Http\Controllers\Admin\CryptoAssetController;
-use App\Http\Controllers\Admin\PaymentLinkController;
-use App\Http\Controllers\Admin\TrxSettingsController;
-use App\Http\Controllers\Admin\VirtualCardController;
-use App\Http\Controllers\Admin\WebSettingsController;
-use App\Http\Controllers\Admin\BroadcastingController;
+use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\MerchantCareController;
-use App\Http\Controllers\Admin\SetupBillPayController;
 use App\Http\Controllers\Admin\ModuleSettingController;
+use App\Http\Controllers\Admin\MoneyOutController;
+use App\Http\Controllers\Admin\NewsletterController;
+use App\Http\Controllers\Admin\PaymentGatewayCurrencyController;
+use App\Http\Controllers\Admin\PaymentGatewaysController;
+use App\Http\Controllers\Admin\PaymentLinkController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\ProfitLogsController;
+use App\Http\Controllers\Admin\PushNotificationController;
+use App\Http\Controllers\Admin\RemitanceController;
+use App\Http\Controllers\Admin\ServerInfoController;
+use App\Http\Controllers\Admin\SetupBillPayController;
+use App\Http\Controllers\Admin\SetupEmailController;
+use App\Http\Controllers\Admin\SetupKycController;
+use App\Http\Controllers\Admin\SetupMobileTopupController;
+use App\Http\Controllers\Admin\SetupPagesController;
 use App\Http\Controllers\Admin\SetupSectionsController;
 use App\Http\Controllers\Admin\SupportTicketController;
-use App\Http\Controllers\Admin\ContactMessageController;
-use App\Http\Controllers\Admin\PaymentGatewaysController;
-use App\Http\Controllers\Admin\PushNotificationController;
-use App\Http\Controllers\Admin\SetupMobileTopupController;
-use App\Http\Controllers\Admin\AppOnboardScreensController;
-use App\Http\Controllers\Admin\BankAccountVerificationController;
-use App\Http\Controllers\Admin\PaymentGatewayCurrencyController;
-use App\Http\Controllers\Admin\SendMoneyGatewayController;
+use App\Http\Controllers\Admin\UsefulLInkController;
+use App\Http\Controllers\Admin\UserCareController;
+use App\Http\Controllers\Admin\WebSettingsController;
+use App\Http\Controllers\Admin\VirtualCardController;
+use Illuminate\Support\Facades\Artisan;
+use Pusher\PushNotifications\PushNotifications;
+use Illuminate\Http\Request;
+use App\Providers\Admin\BasicSettingsProvider;
+use Illuminate\Support\Facades\Auth;
 
 // All Admin Route Is Here
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -89,35 +87,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::controller(GatewayApiController::class)->prefix('gateway-api')->name('gateway.api.')->group(function () {
         Route::get('', 'index')->name('index');
         Route::put('update', 'update')->name('update');
-    });
-
-    //bank
-    Route::controller(BankController::class)->prefix('bank')->name('bank.')->group(function(){
-        Route::get('/','index')->name('index');
-        Route::get('create','create')->name('create');
-        Route::post('store','store')->name('store');
-        Route::get('edit/{slug}','edit')->name('edit');
-        Route::post('update/{slug}','update')->name('update');
-        Route::put('status/update','statusUpdate')->name('status.update');
-        Route::delete('delete','delete')->name('delete');
-    });
-
-    //bank account verification 
-    Route::controller(BankAccountVerificationController::class)->prefix('bank-account')->name('bank.account.')->group(function(){
-        Route::get('pending','pending')->name('pending');
-        Route::get('details/{id}','details')->name('details');
-        Route::get('approve','approve')->name('approve');
-        Route::get('reject','reject')->name('reject');
-        Route::post('status-approved/{id}','statusApproved')->name('status.approve');
-        Route::post('status-reject/{id}','statusReject')->name('status.reject');
-    });
-
-    //send money gateway
-    Route::controller(SendMoneyGatewayController::class)->prefix('send-money-gateway')->name('send.money.gateway.')->group(function(){
-        Route::get('/','index')->name('index');
-        Route::get('edit/{slug}','edit')->name('edit');
-        Route::put('update/{slug}','update')->name('update');
-        Route::put('status/update', 'statusUpdate')->name('status.update');
     });
 
     // Remittance Logs
@@ -265,8 +234,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('sms/unverified', 'SmsUnverified')->name('sms.unverified');
         Route::get('kyc/unverified', 'KycUnverified')->name('kyc.unverified');
         Route::get('kyc/details/{username}', 'kycDetails')->name('kyc.details');
-        Route::get('email-agents', 'emailAllUsers')->name('email.merchants');
-        Route::post('email-agents/send', 'sendMailUsers')->name('email.merchants.send')->middleware("mail");
+        Route::get('email-merchants', 'emailAllUsers')->name('email.merchants');
+        Route::post('email-merchants/send', 'sendMailUsers')->name('email.merchants.send')->middleware("mail");
         Route::get('details/{username}', 'userDetails')->name('details');
         Route::post('details/update/{username}', 'userDetailsUpdate')->name('details.update');
         Route::get('login/logs/{username}', 'loginLogs')->name('login.logs');
@@ -278,8 +247,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('search','search')->name('search');
         Route::post('wallet/balance/update/{username}','walletBalanceUpdate')->name('wallet.balance.update');
     });
-
-
+    // Agent Care Section
+    Route::controller(AgentCareController::class)->prefix('agents')->name('agents.')->group(function () {
+        Route::get('index', 'index')->name('index');
+        Route::get('active', 'active')->name('active');
+        Route::get('banned', 'banned')->name('banned');
+        Route::get('email/unverified', 'emailUnverified')->name('email.unverified');
+        Route::get('kyc/unverified', 'KycUnverified')->name('kyc.unverified');
+        Route::get('kyc/details/{username}', 'kycDetails')->name('kyc.details');
+        Route::get('email-agents', 'emailAllUsers')->name('email.agents');
+        Route::post('email-agents/send', 'sendMailUsers')->name('email.agents.send')->middleware("mail");
+        Route::get('details/{username}', 'userDetails')->name('details');
+        Route::post('details/update/{username}', 'userDetailsUpdate')->name('details.update');
+        Route::get('login/logs/{username}', 'loginLogs')->name('login.logs');
+        Route::get('mail/logs/{username}', 'mailLogs')->name('mail.logs');
+        Route::post('send/mail/{username}', 'sendMail')->name('send.mail')->middleware("mail");
+        Route::post('login-as-member/{username?}','loginAsMember')->name('login.as.member');
+        Route::post('kyc/approve/{username}','kycApprove')->name('kyc.approve');
+        Route::post('kyc/reject/{username}','kycReject')->name('kyc.reject');
+        Route::post('search','search')->name('search');
+        Route::post('wallet/balance/update/{username}','walletBalanceUpdate')->name('wallet.balance.update');
+    });
     // Admin Care Section
     Route::controller(AdminCareController::class)->prefix('admins')->name('admins.')->group(function () {
         Route::get('index', 'index')->name('index');
@@ -312,6 +300,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::controller(WebSettingsController::class)->prefix('web-settings')->name('web.settings.')->group(function(){
         Route::get('basic-settings','basicSettings')->name('basic.settings');
         Route::put('basic-settings/update','basicSettingsUpdate')->name('basic.settings.update');
+        Route::put('basic-settings/update/agent','basicSettingsUpdateAgent')->name('basic.settings.update.agent');
+        Route::put('basic-settings/update/merchant','basicSettingsUpdateMerchant')->name('basic.settings.update.merchant');
         Route::put('basic-settings/activation/update','basicSettingsActivationUpdate')->name('basic.settings.activation.update');
         Route::get('image-assets','imageAssets')->name('image.assets');
         Route::put('image-assets/update','imageAssetsUpdate')->name('image.assets.update');
@@ -329,10 +319,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('urls/update', 'urlsUpdate')->name('urls.update');
         });
 
-        Route::controller(AppOnboardScreensController::class)->name('onboard.')->group(function () {
-            Route::get('onboard-screens', 'onboardScreens')->name('screens');
-            Route::post('onboard-screens/store', 'onboardScreenStore')->name('screen.store');
-            Route::put('onboard-screen/update', 'onboardScreenUpdate')->name('screen.update');
+        Route::controller(AppOnboardScreensController::class)->prefix('onboard')->name('onboard.')->group(function () {
+            Route::get('index', 'index')->name('index');
+            Route::get('onboard-screens/{type}', 'onboardScreens')->name('screens');
+            Route::post('onboard-screens/store/{type}', 'onboardScreenStore')->name('screen.store');
+            Route::put('onboard-screen/update/{type}', 'onboardScreenUpdate')->name('screen.update');
             Route::put('onboard-screen/status/update', 'onboardScreenStatusUpdate')->name('screen.status.update');
             Route::delete('onboard-screen/delete','onboardScreenDelete')->name('screen.delete');
         });

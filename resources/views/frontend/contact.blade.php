@@ -38,7 +38,7 @@
                                     <i class="las la-phone-volume"></i>
                                 </div>
                                 <div class="contact-item-content">
-                                    <h5 class="title">{{ __("Call us on") }}: +{{ __(@$contact->value->language->$lang->mobile) }}</h5>
+                                    <h5 class="title">{{ __("Call Us At") }}: +{{ __(@$contact->value->language->$lang->mobile) }}</h5>
                                     <span class="sub-title">{{ __(@$contact->value->language->$lang->office_hours) }}</span>
                                 </div>
                             </a>
@@ -49,7 +49,7 @@
                                     <i class="las la-envelope"></i>
                                 </div>
                                 <div class="contact-item-content">
-                                    <h5 class="title">{{ __("Email us directly") }}</h5>
+                                    <h5 class="title">{{ __("Email Us Directly") }}</h5>
                                     <span class="sub-title">{{ __(@$contact->value->language->$lang->email) }}</span>
                                 </div>
                             </a>
@@ -64,24 +64,24 @@
                             @csrf
                             <div class="row justify-content-center mb-10-none">
                                 <div class="col-xl-6 col-lg-6 col-md-6 form-group">
-                                    <label>{{ __("Name") }}<span>*</span></label>
-                                    <input type="text" name="name" class="form--control" placeholder="Enter Name..." required>
+                                    <label>{{ __("name") }}<span>*</span></label>
+                                    <input type="text" name="name" class="form--control" placeholder="{{ __("Enter Name") }}" required>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 form-group">
                                     <label>{{ __("Email") }}<span>*</span></label>
-                                    <input type="email" name="email" class="form--control" placeholder="Enter Email..." required>
+                                    <input type="email" name="email" class="form--control" placeholder="{{ __("enter Email Address") }}" required>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 form-group">
                                     <label>{{ __("Phone") }}<span>*</span></label>
-                                    <input type="number" name="mobile" class="form--control" placeholder="Enter Phone..." required>
+                                    <input type="text" name="mobile" class="form--control number-input" placeholder="{{ __("enter Phone") }}" required>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 form-group">
-                                    <label>Subject<span>*</span></label>
-                                    <input type="text" name="subject" class="form--control" placeholder="Enter Subject..." required>
+                                    <label>{{ __("Subject") }}<span>*</span></label>
+                                    <input type="text" name="subject" class="form--control" placeholder="{{ __("Enter Subject") }}" required>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 form-group">
                                     <label>{{ __("Message") }}<span>*</span></label>
-                                    <textarea class="form--control" name="message" placeholder="Write Here..." required></textarea>
+                                    <textarea class="form--control" name="message" placeholder="{{ __("Write Here..") }}." required></textarea>
                                 </div>
 
                                 <div class="col-lg-12 form-group">

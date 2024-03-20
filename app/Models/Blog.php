@@ -13,7 +13,7 @@ class Blog extends Model
     protected $casts = [
         // 'short_title'      => 'object',
         'name'             => 'object',
-        'tags'             => 'object',
+        'lan_tags'         => 'object',
         'details'          => 'object',
     ];
     protected $appends = [

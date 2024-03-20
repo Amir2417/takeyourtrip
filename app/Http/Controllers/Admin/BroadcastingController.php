@@ -39,11 +39,11 @@ class BroadcastingController extends Controller
                 "PUSHER_APP_SECRET"     => remove_spaces($validated['secret_key']),
                 "PUSHER_APP_CLUSTER"    => remove_spaces($validated['cluster']),
             ]);
-        }catch(Exception $e) {  
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+        }catch(Exception $e) {
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Broadcast configuration updated successfully!']]);
+        return back()->with(['success' => [__("Broadcast configuration updated successfully!")]]);
 
     }
 

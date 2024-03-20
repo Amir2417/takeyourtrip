@@ -32,7 +32,7 @@
                                 @php
                                     $title = json_decode($item->title);
                                 @endphp
-                                <li><a href="{{ url($item->url) }}" class="@if ($current_url == url($item->url)) active @endif">{{ __($title->title) }}</a></li>
+                                <li><a href="{{ url($item->url) }}" class="@if ($current_url == url($item->url)) active @endif"><span>{{ __($title->title) }}</span></a></li>
                             @endforeach
                             </ul>
 

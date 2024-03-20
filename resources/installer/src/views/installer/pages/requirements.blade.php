@@ -88,7 +88,6 @@
                 </ul>
             @endif
 
-            {{--  --}}
 
             <div class="doc-btn mt-20 d-flex align-items-center justify-content-between gap-3">
                 <a href="{{ route('project.install.welcome') }}" class="btn--base bg--primary">&#8920; &nbsp; &nbsp; {{ __("Back") }}</a>

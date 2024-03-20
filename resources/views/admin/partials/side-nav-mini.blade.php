@@ -11,7 +11,7 @@
             </button>
             <div class="header-search-wrapper">
                 <div class="position-relative">
-                    <input class="form-control sidebar-search-input" type="search" placeholder="Search . . . ." aria-label="Search">
+                    <input class="form-control sidebar-search-input" type="search" placeholder="{{ __("Search") }}" aria-label="Search">
                     <span class="las la-search"></span>
                 </div>
                 <div class="sidebar-search-result p-3"></div>
@@ -78,19 +78,19 @@
                         @include('admin.components.side-nav-mini.support.link',[
                             'links'     => [
                                 [
-                                    'title'     => "Pending Ticket $span",
+                                    'title'     => __("Pending Ticket")." $span",
                                     'route'     => "admin.support.ticket.pending",
                                 ],
                                 [
-                                    'title'     => "Active Ticket",
+                                    'title'     => __("Active Ticket"),
                                     'route'     => "admin.support.ticket.active",
                                 ],
                                 [
-                                    'title'     => "Solved Ticket",
+                                    'title'     => __("Solved Ticket"),
                                     'route'     => "admin.support.ticket.solved",
                                 ],
                                 [
-                                    'title'     => "All Ticket",
+                                    'title'     => __("All Ticket"),
                                     'route'     => "admin.support.ticket.index",
                                 ],
                             ],

@@ -39,6 +39,12 @@
                 <div class="form-group">
                     <button type="submit" class="btn--base w-100 mt-20">Continue</button>
                 </div>
+
+                @if ($errors->any() || session('error'))
+                    <div class="">
+                        <a href="{{ route('project.install.welcome') }}" class="mt-20 text--warning" style="font-size: 14px">Go back</a>
+                    </div>
+                @endif
             </form>
         </div>
     </div>

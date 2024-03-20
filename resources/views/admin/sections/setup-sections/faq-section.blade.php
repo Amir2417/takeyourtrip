@@ -55,21 +55,21 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="english" role="tabpanel" aria-labelledby="english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Heading*",
+                                            'label'     =>__( "Heading*"),
                                             'name'      => $default_lang_code . "_heading",
                                             'value'     => old($default_lang_code . "_heading",$data->value->language->$default_lang_code->heading ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Sub Heading*",
+                                            'label'     =>__( "Sub Heading*"),
                                             'name'      => $default_lang_code . "_sub_heading",
                                             'value'     => old($default_lang_code . "_sub_heading",$data->value->language->$default_lang_code->sub_heading ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Details*",
+                                            'label'     => __( "Details")."*",
                                             'name'      => $default_lang_code . "_details",
                                             'value'     => old($default_lang_code . "_details",$data->value->language->$default_lang_code->details ?? "")
                                         ])
@@ -84,21 +84,21 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="{{ $item->name }}" role="tabpanel" aria-labelledby="english-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Heading*",
+                                                'label'     =>__( "Heading*"),
                                                 'name'      => $lang_code . "_heading",
                                                 'value'     => old($lang_code . "_heading",$data->value->language->$lang_code->heading ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Sub Heading*",
+                                                'label'     =>__( "Sub Heading*"),
                                                 'name'      => $lang_code . "_sub_heading",
                                                 'value'     => old($lang_code . "_sub_heading",$data->value->language->$lang_code->sub_heading ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.textarea',[
-                                                'label'     => "Details*",
+                                                'label'     => __( "Details")."*",
                                                 'name'      => $lang_code . "_details",
                                                 'value'     => old($lang_code . "_details",$data->value->language->$lang_code->details ?? "")
                                             ])
@@ -111,7 +111,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>
@@ -123,14 +123,14 @@
         <div class="table-wrapper">
             <div class="table-header justify-content-end">
                 <div class="table-btn-area">
-                    <a href="#faq-add" class="btn--base modal-btn"><i class="fas fa-plus me-1"></i> {{ __("Add Item ") }}</a>
+                    <a href="#faq-add" class="btn--base modal-btn"><i class="fas fa-plus me-1"></i> {{ __("Add Item") }}</a>
                 </div>
             </div>
             <div class="table-responsive">
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Question</th>
+                            <th>{{ __("Question") }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -183,7 +183,7 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="edit-modal-english" role="tabpanel" aria-labelledby="edit-modal-english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Question*",
+                                            'label'     => __( "Question")."*",
                                             'name'      => $default_lang_code . "_question_edit",
                                             'value'     => old($default_lang_code . "_question_edit",$data->value->language->$default_lang_code->question ?? "")
                                         ])
@@ -191,7 +191,7 @@
 
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Answer*",
+                                            'label'     => __( "Answer*"),
                                             'name'      => $default_lang_code . "_answer_edit",
                                             'value'     => old($default_lang_code . "_answer_edit",$data->value->language->$default_lang_code->answer ?? "")
                                         ])
@@ -206,7 +206,7 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="edit-modal-{{ $item->name }}" role="tabpanel" aria-labelledby="edit-modal-{{$item->name}}-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Question*",
+                                                'label'     => __( "Question")."*",
                                                 'name'      => $lang_code . "_question_edit",
                                                 'value'     => old($lang_code . "_question_edit",$data->value->language->$lang_code->question ?? "")
                                             ])
@@ -214,7 +214,7 @@
 
                                         <div class="form-group">
                                             @include('admin.components.form.textarea',[
-                                                'label'     => "Answer*",
+                                                'label'     => __( "Answer*"),
                                                 'name'      => $lang_code . "_answer_edit",
                                                 'value'     => old($lang_code . "_answer_edit",$data->value->language->$lang_code->answer ?? "")
                                             ])
@@ -227,7 +227,7 @@
 
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

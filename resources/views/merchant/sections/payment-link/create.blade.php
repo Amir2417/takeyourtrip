@@ -41,7 +41,7 @@
                         <div class="row">
                             <div class="col-xl-6">
                                 <div class="form-group">
-                                    <label>{{ __('Title') }}</label>
+                                    <label>{{ __("titleS") }}</label>
                                     <input type="text" class="form--control link_title" name="title" placeholder="Name of cause or service" value="{{ old('title') }}">
                                 </div>
                                 <div class="form-group">
@@ -52,7 +52,7 @@
                             <div class="col-xl-6">
                                 <div class="form-group">
                                      @include('admin.components.form.input-file',[
-                                        'label'             => "Image:",
+                                        'label'             => __("Image").":",
                                         'name'              => "image",
                                         'class'             => "file-holder payment-link-image",
                                         'old_files_path'    => files_asset_path("site-section"),
@@ -66,7 +66,7 @@
                         <div class="row">
                             <div class="col-xl-12 form-group">
                                 <div class="form-group">
-                                    <label>{{ __("Currency") }}</label>
+                                    <label>{{ __("currency") }}</label>
                                     <select class="select2-auto-tokenize currency_link" name="currency">
                                         <option value="" disabled selected>{{ __('Select One') }}</option>
                                         @foreach ($currency_data as $item)
@@ -91,7 +91,7 @@
                                         <label>{{ __('Minimum amount') }}</label>
                                         <div class="input-group">
                                             <div class="input-group-text prepend currency_link_symbol">$</div>
-                                            <input type="number" class="form--control" placeholder="0.3" name="min_amount" value="{{ old('min_amount') }}">
+                                            <input type="text" class="form--control number-input" placeholder="0.3" name="min_amount" value="{{ old('min_amount') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -100,7 +100,7 @@
                                         <label>{{ __('Maximum amount') }}</label>
                                         <div class="input-group">
                                             <div class="input-group-text prepend currency_link_symbol">$</div>
-                                            <input type="number" class="form--control" placeholder="10,000" name="max_amount" value="{{ old('max_amount') }}">
+                                            <input type="text" class="form--control number-input" placeholder="10,000" name="max_amount" value="{{ old('max_amount') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -112,11 +112,11 @@
                     <div class="payment-product-form">
                         <div class="row">
                             <div class="col-xl-12 form-group">
-                                <label>{{ __('Title') }}*</label>
+                                <label>{{ __("titleS") }}*</label>
                                 <input type="text" class="form--control link_title" name="sub_title" placeholder="Collecting Payment Platform" value="{{ old('sub_title') }}">
                             </div>
                             <div class="col-xl-12 form-group">
-                                <label>{{ __("Currency") }}</label>
+                                <label>{{ __("currency") }}</label>
                                 <select class="select2-auto-tokenize currency_link_sub" name="sub_currency">
                                     <option value="" disabled selected>{{ __('Select One') }}</option>
                                     @foreach ($currency_data as $item)
@@ -130,12 +130,12 @@
                                 <label>{{ __("Unit Price") }}*</label>
                                 <div class="input-group">
                                     <div class="input-group-text prepend currency_link_symbol">$</div>
-                                    <input type="number" class="form--control sub_price" value="" placeholder="0.00" name="price">
+                                    <input type="text" class="form--control sub_price number-input" value="" placeholder="0.00" name="price">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 form-group">
-                                <label>{{ __("Quantity") }}*</label>
-                                <input type="number" class="form--control qty_change" value="1" min="1" name="qty">
+                                <label>{{ __("quantity") }}*</label>
+                                <input type="text" class="form--control qty_change number-input" value="1" min="1" name="qty">
                             </div>
                         </div>
                     </div>
@@ -163,7 +163,7 @@
                             <div class="payment-preview-box-left">
                                 <form class="payment-preview-box-left-form">
                                     <div class="form-group">
-                                        <label>{{ _('Amount') }}</label>
+                                        <label>{{ __('Amount') }}</label>
                                         <div class="input-group">
                                             <div class="input-group-text prepend currency_link_symbol">$</div>
                                             <input type="text" class="form--control paylink_amount" value="0.00" min="0.1" readonly>
@@ -187,19 +187,19 @@
                                         </div>
                                         <div class="col-xl-12 form-group">
                                             <label>{{ __("Email") }}</label>
-                                            <input type="email" class="form--control" readonly placeholder="Email">
+                                            <input type="email" class="form--control" readonly placeholder="{{ __("Email") }}">
                                         </div>
                                         <div class="col-xl-12 form-group">
                                             <label>{{ __("Name on card") }}</label>
-                                            <input type="text" class="form--control" readonly placeholder="Name On Card">
+                                            <input type="text" class="form--control" readonly placeholder="{{ __("Name on card") }}">
                                         </div>
                                         <div class="col-xl-12 form-group">
                                             <div class="input-group two">
                                                 <div class="input-group-text prepend">
                                                     <img src="{{ asset('public/frontend/images/icon/credit-card.png') }}" alt="">
                                                 </div>
-                                                <input type="text" class="form--control" placeholder="Card Number" name="card_name" value="{{ old('card_name') }}" readonly>
-                                                <div class="input-group-text append">MM / YY / CVC</div>
+                                                <input type="text" class="form--control" placeholder={{ __("card Number") }} name="card_name" value="{{ old('card_name') }}" readonly>
+                                                <div class="input-group-text append">{{ __("MM / YY / CVC") }}</div>
                                             </div>
                                         </div>
                                         <div class="col-xl-12 form-group">
@@ -246,11 +246,11 @@
                                     </div>
 
                                     <div class="col-xl-12 form-group">
-                                        <input type="email" class="form--control" readonly placeholder="Email">
+                                        <input type="email" class="form--control" readonly placeholder="{{ __("Email") }}">
                                     </div>
 
                                     <div class="col-xl-12 form-group">
-                                        <input type="text" class="form--control" readonly placeholder="Name On Card">
+                                        <input type="text" class="form--control" readonly placeholder="{{ __("Name on card") }}">
                                     </div>
 
                                     <div class="col-xl-12 form-group">
@@ -258,8 +258,8 @@
                                             <div class="input-group-text prepend">
                                                 <img src="{{ asset('public/frontend/images/icon/credit-card.png') }}" alt="">
                                             </div>
-                                            <input type="text" class="form--control" placeholder="Card Number" name="card_name" value="{{ old('card_name') }}" readonly>
-                                            <div class="input-group-text append">MM / YY / CVC</div>
+                                            <input type="text" class="form--control" placeholder={{ __("card Number") }} name="card_name" value="{{ old('card_name') }}" readonly>
+                                            <div class="input-group-text append">{{ __("MM / YY / CVC") }}</div>
                                         </div>
                                     </div>
                                     <div class="col-xl-12 form-group">

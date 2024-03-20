@@ -51,7 +51,7 @@ class AuthorizationController extends Controller
         ]);
         $code = $request->code;
         $code = implode("",$code);
-        $otp_exp_sec = BasicSettingsProvider::get()->otp_exp_seconds ?? GlobalConst::DEFAULT_TOKEN_EXP_SEC;
+        $otp_exp_sec = BasicSettingsProvider::get()->merchant_otp_exp_seconds ?? GlobalConst::DEFAULT_TOKEN_EXP_SEC;
         $auth_column = MerchantAuthorization::where("token",$request->token)->where("code",$code)->first();
         if(!$auth_column){
             return back()->with(['error' => [__('Verification code does not match')]]);
@@ -125,8 +125,6 @@ class AuthorizationController extends Controller
     }
 
     public function kycSubmit(Request $request) {
-
-
         $user = auth()->user();
         if($user->kyc_verified == GlobalConst::VERIFIED) return back()->with(['success' => [__('You are already KYC Verified User')]]);
 

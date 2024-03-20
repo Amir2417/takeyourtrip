@@ -20,17 +20,17 @@
 @section('content')
     <div class="custom-card">
         <div class="card-header">
-            <h6 class="title">Default Template</h6>
+            <h6 class="title">__(Default Template"Default Template)</h6>
         </div>
         <div class="card-body">
             <form class="card-form">
                 <div class="row mb-10-none">
                     <div class="col-xl-12 col-lg-12 form-group">
-                        <label>Email Body*</label>
+                        <label>{{ __('Email Body*') }}</label>
                         <div id="div_editor1"></div>
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
-                        <button type="submit" class="btn--base w-100">Update</button>
+                        <button type="submit" class="btn--base w-100">{{ __("update") }}</button>
                     </div>
                 </div>
             </form>
@@ -39,5 +39,5 @@
 @endsection
 
 @push('script')
-    
+
 @endpush

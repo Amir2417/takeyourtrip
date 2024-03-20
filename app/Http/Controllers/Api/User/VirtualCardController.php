@@ -16,6 +16,7 @@ use App\Models\UserWallet;
 use App\Models\VirtualCard;
 use App\Models\VirtualCardApi;
 use App\Notifications\User\VirtualCard\CreateMail;
+use App\Notifications\User\VirtualCard\Fund;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -549,7 +550,6 @@ class VirtualCardController extends Controller
 
     }
     public function cardFundConfirm(Request $request){
-
         $validator = Validator::make($request->all(), [
             'card_id' => 'required',
             'fund_amount' => 'required|numeric|gt:0',
@@ -585,7 +585,7 @@ class VirtualCardController extends Controller
             $error = ['error'=>[__('User wallet not found')]];
             return Helpers::error($error);
         }
-        $cardCharge = TransactionSetting::where('slug','virtual_card')->where('status',1)->first();
+        $cardCharge = TransactionSetting::where('slug','reload_card')->where('status',1)->first();
         $baseCurrency = Currency::default();
         $rate = $baseCurrency->rate;
         if(!$baseCurrency){
@@ -637,6 +637,19 @@ class VirtualCardController extends Controller
             $trx_id = 'CF'.getTrxNum();
             $sender = $this->insertCardFund( $trx_id,$user,$wallet,$amount, $myCard ,$payable);
             $this->insertFundCardCharge( $fixedCharge,$percent_charge, $total_charge,$user,$sender,$myCard->masked_card,$amount);
+            if($basic_setting->email_notification == true){
+                $notifyDataSender = [
+                    'trx_id'  => $trx_id,
+                    'title'  => "Virtual Card (Fund Amount)",
+                    'request_amount'  => getAmount($amount,4).' '.get_default_currency_code(),
+                    'payable'   =>  getAmount($payable,4).' ' .get_default_currency_code(),
+                    'charges'   => getAmount( $total_charge,2).' ' .get_default_currency_code(),
+                    'card_amount'  => getAmount($myCard->amount,2).' ' .get_default_currency_code(),
+                    'card_pan'  =>    $myCard->maskedPan,
+                    'status'  => "Success",
+                  ];
+                $user->notify(new Fund($user,(object)$notifyDataSender));
+            }
             $message =  ['success'=>[__('Card Funded Successfully')]];
             return Helpers::onlysuccess($message);
 
@@ -682,7 +695,6 @@ class VirtualCardController extends Controller
         }
         return $id;
     }
-
     public function insertBuyCardCharge($fixedCharge,$percent_charge, $total_charge,$user,$id,$masked_card) {
         DB::beginTransaction();
         try{

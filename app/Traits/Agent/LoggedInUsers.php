@@ -11,7 +11,7 @@ use Jenssegers\Agent\Agent;
 trait LoggedInUsers {
 
     protected function refreshUserWallets($user) {
-        $user_wallets = $user->wallets->pluck("currency_id")->toArray();
+        $user_wallets = $user->wallet->pluck("currency_id")->toArray();
         $currencies = Currency::active()->roleHasOne()->pluck("id")->toArray();
         $new_currencies = array_diff($currencies,$user_wallets);
         $new_wallets = [];

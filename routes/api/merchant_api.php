@@ -15,7 +15,6 @@ use App\Http\Controllers\Api\Merchant\TransactionController;
 use App\Http\Helpers\Api\Helpers;
 use App\Models\Admin\SetupKyc;
 use App\Providers\Admin\BasicSettingsProvider;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 /*
@@ -102,10 +101,10 @@ Route::prefix('merchant')->group(function(){
             // Payment Link
             Route::controller(PaymentLinkController::class)->prefix('payment-links/')->group(function(){
                 Route::get('/', 'index');
-                Route::post('/store', 'store');
+                Route::post('/store', 'store')->middleware('api.kyc');
                 Route::get('/edit', 'edit');
-                Route::post('/update', 'update');
-                Route::post('/status', 'status');
+                Route::post('/update', 'update')->middleware('api.kyc');
+                Route::post('/status', 'status')->middleware('api.kyc');
             });
              //transactions
             Route::controller(TransactionController::class)->prefix("transactions")->group(function(){
@@ -120,15 +119,15 @@ Route::prefix('merchant')->group(function(){
              //merchant developer api
             Route::controller(DeveloperApiController::class)->prefix('developer/api')->group(function(){
                 Route::get('/','index');
-                Route::post('mode/update','updateMode')->middleware('app.mode.api');;
+                Route::post('mode/update','updateMode')->middleware('app.mode.api');
             });
             //merchant gateway settings
             Route::controller(GatewaySettingController::class)->prefix('gateway-settings')->group(function(){
                 Route::get('/','index');
-                Route::post('update/wallet/status','updateWalletStatus')->middleware('app.mode.api');;
-                Route::post('update/virtual/card/status','updateVirtualCardStatus')->middleware('app.mode.api');;
-                Route::post('update/master/card/status','updateMasterCardStatus')->middleware('app.mode.api');;
-                Route::post('update/master/card/credentials','updateMasterCardCredentials')->middleware('app.mode.api');;
+                Route::post('update/wallet/status','updateWalletStatus')->middleware('app.mode.api');
+                Route::post('update/virtual/card/status','updateVirtualCardStatus')->middleware('app.mode.api');
+                Route::post('update/master/card/status','updateMasterCardStatus')->middleware('app.mode.api');
+                Route::post('update/master/card/credentials','updateMasterCardCredentials')->middleware('app.mode.api');
             });
 
         });

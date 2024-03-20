@@ -27,7 +27,7 @@ class WalletController extends Controller
         $crypto_wallets = UserWallet::auth()->whereHas("currency",function($q) {
             return $q->where("type",GlobalConst::CRYPTO);
         })->orderByDesc("balance")->get();
-        
+
         return view('user.sections.wallets.index',compact("page_title","fiat_wallets","crypto_wallets"));
     }
 
@@ -48,7 +48,7 @@ class WalletController extends Controller
                 $q->where("code",$validated['target']);
             })->first();
         }catch(Exception $e) {
-            $error = ['error' => ['Something went worng!. Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 

@@ -7,8 +7,8 @@
 @section('content')
 <div class="developer-body-wrapper">
     <div class="developer-main-wrapper">
-        <h1 class="heading-title mb-20">Check Payment Status</h1>
-        <p>Checks the status of a payment.</p>
+        <h1 class="heading-title mb-20">{{ __("Check Payment Status") }}</h1>
+        <p>{{ __("Checks the status of a payment.") }}</p>
         <pre class="prettyprint mt-0" style="white-space: normal;">
             <span class="code-show-list">
                 <br>**Response: SUCCESS (200 OK)**
@@ -36,8 +36,8 @@
     <div class="page-change-area">
 
         <div class="navigation-wrapper">
-            <a href="{{ setRoute("developer.initiate.payment") }}" class="left"><i class="las la-arrow-left me-1"></i> Initiate Payment</a>
-            <a href="{{ setRoute("developer.response.code") }}" class="right">Response Codes <i class="las la-arrow-right ms-1"></i></a>
+            <a href="{{ setRoute("developer.initiate.payment") }}" class="left"><i class="las la-arrow-left me-1"></i> {{ __("Initiate Payment") }}</a>
+            <a href="{{ setRoute("developer.response.code") }}" class="right">{{ __("Response Codes") }} <i class="las la-arrow-right ms-1"></i></a>
         </div>
 
     </div>

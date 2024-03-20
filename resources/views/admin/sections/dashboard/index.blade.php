@@ -88,7 +88,7 @@
                                     <h2 class="user-count">{{ $data['total_cards'] }}</h2>
                                 </div>
                                 <div class="user-badge">
-                                    <span class="badge badge--success">{{ __("Active") }} {{ $data['active_cards'] }}</span>
+                                    <span class="badge badge--success">{{ __("active") }} {{ $data['active_cards'] }}</span>
                                     <span class="badge badge--warning">{{ __("Inactive") }} {{ $data['inactive_cards'] }}</span>
                                 </div>
                             </div>
@@ -126,7 +126,7 @@
                                     <h2 class="user-count">{{ $data['total_users'] }}</h2>
                                 </div>
                                 <div class="user-badge">
-                                    <span class="badge badge--info">{{ __("Active") }} {{  $data['active_users'] }}</span>
+                                    <span class="badge badge--info">{{ __("active") }} {{  $data['active_users'] }}</span>
                                     <span class="badge badge--warning">{{ __("Unverified") }} {{ $data['unverified_users'] }}</span>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
                                     <h2 class="user-count">{{ $data['total_merchants'] }}</h2>
                                 </div>
                                 <div class="user-badge">
-                                    <span class="badge badge--info">{{ __("Active") }} {{  $data['active_merchants'] }}</span>
+                                    <span class="badge badge--info">{{ __("active") }} {{  $data['active_merchants'] }}</span>
                                     <span class="badge badge--warning">{{ __("Unverified") }} {{ $data['unverified_merchants'] }}</span>
                                 </div>
                             </div>
@@ -165,7 +165,7 @@
                                     <h2 class="user-count">{{ $data['total_tickets'] }}</h2>
                                 </div>
                                 <div class="user-badge">
-                                    <span class="badge badge--info">{{ __("Active") }} {{  $data['active_tickets'] }}</span>
+                                    <span class="badge badge--info">{{ __("active") }} {{  $data['active_tickets'] }}</span>
                                     <span class="badge badge--warning">{{ __("Pending") }} {{ $data['pending_tickets'] }}</span>
                                 </div>
                             </div>
@@ -279,9 +279,9 @@
                 <div class="chart-wrapper">
                     <div class="chart-area-header">
                         <h5 class="title">
-                           {{__(" Monthly Add Money Chart")}}
+                           {{__("Monthly Add Money Chart")}}
                         </h5>
-                        <a href="{{ setRoute('admin.add.money.index') }}" class="btn--base modal-btn"> {{__("View")}}</a>
+                        <a href="{{ setRoute('admin.add.money.index') }}" class="btn--base "> {{__("View")}}</a>
                     </div>
                     <div class="chart-container">
                         <div id="chart1" data-chart_one_data="{{ json_encode($data['chart_one_data']) }}" data-month_day="{{ json_encode($data['month_day']) }}" class="sales-chart"></div>
@@ -304,9 +304,9 @@
                 <div class="chart-wrapper">
                     <div class="chart-area-header">
                         <h5 class="title">
-                           {{__(" Monthly Money Out Chart")}}
+                           {{__("Monthly Money Out Chart")}}
                         </h5>
-                        <a href="{{ setRoute('admin.money.out.index') }}" class="btn--base modal-btn"> {{__("View")}}</a>
+                        <a href="{{ setRoute('admin.money.out.index') }}" class="btn--base "> {{__("View")}}</a>
                     </div>
                     <div class="chart-container">
                         <div id="chart3" data-chart_three_data="{{ json_encode($data['chart_three_data']) }}" data-month_day="{{ json_encode($data['month_day']) }}" class="sales-chart"></div>
@@ -356,7 +356,7 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>{{ __("TRX") }}</th>
+                            <th>{{ __("web_trx_id") }}</th>
                             <th>{{ __("Full Name") }}</th>
                             <th>{{ __("User Type") }}</th>
                             <th>{{ __("Phone") }}</th>
@@ -364,7 +364,7 @@
                             <th>{{ __("Method") }}</th>
                             <th>{{ __(("Status")) }}</th>
                             <th>{{ __("Time") }}</th>
-                            <th>{{ __("Action") }}</th>
+                            <th>{{__("action")}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -377,7 +377,6 @@
                                 <a href="{{ setRoute('admin.users.details',$item->creator->username) }}">{{ $item->creator->fullname }}</a>
                                 @elseif($item->agent_id != null)
                                 <a href="{{ setRoute('admin.agents.details',$item->creator->username) }}">{{ $item->creator->fullname }}</a>
-
                                 @endif
 
                             <td>
@@ -397,7 +396,7 @@
                             <td>{{ number_format($item->request_amount,2) }} {{ get_default_currency_code() }}</td>
                             <td><span class="text--info">{{ @$item->currency->name }}</span></td>
                             <td>
-                                <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span>
+                                <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                             </td>
                             <td>{{ $item->created_at->format('d-m-y h:i:s A') }}</td>
                             <td>
@@ -409,7 +408,7 @@
                             </td>
                         </tr>
                         @empty
-                            <div class="alert alert-primary">{{ __('No data found!') }}</div>
+                            <div class="alert alert-primary">{{ __('empty Status') }}</div>
                         @endforelse
                     </tbody>
                 </table>
@@ -421,25 +420,25 @@
 
 @push('script')
 <script>
-    var chart1 = $('#chart1');
+var chart1 = $('#chart1');
 var chart_one_data = chart1.data('chart_one_data');
 var month_day = chart1.data('month_day');
 // apex-chart
 var options = {
   series: [{
-  name: 'Pending',
+  name: "{{ __('Pending') }}",
   color: "#5A5278",
   data: chart_one_data.pending_data
 }, {
-  name: 'Completed',
+  name: "{{ __('Completed') }}",
   color: "#6F6593",
   data: chart_one_data.success_data
 }, {
-  name: 'Canceled',
+  name: '{{ __("Canceled") }}',
   color: "#8075AA",
   data: chart_one_data.canceled_data
 }, {
-  name: 'Hold',
+  name: '{{ __("Hold") }}',
   color: "#A192D9",
   data: chart_one_data.hold_data
 }],
@@ -490,19 +489,19 @@ var chart2 = $('#chart2');
 var chart_two_data = chart2.data('chart_two_data');
 var options = {
   series: [{
-  name: 'Pending',
+  name: "{{ __('Pending') }}",
   color: "#5A5278",
   data: chart_two_data.pending_data
 }, {
-  name: 'Completed',
+  name: "{{ __('Completed') }}",
   color: "#6F6593",
   data: chart_two_data.success_data
 }, {
-  name: 'Canceled',
+  name: '{{ __("Canceled") }}',
   color: "#8075AA",
   data: chart_two_data.canceled_data
 }, {
-  name: 'Hold',
+  name: '{{ __("Hold") }}',
   color: "#A192D9",
   data: chart_two_data.hold_data
 }],
@@ -560,19 +559,19 @@ var month_day = chart3.data('month_day');
 // apex-chart
 var options = {
   series: [{
-  name: 'Pending',
+  name: "{{ __('Pending') }}",
   color: "#5A5278",
   data: chart_three_data.pending_data
 }, {
-  name: 'Completed',
+  name: "{{ __('Completed') }}",
   color: "#6F6593",
   data: chart_three_data.success_data
 }, {
-  name: 'Canceled',
+  name: '{{ __("Canceled") }}',
   color: "#8075AA",
   data: chart_three_data.canceled_data
 }, {
-  name: 'Hold',
+  name: '{{ __("Hold") }}',
   color: "#A192D9",
   data: chart_three_data.hold_data
 }],
@@ -629,8 +628,8 @@ var options = {
   width: 350,
   type: 'pie'
 },
-colors: ['#5A5278', '#6F6593', '#8075AA', '#A192D9'],
-labels: ['Active', 'Unverified', 'Banned', 'All'],
+colors: ['#10c469', '#f03d30', '#ff9f43', '#A192D9'],
+labels: ['{{ __("active") }}', '{{ __("banned") }}','{{ __("Unverified") }}', '{{ __("All") }}'],
 responsive: [{
   breakpoint: 1480,
   options: {
@@ -677,8 +676,8 @@ var options = {
   width: 350,
   type: 'pie'
 },
-colors: ['#5A5278', '#6F6593', '#8075AA', '#A192D9'],
-labels: ['Active', 'Unverified', 'Banned', 'All'],
+colors: ['#10c469', '#f03d30', '#ff9f43', '#A192D9'],
+labels: ['{{ __("active") }}', '{{ __("banned") }}','{{ __("Unverified") }}', '{{ __("All") }}'],
 responsive: [{
   breakpoint: 1480,
   options: {
@@ -725,8 +724,8 @@ var options = {
   width: 350,
   type: 'pie'
 },
-colors: ['#5A5278', '#6F6593', '#8075AA', '#A192D9'],
-labels: ['Active', 'Unverified', 'Banned', 'All'],
+colors: ['#10c469', '#f03d30', '#ff9f43', '#A192D9'],
+labels: ['{{ __("active") }}', '{{ __("banned") }}','{{ __("Unverified") }}', '{{ __("All") }}'],
 responsive: [{
   breakpoint: 1480,
   options: {

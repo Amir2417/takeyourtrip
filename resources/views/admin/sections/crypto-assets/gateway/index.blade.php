@@ -43,7 +43,7 @@
                     @include('admin.components.link.custom',[
                         'href'          => setRoute('admin.crypto.assets.generate.wallet', $gateway->alias),
                         'class'         => "btn--base",
-                        'text'          => "Generate Wallets",
+                        'text'          => __("Generate Wallets"),
                         'permission'    => "admin.crypto.assets.generate.wallet",
                     ])
                 </div>
@@ -66,7 +66,7 @@
                     @include('admin.components.link.add-default',[
                         'href'          => "#wallet-store",
                         'class'         => "modal-btn wallet-add-btn",
-                        'text'          => "Add Wallet",
+                        'text'          => __("Add Wallet"),
                         'permission'    => "admin.crypto.assets.wallet.store",
                         'attribute'     => "data-coin=$currency data-gateway=$gateway->alias",
                     ])
@@ -84,10 +84,10 @@
                                 <div class="card-header">
                                     <div class="col-4 form-group switcher" data-target="{{ $wallet_assets->id }}" data-credentials="{{ $item->id }}">
                                         @include('admin.components.form.switcher',[
-                                            'label'         => 'Status',
+                                            'label'         =>__("Status"),
                                             'name'          => 'type',
                                             'value'         => old('type',$item->status),
-                                            'options'       => ['Active' => 1,'Deactive' => 0],
+                                            'options'       => [__("active") => 1,__("Deactive") => 0],
                                             'status'        => true,
                                             'permission'    => 'admin.crypto.assets.wallet.status.update'
                                         ])
@@ -243,7 +243,7 @@
 
                             <div class="col-12 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => 'Mnemonic',
+                                    'label'         => __("Mnemonic"),
                                     'label_after'   => '<span> (Optional)</span>',
                                     'name'          => 'mnemonic',
                                     'value'         => old('mnemonic')
@@ -252,7 +252,7 @@
 
                             <div class="col-12 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => 'Extended Public Key (Xpub)',
+                                    'label'         => __("Extended Public Key (Xpub)"),
                                     'label_after'   => '<span> (Optional)</span>',
                                     'name'          => 'xpub',
                                     'value'         => old('xpub')
@@ -261,7 +261,7 @@
 
                             <div class="col-12 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => 'Private Key',
+                                    'label'         => __("Private Key"),
                                     'label_after'   => '<span> (Optional)</span>',
                                     'name'          => 'private_key',
                                     'value'         => old('private_key')
@@ -270,7 +270,7 @@
 
                             <div class="col-12 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => 'Public Address',
+                                    'label'         => __("Public Address"),
                                     'label_after'   => '<span>*</span>',
                                     'name'          => 'public_address',
                                     'value'         => old('public_address')

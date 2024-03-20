@@ -1,9 +1,11 @@
 <?php
+
+use App\Models\StrowalletVirtualCard;
 use GuzzleHttp\Client;
 use App\Models\VirtualCardApi;
+
+
 function stro_wallet_create_user($user,$formData,$public_key,$base_url){
-
-
     $client = new Client();
 
     $response               = $client->request('POST', $base_url.'create-user/', [
@@ -16,7 +18,7 @@ function stro_wallet_create_user($user,$formData,$public_key,$base_url){
             'firstName'     => $formData['first_name'],
             'lastName'      => $formData['last_name'],
 
-            'idNumber'      => generate_random_number(),
+            'idNumber'      => rand(123456789,987654321),
             'customerEmail' => $formData['customer_email'],
             'phoneNumber'   => $formData['phone'],
             'dateOfBirth'   => $formData['date_of_birth'],
@@ -34,7 +36,7 @@ function stro_wallet_create_user($user,$formData,$public_key,$base_url){
     $result         = $response->getBody();
     $decodedResult  = json_decode($result, true);
 
-    if( $decodedResult['success'] == true ){
+    if(isset($decodedResult['success']) && $decodedResult['success'] == true ){
         $data =[
             'status'        => true,
             'message'       => "Create Customer Successfully.",
@@ -52,8 +54,7 @@ function stro_wallet_create_user($user,$formData,$public_key,$base_url){
 
 }
 // create virtual card for strowallet
-function create_strowallet_virtual_card($user,$cardAmount,$customer,$public_key,$base_url){
-
+function create_strowallet_virtual_card($user,$cardAmount,$customer,$public_key,$base_url,$formData){
     $curl = curl_init();
 
     curl_setopt_array($curl, [
@@ -65,7 +66,7 @@ function create_strowallet_virtual_card($user,$cardAmount,$customer,$public_key,
     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
     CURLOPT_CUSTOMREQUEST => "POST",
     CURLOPT_POSTFIELDS => json_encode([
-        'name_on_card' => $user->username,
+        'name_on_card' => $formData['name_on_card']??$user->username,
         'card_type' => $customer->card_brand,
         'public_key' => $public_key,
         'amount' => $cardAmount,
@@ -82,7 +83,7 @@ function create_strowallet_virtual_card($user,$cardAmount,$customer,$public_key,
     $result  = json_decode($response, true);
 
 
-    if( $result['success'] == true ){
+    if(isset($result['success']) && $result['success'] == true ){
         $data =[
             'status'        => true,
             'message'       => "Create Card Successfully.",
@@ -91,7 +92,7 @@ function create_strowallet_virtual_card($user,$cardAmount,$customer,$public_key,
     }else{
         $data =[
             'status'        => false,
-            'message'       => $result['message'] ?? 'Something is wrong! Contact With Admin',
+            'message'       => $result['message']. ' Contact With Strowallet Account Administration',
             'data'          => null,
         ];
     }
@@ -126,7 +127,7 @@ function card_details($card_id,$public_key,$base_url){
 
     $result  = json_decode($response, true);
 
-    if( $result['success'] == true ){
+    if(isset($result['success']) && $result['success'] == true ){
         $data =[
             'status'        => true,
             'message'       => "Card Details Retrieved Successfully.",
@@ -135,7 +136,7 @@ function card_details($card_id,$public_key,$base_url){
     }else{
         $data =[
             'status'        => false,
-            'message'       => $result['message'] ?? 'Something is wrong! Contact With Admin',
+            'message'       => $result['message'] ?? 'Your Card Is Pending!Please Contact With Admin',
             'data'          => null,
         ];
     }
@@ -143,9 +144,10 @@ function card_details($card_id,$public_key,$base_url){
     return $data;
 }
 function strowalletBalance(){
+    $currency_code = get_default_currency_code();
     $method = VirtualCardApi::first();
     $publicKey =  $method->config->strowallet_public_key;
-    $url = 'https://strowallet.com/api/wallet/balance/NGN/?public_key=' . $publicKey;
+    $url = 'https://strowallet.com/api/wallet/balance/'.$currency_code.'/?public_key='  . $publicKey;
 
     $ch = curl_init($url);
 
@@ -158,18 +160,24 @@ function strowalletBalance(){
     curl_close($ch);
 
     $result = json_decode(  $response,true);
-    if( isset($result['balance']) ){
+    if(isset($result['balance']) ){
         $data =[
             'status'        => true,
-            'message'       => "Account Balance Get Successfully",
+            'message'       => __("SuccessFully Fetch Account Balance"),
             'balance'          => $result['balance'],
         ];
     }else{
         $data =[
             'status'        => false,
-            'message'       => $result['message'] ?? 'Something is wrong! Contact With Admin',
+            'message'       => $result['message']??'',
             'balance'          => 0
         ];
     }
     return $data;
+}
+function updateStroWalletCardBalance($user,$card_id,$response){
+    $card = StrowalletVirtualCard::where('user_id',$user->id)->where('card_id',$card_id)->first();
+    $card->balance = $response['data']['card_detail']['balance'];
+    $card->save();
+    return  $card->balance??0;
 }

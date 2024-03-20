@@ -43,10 +43,10 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>SL NO</th>
-                            <th>Permission Name</th>
-                            <th>Role Name</th>
-                            <th>Status</th>
+                            <th>{{ __("SL NO") }}</th>
+                            <th>{{ __("Permission Name") }}</th>
+                            <th>{{ __("Role Name") }}</th>
+                            <th>{{ __("Status") }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -56,7 +56,7 @@
                                 <td>{{ $key + 1 }}</td>
                                 <td><span>{{ $item->name }}</span></td>
                                 <td><span>{{ $item->role->name }}</span></td>
-                                <td>{{ $item->stringStatus }}</td>
+                                <td>{{ __($item->stringStatus )}}</td>
                                 <td>
                                     @include('admin.components.link.info-default',[
                                         'href'          => setRoute('admin.admins.role.permission',$item->slug),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Constants\PaymentGatewayConst;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
 
 class VerifyCsrfToken extends Middleware
@@ -18,11 +19,19 @@ class VerifyCsrfToken extends Middleware
         '/add-money/sslcommerz/cancel',
         '/add-money/sslcommerz/fail',
         '/add-money/sslcommerz/ipn',
-        '/api-add-money/sslcommerz/success',
-        '/api-add-money/sslcommerz/cancel',
-        '/api-add-money/sslcommerz/fail',
-        '/api-add-money/sslcommerz/ipn',
-        '/handle-payment-confirmation',
-        '/api/send-money/confirmed'
+
+        '/api/add-money/sslcommerz/success',
+        '/api/add-money/sslcommerz/cancel',
+        '/api/add-money/sslcommerz/fail',
+        '/api/add-money/sslcommerz/ipn',
+
+        'agent/add-money/sslcommerz/success',
+        'agent/add-money/sslcommerz/fail',
+        'agent/add-money/sslcommerz/cancel',
+
+        'user/add-money/success/response/' . PaymentGatewayConst::RAZORPAY,
+        'user/add-money/cancel/response/' . PaymentGatewayConst::RAZORPAY,
+        'agent/add-money/success/response/' . PaymentGatewayConst::RAZORPAY,
+        'agent/add-money/cancel/response/' . PaymentGatewayConst::RAZORPAY,
     ];
 }

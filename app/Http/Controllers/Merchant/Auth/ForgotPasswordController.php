@@ -97,7 +97,7 @@ class ForgotPasswordController extends Controller
         $code = implode("",$code);
 
         $basic_settings = BasicSettingsProvider::get();
-        $otp_exp_seconds = $basic_settings->otp_exp_seconds ?? 0;
+        $otp_exp_seconds = $basic_settings->merchant_otp_exp_seconds ?? 0;
 
         $password_reset = MerchantPasswordReset::where("token",$token)->first();
         if(!$password_reset){
@@ -161,7 +161,7 @@ class ForgotPasswordController extends Controller
     public function resetPassword(Request $request,$token) {
         $basic_settings = BasicSettingsProvider::get();
         $passowrd_rule = "required|string|min:6|confirmed";
-        if($basic_settings->secure_password) {
+        if($basic_settings->merchant_secure_password) {
             $passowrd_rule = ["required",Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised(),"confirmed"];
         }
 

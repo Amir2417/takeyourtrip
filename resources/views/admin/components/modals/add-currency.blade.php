@@ -27,37 +27,37 @@
                             ])
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group">
-                            <label>{{ __("Country*") }}</label>
+                            <label>{{ __("country") }}*</label>
                             <select name="country" class="form--control select2-auto-tokenize country-select" data-old="{{ old('country') }}">
                                 <option selected disabled>Select Country</option>
                             </select>
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Name*',
+                                  'label'         => __('name').'*',
                                 'name'          => 'name',
                                 'value'         => old('name')
                             ])
                         </div>
                         <div class="col-xl-3 col-lg-3 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Code*',
+                                'label'         => __('Code').'*',
                                 'name'          => 'code',
                                 'value'         => old('code')
                             ])
                         </div>
                         <div class="col-xl-3 col-lg-3 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Symbol*',
+                                 'label'         => __('Symbol').'*',
                                 'name'          => 'symbol',
                                 'value'         => old('symbol')
                             ])
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group">
-                            <label>{{ __("Rate*") }}</label>
+                            <label>{{ __("Rate") }}*</label>
                             <div class="input-group">
                                 <span class="input-group-text append">1 {{ get_default_currency_code() }} = </span>
-                                <input type="number" class="form--control" value="{{ old('rate',0.00) }}" name="rate">
+                                <input type="text" class="form--control number-input" value="{{ old('rate',0.00) }}" name="rate">
                                 <span class="input-group-text selcted-currency">{{ old('code') }}</span>
                             </div>
                         </div>

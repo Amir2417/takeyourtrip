@@ -17,7 +17,7 @@ class ContactMessageController extends Controller
      * @return Illuminate\Http\Request Response
      */
     public function index() {
-        $page_title = "All Contact Message";
+        $page_title = __("All Contact Message");
         $data = Contact::orderBy('id',"DESC")->paginate();
 
         return view('admin.sections.contact-message.index',compact(
@@ -51,10 +51,10 @@ class ContactMessageController extends Controller
        try {
             Notification::send($contact, new SendMail((object) $validated));
        } catch (\Throwable $th) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
        }
 
-       return back()->with(['success' => ['Email successfully sended']]);
+       return back()->with(['success' => [__('Email successfully sended')]]);
 
     }
 
@@ -75,9 +75,9 @@ class ContactMessageController extends Controller
         try {
             $subscriber->delete();
         } catch (\Throwable $th) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Contact Message delete successfully!']]);
+        return back()->with(['success' => [__("Contact Message delete successfully!")]]);
     }
 }

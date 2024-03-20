@@ -33,7 +33,7 @@
                             <form class="card-form">
                                 <div class="row">
                                     <div class="col-xl-12 col-lg-12 form-group">
-                                        <label>{{ __("QR Address") }}</label>
+                                        <label>{{ __("qr Address") }}</label>
                                         <div class="input-group">
                                             <input type="text" class="form--control" value="{{ @$uniqueCode }}" readonly id="referralURL">
                                             <div class="input-group-text copytext" id="copyBoard"><i class="las la-copy"></i></div>

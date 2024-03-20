@@ -26,7 +26,7 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        $page_title = "Language Manager";
+        $page_title = __("Language Manager");
         $languages = Language::paginate(10);
         return view('admin.sections.language.index',compact(
             'page_title',
@@ -65,10 +65,10 @@ class LanguageController extends Controller
         try{
             Language::create($validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Language created successfully!']]);
+        return back()->with(['success' => [__("Language created successfully!")]]);
     }
 
     /**
@@ -100,10 +100,10 @@ class LanguageController extends Controller
         try{
             $language->update($validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Language updated successfully!']]);
+        return back()->with(['success' => [__("Language updated successfully!")]]);
 
     }
 
@@ -127,7 +127,7 @@ class LanguageController extends Controller
         try{
            $language->delete();
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         // Delete File
@@ -135,10 +135,10 @@ class LanguageController extends Controller
             $file = lang_path($language->code.".json");
             delete_file($file);
         }catch(Exception $e) {
-            return back()->with(['warning' => ['File remove failed!']]);
+            return back()->with(['warning' => [__("File remove failed!")]]);
         }
 
-        return back()->with(['success' => ['Language deleted successfully!']]);
+        return back()->with(['success' => [__("Language deleted successfully!")]]);
     }
 
 
@@ -156,7 +156,7 @@ class LanguageController extends Controller
         $validated = $validator->validate();
 
         if(Language::whereNot("id",$validated['data_target'])->default()->exists()) {
-            $warning = ['warning' => ['Please deselect your default language first.']];
+            $warning = ['warning' => [__("Please deselect your default language first.")]];
             return Response::warning($warning);
         }
 
@@ -167,11 +167,11 @@ class LanguageController extends Controller
                 'status'        => ($validated['status']) ? false : true,
             ]);
         }catch(Exception $e) {
-            $errors = ['error' => ['Something went wrong! Please try again.'] ];
+            $errors = ['error' => [__("Something went wrong! Please try again.")] ];
             return Response::error($errors,null,500);
         }
 
-        $success = ['success' => ['Language status updated successfully!']];
+        $success = ['success' => [__("Language status updated successfully!")]];
         return Response::success($success);
     }
 
@@ -181,19 +181,19 @@ class LanguageController extends Controller
         $language = Language::where("code",$code);
 
         if(!$language->exists()) {
-            return back()->with(['error' => ['Sorry! Language not found!']]);
+            return back()->with(['error' => [__("Sorry! Language not found!")]]);
         }
 
         $file = lang_path($code.".json");
         if(!is_file($file)) {
-            return back()->with(['error' => ['Something went wrong! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         $data = file_get_contents($file);
         try{
             $key_value = json_decode($data,true);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         $language = $language->first();
@@ -206,9 +206,7 @@ class LanguageController extends Controller
         ));
     }
 
-
     public function import(Request $request) {
-
         $validator = Validator::make($request->all(),[
             'language'      => 'required|string|exists:languages,code',
             'file'          => 'required|file|mimes:csv,xlsx',
@@ -225,7 +223,7 @@ class LanguageController extends Controller
         }catch(Exception $e) {
             return back()->with(['error' => [$e->getMessage()]]);
         }
-        //  dd(json_encode((new LanguageImport)->toArray($validated['file'])->columnData()->getArray()['Key']));
+        // dd(json_encode((new LanguageImport)->toArray($validated['file'])->columnData()->getArray()['Key']));
         $filter_with_database_lang = array_intersect_key($sheets,[$validated['language'] => "value"]);
 
         $get_predefine_keys = LanguageImport::getKeys();
@@ -244,7 +242,6 @@ class LanguageController extends Controller
                 file_put_contents($file,$json_format);
             }
         }
-
         try{
             if($request->hasFile('file')) {
                 $file_name = 'language-'.Carbon::parse(now())->format("Y-m-d") . "." .$validated['file']->getClientOriginalExtension();
@@ -253,10 +250,9 @@ class LanguageController extends Controller
                 File::move($validated['file'],$file_link);
             }
         }catch(Exception $e) {
-            return back()->with(['warning' => ['Failed to store new file.']]);
+            return back()->with(['warning' => [__("Failed to store new file.")]]);
         }
-
-        return back()->with(['success' => ['Language updated successfully!']]);
+        return back()->with(['success' => [__("Language updated successfully!")]]);
     }
 
 
@@ -264,12 +260,10 @@ class LanguageController extends Controller
         $code = $request->target;
         $language = Language::where("code",$code);
         if(!$language->exists()) {
-            return back()->with(['error' => ['Oops! Language not found!']]);
+            return back()->with(['error' => [__("Oops! Language not found!")]]);
         }
-
         Session::put('local',$code);
-
-        return back()->with(['success' => ['Language switch successfully!']]);
+        return back()->with(['success' => [__("Language switch successfully!")]]);
     }
 
 
@@ -277,7 +271,7 @@ class LanguageController extends Controller
         $file_path = get_files_path('language-file');
         $file_name = get_first_file_from_dir($file_path);
         if($file_name == false) {
-            return back()->with(['error' => ['File does not exists.']]);
+            return back()->with(['error' => [__("File does not exists.")]]);
         }
         $file_link = $file_path . '/' . $file_name;
         return response()->download($file_link);

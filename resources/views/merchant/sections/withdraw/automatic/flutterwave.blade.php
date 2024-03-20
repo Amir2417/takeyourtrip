@@ -1,18 +1,7 @@
 @extends('merchant.layouts.master')
 
 @push('css')
-<style>
-    .jp-card .jp-card-back, .jp-card .jp-card-front {
 
-      background-image: linear-gradient(160deg, #2583C5 0%, #813FD6 100%) !important;
-      }
-      label{
-          color: #000 !important;
-      }
-      .form--control{
-          color: #000 !important;
-      }
-  </style>
 @endpush
 
 @section('breadcrumb')
@@ -45,21 +34,21 @@
                             <input type="hidden" name="gateway_name" value="{{ strtolower($gateway->name) }}">
                             <div class="row">
                                 <div class="col-lg-12 form-group">
-                                    <label for="bank_name">{{ __("Select Bank") }} <span class="text-danger">*</span></label>
-                                    <select name="bank_name" class="form--control select2-basic" required data-placeholder="Select Bank" >
-                                          <option disabled selected value="">{{ __("Select Bank") }}</option>
+                                    <label for="bank_name">{{ __("select Bank") }} <span class="text-danger">*</span></label>
+                                    <select name="bank_name" class="form--control select2-basic" required data-placeholder="{{ __("select Bank") }}" >
+                                          <option disabled selected value="">{{ __("select Bank") }}</option>
                                         @foreach ($allBanks ??[] as $bank)
                                             <option value="{{ $bank['code'] }}">{{ $bank['name'] }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-lg-12 form-group">
-                                    <label for="account_number">{{ __("Account Number") }} <span class="text-danger">*</span></label>
-                                    <input type="number" class="form--control check_bank" id="account_number"  name="account_number" value="{{ old('account_number') }}" placeholder="Account Number">
+                                    <label for="account_number">{{ __("account Number") }} <span class="text-danger">*</span></label>
+                                    <input type="text" class="form--control check_bank number-input" id="account_number"  name="account_number" value="{{ old('account_number') }}" placeholder="{{ __("account Number") }}">
                                     <label class="exist text-start"></label>
                                 </div>
                                 <div class="col-xl-12 col-lg-12">
-                                    <button type="submit" class="btn--base w-100 btn-loading withdraw"> {{ __("Confirm") }}
+                                    <button type="submit" class="btn--base w-100 btn-loading withdraw"> {{ __("confirm") }}
 
                                     </button>
                                 </div>
@@ -74,7 +63,7 @@
                 <div class="dash-payment-item active">
                     <div class="dash-payment-title-area">
                         <span class="dash-payment-badge">!</span>
-                        <h5 class="title">{{_("Withdraw Information")}}</h5>
+                        <h5 class="title">{{__("Withdraw Money Information!")}}</h5>
                     </div>
                     <div class="dash-payment-body">
                         <div class="preview-list-wrapper">

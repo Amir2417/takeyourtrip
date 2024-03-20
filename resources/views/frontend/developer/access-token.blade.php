@@ -13,34 +13,34 @@
                 <h1 class="heading-title mb-20">{{ __("Get Access Token") }}</h1>
                 <p>{{ __("Get access token to initiates payment transaction.") }}</p>
                 <div class="mb-10">
-                    <strong>Endpoint:</strong> <span class="badge rounded-pill bg-primary">POST</span> <code class="fw-bold fs-6" style="color: #EE8D1D;"><code>&#123;&#123;base_url&#125;&#125;</code>/authentication/token</code>
+                    <strong>{{ __("Endpoint") }}:</strong> <span class="badge rounded-pill bg-primary">{{ __("POST") }}</span> <code class="fw-bold fs-6" style="color: #EE8D1D;"><code>&#123;&#123;base_url&#125;&#125;</code>/authentication/token</code>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                           <tr>
-                            <th scope="col">Parameter</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Comments</th>
+                            <th scope="col">{{ __("Parameter") }}</th>
+                            <th scope="col">{{ __("type") }}</th>
+                            <th scope="col">{{ __("Comments") }}</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
                             <th scope="row">client_id</th>
                             <td>string</td>
-                            <td>Enter merchant API client/primary key</td>
+                            <td>{{ __("Enter merchant API client/primary key") }}</td>
                           </tr>
                           <tr>
                             <th scope="row">secret_id</th>
                             <td>string</td>
-                            <td>Enter merchant API secret key</td>
+                            <td>{{ __("Enter merchant API secret key") }}</td>
                           </tr>
                         </tbody>
                       </table>
                 </div>
             </div>
             <div class="col-lg-6 mb-30">
-                <span class="mb-10">Just request to that endpoint with all parameter listed below:</span>
+                <span class="mb-10">{{ __("Just request to that endpoint with all parameter listed below") }}:</span>
                 <pre class="prettyprint mt-0" style="white-space: normal;">
                     <span class="code-show-list">
                         <span>Request Example (guzzle)</span>

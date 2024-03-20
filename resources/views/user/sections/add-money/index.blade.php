@@ -60,7 +60,7 @@
 
                                     <label>{{ __("Amount") }}<span>*</span></label>
                                     <div class="input-group">
-                                        <input type="text" class="form--control" placeholder="Enter Amount" required name="amount" value="{{ old("amount") }}">
+                                        <input type="text" class="form--control" placeholder="{{ __("enter Amount") }}" required name="amount" value="{{ old("amount") }}">
                                         <select class="form--control nice-select">
                                             <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                         </select>
@@ -159,7 +159,7 @@
     </div>
     <div class="dashboard-list-area mt-20">
         <div class="dashboard-header-wrapper">
-            <h4 class="title">{{ __("Add Money Log") }}</h4>
+            <h4 class="title">{{ __("add Money Log") }}</h4>
             <div class="dashboard-btn-wrapper">
                 <div class="dashboard-btn mb-2">
                     <a href="{{ setRoute('user.transactions.index','add-money') }}" class="btn--base">{{__("View More")}}</a>
@@ -221,7 +221,7 @@
             if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
                 var min_limit_calc = parseFloat(min_limit/sender_currency_rate).toFixed(2);
                 var max_limit_clac = parseFloat(max_limit/sender_currency_rate).toFixed(2);
-                $('.limit-show').html("Limit " + min_limit_calc + " " + defualCurrency + " - " + max_limit_clac + " " + defualCurrency);
+                $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + defualCurrency + " - " + max_limit_clac + " " + defualCurrency);
                 return {
                     minLimit:min_limit_calc,
                     maxLimit:max_limit_clac,
@@ -291,7 +291,7 @@
             if (charges == false) {
                 return false;
             }
-            $(".fees-show").html("Charge: " + parseFloat(charges.fixed).toFixed(presion) + " " + sender_currency + " + " + parseFloat(charges.percent).toFixed(presion) + "% = " + parseFloat(charges.total).toFixed(presion) + " " + sender_currency);
+            $(".fees-show").html("{{ __('charge') }}: " + parseFloat(charges.fixed).toFixed(presion) + " " + sender_currency + " + " + parseFloat(charges.percent).toFixed(presion) + "% = " + parseFloat(charges.total).toFixed(presion) + " " + sender_currency);
         }
         function getPreview() {
                 var senderAmount = $("input[name=amount]").val();

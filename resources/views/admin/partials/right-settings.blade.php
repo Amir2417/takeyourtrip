@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="layout-area">
-            <h5 class="title">{{ __("Layout Mode") }}</h5>
+            <h5 class="title">{{ __("Layout mode") }}</h5>
             <div class="layout-wrapper">
                 <div class="layout-content">
                     <span>{{ __("Dark Mode") }}</span>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="layout-area sidebar-layout-area">
-            <h5 class="title">{{ __("Sidebar Color") }}</h5>
+            <h5 class="title">{{ __("Sidebar color") }}</h5>
             <div class="layout-wrapper">
                 <div class="layout-content">
                     <span>{{ __("Dark Mode") }}</span>

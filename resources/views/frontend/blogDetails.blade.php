@@ -2,6 +2,7 @@
 
 @php
 $lang = selectedLang();
+$system_default    = $default_language_code;
 @endphp
 
 @section('content')
@@ -17,12 +18,13 @@ $lang = selectedLang();
                         <div class="blog-item">
                             <div class="blog-thumb">
                                 <img src="{{ get_image(@$blog->image,'blog') }}" alt="blog">
-                                <span class="category">{{ @$blog->category->name }}</span>
+                                <span class="category">{{  @$blog->category->data->language->$lang->name??@$blog->category->data->language->$system_default->name }}</span>
                             </div>
                             <div class="blog-content">
-                                <h4 class="title mb-30"><a href="javascript:void(0)">{{ @$blog->name->language->$lang->name }}</a></h4>
+                                <h4 class="title mb-30"><a href="javascript:void(0)">{{ @$blog->name->language->$lang->name??@$blog->name->language->$system_default->name  }}</a></h4>
                                 @php
-                                    echo @$blog->details->language->$lang->details;
+                                    echo @$blog->details->language->$lang->details??@$blog->details->language->$system_default->details;
+
                                 @endphp
                             </div>
                         </div>
@@ -41,9 +43,9 @@ $lang = selectedLang();
 
                                 @endphp
                                     @if( $blogCount > 0)
-                                    <li><a href="{{ setRoute('blog.by.category',[$cat->id, slug(@$cat->name)]) }}"> {{ __(@$cat->name) }}<span>{{ @$blogCount }}</span></a></li>
+                                    <li><a href="{{ setRoute('blog.by.category',[$cat->id, slug(@$cat->name)]) }}"> {{ __(@$cat->data->language->$lang->name??@$cat->data->language->$system_default->name) }}<span>{{ @$blogCount }}</span></a></li>
                                     @else
-                                    <li><a href="javascript:void(0)"> {{ __(@$cat->name) }}<span>{{ @$blogCount }}</span></a></li>
+                                    <li><a href="javascript:void(0)"> {{ __(@$cat->data->language->$lang->name??@$cat->data->language->$system_default->name) }}<span>{{ @$blogCount }}</span></a></li>
                                     @endif
 
                                 @endforeach
@@ -72,8 +74,14 @@ $lang = selectedLang();
                         <h4 class="widget-title">{{ __("Tags") }}</h4>
 
                         <div class="tag-widget-box">
+                            @php
+                                $old_tags = $blog->lan_tags?->language?->$lang?->tags ?? $blog->lan_tags?->language?->$system_default?->tags ?? [];
+                                if( gettype($old_tags) === "string"){
+                                    $old_tags = json_decode( $old_tags,true);
+                                }
+                            @endphp
                             <ul class="tag-list">
-                                @foreach ($blog->tags as $tag)
+                                @foreach ($old_tags as $tag)
                                 <li><a href="javascript:void(0)">{{ @$tag }}</a></li>
                                 @endforeach
 

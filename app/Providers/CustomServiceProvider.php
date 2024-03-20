@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Constants\GlobalConst;
+use App\Constants\LanguageConst;
 use Exception;
 use App\Models\User;
 use App\Models\Admin\Currency;
@@ -37,6 +39,8 @@ class CustomServiceProvider extends ServiceProvider
     public function boot()
     {
         try{
+            $default_language = Language::where('status',GlobalConst::ACTIVE)->first();
+            $default_language_code = $default_language->code ?? LanguageConst::NOT_REMOVABLE;
             $view_share = [];
             $view_share['basic_settings']               = BasicSettings::first();
             $view_share['default_currency']             = Currency::default();
@@ -49,6 +53,8 @@ class CustomServiceProvider extends ServiceProvider
             $view_share['pending_ticket_count']         = UserSupportTicket::pending()->get()->count();
             $view_share['module']                       = ModuleSetting::get();
             $view_share['card_limit']                   = VirtualCardApi::first()->card_limit;
+            $view_share['card_api']                     = VirtualCardApi::first();
+            $view_share['default_language_code']        = $default_language_code;
 
             view()->share($view_share);
 

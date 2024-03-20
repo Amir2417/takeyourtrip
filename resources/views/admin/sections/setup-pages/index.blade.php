@@ -28,7 +28,7 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Page Name</th>
+                            <th>{{ __("Page Name") }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -41,7 +41,7 @@
                                         @include('admin.components.form.switcher',[
                                             'name'          => 'status',
                                             'value'         => $item->status,
-                                            'options'       => ['Enable' => 1,'Disable' => 0],
+                                            'options'       => [__("Enable") => 1,__("Disable") => 0],
                                             'onload'        => true,
                                             'data_target'   => $item->slug,
                                             'permission'    => "admin.setup.pages.status.update",

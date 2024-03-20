@@ -30,10 +30,9 @@ class UsefulLInkController extends Controller
      */
     public function index() {
         $languages = $this->languages;
-        $page_title = "Useful Links";
+        $page_title = __("Useful LInks");
         $type = Str::slug(GlobalConst::USEFUL_LINKS);
         $data = SetupPage::orderBy('id')->where('type', $type)->paginate(12);
-
         return view('admin.sections.setup-pages.useful-links.index',compact(
             'page_title',
             'languages',
@@ -68,10 +67,10 @@ class UsefulLInkController extends Controller
         try {
             SetupPage::create($data);
         } catch (\Throwable $th) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Page added successfully!']]);
+        return back()->with(['success' => [__("Page added successfully!")]]);
     }
 
     /**
@@ -81,7 +80,7 @@ class UsefulLInkController extends Controller
      */
     public function edit($id) {
         $languages = $this->languages;
-        $page_title = "Useful Link Edit";
+        $page_title = __("Useful LInks").__("editS");
         $data = SetupPage::findOrFail($id);
         return view('admin.sections.setup-pages.useful-links.edit',compact(
             'page_title',
@@ -126,10 +125,10 @@ class UsefulLInkController extends Controller
         try {
             $setup_page->update($data);
         } catch (\Throwable $th) {
-            return back()->with(['error' => ['Something went worng! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return redirect()->route('admin.useful.links.index')->with(['success' => ['Page updated successfully!']]);
+        return redirect()->route('admin.useful.links.index')->with(['success' => [__("Page updated successfully!")]]);
     }
 
     /**
@@ -155,7 +154,7 @@ class UsefulLInkController extends Controller
         $setup_page = SetupPage::findOrFail($id);
 
         if(!$setup_page) {
-            $error = ['error' => ['Page record not found in our system.']];
+            $error = ['error' => [__("Page record not found in our system.")]];
             return Response::error($error,null,404);
         }
 
@@ -165,11 +164,11 @@ class UsefulLInkController extends Controller
                 'status' => ($validated['status'] == true) ? false : true,
             ]);
         }catch(Exception $e) {
-            $error = ['error' => ['Something went worng!. Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 
-        $success = ['success' => ['Page status updated successfully!']];
+        $success = ['success' => [__("Page status updated successfully!")]];
 
         return Response::success($success,null,200);
     }
@@ -190,10 +189,10 @@ class UsefulLInkController extends Controller
         try{
             $setup_page->delete();
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Page deleted successfully!']]);
+        return back()->with(['success' => [__("Page deleted successfully!")]]);
     }
 
 

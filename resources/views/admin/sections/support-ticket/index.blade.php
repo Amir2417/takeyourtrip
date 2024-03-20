@@ -28,14 +28,14 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Ticket ID</th>
-                            <th>Subject</th>
-                            <th>User (Fullname)</th>
-                            <th>User Type</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Last Replied</th>
-                            <th>Details</th>
+                            <th>{{ __("Ticket ID") }}</th>
+                            <th>{{ __("Subject") }}</th>
+                            <th>{{ __("User (Fullname)") }}</th>
+                            <th>{{ __("User Type") }}</th>
+                            <th>{{ __("Email") }}</th>
+                            <th>{{__("Status") }}</th>
+                            <th>{{ __("Last Replied") }}</th>
+                            <th>{{ __("Details") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,7 +61,7 @@
                                 </td>
                                 <td>{{ $item->email }}</td>
                                 <td>
-                                    <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span>
+                                    <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                                 </td>
                                 <td>
                                     @if (count($item->conversations) > 0)

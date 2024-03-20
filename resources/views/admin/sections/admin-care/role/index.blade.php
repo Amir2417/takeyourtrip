@@ -43,9 +43,9 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>SL NO</th>
-                            <th>Role Name</th>
-                            <th>Asign Admin</th>
+                            <th>{{ __("SL NO") }}</th>
+                            <th>{{ __("Role Name") }}</th>
+                            <th>{{ __("Asign Admin") }}</th>
                             <th></th>
                         </tr>
                     </thead>

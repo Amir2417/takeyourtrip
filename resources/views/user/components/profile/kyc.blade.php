@@ -2,13 +2,13 @@
 
     <div class="custom-card mt-30">
         <div class="dashboard-header-wrapper">
-            <h4 class="title">{{ __("KYC Information") }} &nbsp; <span class="{{ auth()->user()->kycStringStatus->class }}">{{ auth()->user()->kycStringStatus->value }}</span></h4>
+            <h4 class="title">{{ __("KYC Information") }} &nbsp; <span class="{{ auth()->user()->kycStringStatus->class }}">{{ __(auth()->user()->kycStringStatus->value) }}</span></h4>
         </div>
         <div class="card-body">
             @if (auth()->user()->kyc_verified == global_const()::PENDING)
-                <div class="pending text--warning kyc-text">Your KYC information is submited. Please wait for admin confirmation. When you are KYC verified you will show your submited information here.</div>
+                <div class="pending text--warning kyc-text">{{ __("pendingKycText") }}</div>
             @elseif (auth()->user()->kyc_verified == global_const()::APPROVED)
-                <div class="approved text--success kyc-text">Your KYC information is verified</div>
+                <div class="approved text--success kyc-text">{{ __("verifiedKycText") }}</div>
                 <ul class="kyc-data">
                     @foreach (auth()->user()->kyc->data ?? [] as $item)
                         <li>
@@ -40,7 +40,7 @@
                 </ul>
             @elseif (auth()->user()->kyc_verified == global_const()::REJECTED)
                 <div class="unverified text--danger kyc-text d-flex align-items-center justify-content-between mb-4">
-                    <div class="title text--warning">{{ __("Your KYC information is rejected.") }}</div>
+                    <div class="title text--warning">{{ __("rejectedKycKey") }}</div>
                     <a href="{{ setRoute('user.authorize.kyc') }}" class="btn--base">{{ __("Verify KYC") }}</a>
                 </div>
                 <div class="rejected">
@@ -48,7 +48,7 @@
                 </div>
             @else
                 <div class="unverified kyc-text d-flex align-items-center justify-content-between">
-                    <div class="title">{{ __("Please verify KYC information") }}</div>
+                    <div class="title">{{ __("verifyKycInformation") }}</div>
                     <a href="{{ setRoute('user.authorize.kyc') }}" class="btn--base">{{ __("Verify KYC") }}</a>
                 </div>
             @endif

@@ -30,8 +30,8 @@
                         <div class="gateway-item">
                             <div class="gateway-item-wrapper">
                                 <div class="content">
-                                    <h4 class="title">{{ __("Wallet Balance") }}</h4>
-                                    <span><i class="las la-exclamation-circle"></i>{{ __("enable or disable this feature") }}</span>
+                                    <h4 class="title">{{ __("wallet Balance") }}</h4>
+                                    <span><i class="las la-exclamation-circle"></i>{{ __("enable Or Disable This Features") }}</span>
                                 </div>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" name="wallet_status" type="checkbox" id="walletStatusCheckbox" {{ @$setting->wallet_status == 1 ?'checked' :'' }} >
@@ -44,7 +44,7 @@
                             <div class="gateway-item-wrapper">
                                 <div class="content">
                                     <h4 class="title">{{ __("Virtual Card") }}</h4>
-                                    <span><i class="las la-exclamation-circle"></i>{{ __("enable or disable this feature") }}</span>
+                                    <span><i class="las la-exclamation-circle"></i>{{ __("enable Or Disable This Features") }}</span>
                                 </div>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="virtualStatusCheckbox" {{ @$setting->virtual_card_status == 1 ?'checked' :'' }}>
@@ -57,7 +57,7 @@
                             <div class="gateway-item-wrapper">
                                 <div class="content">
                                     <h4 class="title">{{ __("Master / Visa Card") }} <small class="text--base">({{ __("Stripe") }})</small></h4>
-                                    <span><i class="las la-exclamation-circle"></i>{{ __("enable or disable this feature") }}</span>
+                                    <span><i class="las la-exclamation-circle"></i>{{ __("enable Or Disable This Features") }}</span>
                                 </div>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input master-visa-switch" type="checkbox" id="masterVisaStatusCheckBox" {{ @$setting->master_visa_status == 1 ?'checked' :'' }}>
@@ -67,15 +67,15 @@
                                 @csrf
                                 <div class="api-input-wrapper mb-20-none">
                                     <div class="form-group">
-                                        <label>{{ __("Primary Key") }} <span class="text--base">*</span></label>
-                                        <input type="text" name="primary_key" placeholder="Primary Key" class="form--control" value="{{ @$setting->credentials->primary_key }}" required>
+                                        <label>{{ __("primary Key") }} <span class="text--base">*</span></label>
+                                        <input type="text" name="primary_key" placeholder="{{ __("primary Key") }}" class="form--control" value="{{ @$setting->credentials->primary_key }}" required>
                                     </div>
                                     <div class="form-group">
-                                        <label>{{ __("Secret Key") }} <span class="text--base">*</span></label>
-                                        <input type="text" name="secret_key" placeholder="Secret Key" class="form--control" value="{{ @$setting->credentials->secret_key }}" required>
+                                        <label>{{ __("secret Key") }} <span class="text--base">*</span></label>
+                                        <input type="text" name="secret_key" placeholder="{{ __("secret Key") }}" class="form--control" value="{{ @$setting->credentials->secret_key }}" required>
                                     </div>
                                     <div class="form-group">
-                                        <button type="submit" class="btn--base">{{ __("Save") }} <i class="fas fa-check-circle ms-1"></i></button>
+                                        <button type="submit" class="btn--base">{{ __("Save & Change") }} <i class="fas fa-check-circle ms-1"></i></button>
                                     </div>
                                 </div>
                             </form>

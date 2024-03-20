@@ -11,7 +11,7 @@
     <!-- bootstrap css link -->
     <link rel="stylesheet" href="{{ asset('public/backend/css/bootstrap.min.css') }}">
     <!-- favicon -->
-    <link rel="shortcut icon" href="{{ asset('public/backend/images/logo/favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ get_fav($basic_settings) }}" type="image/x-icon">
     <!-- line-awesome-icon css -->
     <link rel="stylesheet" href="{{ asset('public/backend/css/line-awesome.min.css') }}">
     <!-- animate.css -->
@@ -73,23 +73,6 @@
 @include('admin.partials.notify')
 
 @stack('script')
-
-{{-- <script>
-    $(document).ready(function() {
-        $("#show_hide_password a").on('click', function(event) {
-            event.preventDefault();
-            if($('#show_hide_password input').attr("type") == "text"){
-                $('#show_hide_password input').attr('type', 'password');
-                $('#show_hide_password i').addClass( "fa-eye-slash" );
-                $('#show_hide_password i').removeClass( "fa-eye" );
-            }else if($('#show_hide_password input').attr("type") == "password"){
-                $('#show_hide_password input').attr('type', 'text');
-                $('#show_hide_password i').removeClass( "fa-eye-slash" );
-                $('#show_hide_password i').addClass( "fa-eye" );
-            }
-        });
-    });
-</script> --}}
 
 </body>
 </html>

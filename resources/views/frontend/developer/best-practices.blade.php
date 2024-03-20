@@ -8,7 +8,7 @@
 <div class="developer-body-wrapper">
     <div class="developer-main-wrapper">
         <h1 class="heading-title mb-20">{{ __("Best Practices") }}</h1>
-        <p class="pb-10">{{ __("To ensure a smooth integration process and optimal performance, follow these best practices:") }}</p>
+        <p class="pb-10">{{ __("To ensure a smooth integration process and optimal performance, follow these best practices") }}:</p>
         <ol>
             <li>{{ __("Use secure HTTPS connections for all API requests.") }}</li>
             <li>{{ __("Implement robust error handling to handle potential issues gracefully.") }}</li>

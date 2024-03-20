@@ -9,7 +9,7 @@ trait UserPartials{
 		$user = $this->user();
 	    $qrCode = $user->qrCode()->first();
         $in['agent_id'] = $user->id;;
-        $in['qr_code'] =  $user->full_mobile;
+        $in['qr_code'] =  $user->email;
 	    if(!$qrCode){
             AgentQrCode::create($in);
 	    }else{

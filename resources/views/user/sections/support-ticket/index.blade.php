@@ -17,9 +17,9 @@
 <div class="body-wrapper">
     <div class="table-area mt-10">
         <div class="table-wrapper">
-            <div class="dashboard-header-wrapper">
+            <div class="dashboard-header-wrapper d-block d-sm-flex">
                 <h4 class="title">{{ __("Support Tickets") }}</h4>
-                <div class="dashboard-btn-wrapper">
+                <div class="dashboard-btn-wrapper mt-3 mt-sm-0">
                     <div class="dashboard-btn">
                         <a href="{{ route('user.support.ticket.create') }}" class="btn--base"><i class="las la-plus me-1"></i>{{ __("Add New") }}</a>
                     </div>
@@ -33,8 +33,7 @@
                             <th>{{ __("Full Name") }}</th>
                             <th>{{ __("Email") }}</th>
                             <th>{{__("Subject")}}</th>
-                            {{-- <th>Message</th> --}}
-                            <th>{{ __("Status") }}</th>
+                            <th>{{__("Status") }}</th>
                             <th>{{__("Last Replied")}}</th>
                             <th>{{ __("Details") }}</th>
                         </tr>
@@ -46,9 +45,8 @@
                                 <td><span class="text--info">{{ $item->creator->fullname }}</span></td>
                                 <td><span class="text--info">{{ $item->creator->email }}</span></td>
                                 <td><span class="text--info">{{ $item->subject }}</span></td>
-                                {{-- <td>{{ Str::words($item->desc, 10, '...') }}</td> --}}
                                 <td>
-                                    <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span>
+                                    <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                                 </td>
                                 <td>{{ $item->created_at->format("Y-m-d H:i A") }}</td>
                                 <td>
@@ -56,7 +54,7 @@
                                 </td>
                             </tr>
                         @empty
-
+                            @include('admin.components.alerts.empty2',['colspan' => 7])
                         @endforelse
 
                     </tbody>

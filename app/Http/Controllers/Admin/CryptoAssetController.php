@@ -50,11 +50,11 @@ class CryptoAssetController extends Controller
             try{
                 $this->getTatumAssets($gateway);
             }catch(Exception $e) {
-                return back()->with(['error' => ['Something went wrong! Please try again']]);
+                return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }
 
-        return back()->with(['success' => ['Wallet generated successfully!']]);
+        return back()->with(['success' => [__("Wallet generated successfully!")]]);
     }
 
     public function walletBalanceUpdate(Request $request, $crypto_asset_id, $wallet_credentials_id) {
@@ -90,10 +90,10 @@ class CryptoAssetController extends Controller
             ]);
 
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Balance Updated Successfully!']]);
+        return back()->with(['success' => [__("Balance Updated Successfully!")]]);
 
     }
 
@@ -161,7 +161,7 @@ class CryptoAssetController extends Controller
                 DB::commit();
             }catch(Exception $e) {
                 DB::rollBack();
-                return back()->with(['error' => ['Something went wrong! Please try again']]);
+                return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }else {
             // Update existing crypto asset
@@ -184,11 +184,11 @@ class CryptoAssetController extends Controller
                 DB::commit();
             }catch(Exception $e) {
                 DB::rollBack();
-                return back()->with(['error' => ['Something went wrong! Please try again']]);
+                return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }
 
-        return back()->with(['success' => ['Wallet Added Successfully!']]);
+        return back()->with(['success' => [__("Wallet Added Successfully!")]]);
     }
 
     public function walletDelete(Request $request) {
@@ -218,10 +218,10 @@ class CryptoAssetController extends Controller
                 'credentials'   => $credentials_column,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Wallet Address Deleted Successfully!']]);
+        return back()->with(['success' => [__("Wallet Address Deleted Successfully!")]]);
     }
 
     public function walletStatusUpdate(Request $request) {
@@ -240,7 +240,7 @@ class CryptoAssetController extends Controller
             return false;
         });
 
-        if(count($target_credentials) == 0) return back()->with(['error' => ['Wallet Information not found!']]);
+        if(count($target_credentials) == 0) return back()->with(['error' => [__("Wallet Information not found!")]]);
         $target_credentials = array_shift($target_credentials);
 
         if($target_credentials['status'] == true) { // make false
@@ -269,10 +269,10 @@ class CryptoAssetController extends Controller
                 'credentials'   => $credentials_column,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Wallet Status Changed Successfully!']]);
+        return back()->with(['success' => [__("Wallet Status Changed Successfully!")]]);
     }
 
     public function walletTransactions(Request $request, $crypto_asset_id, $wallet_credentials_id) {
@@ -296,13 +296,13 @@ class CryptoAssetController extends Controller
     public function walletTransactionSearch(Request $request, $crypto_asset_id, $wallet_credentials_id)
     {
         $crypto_asset = CryptoAsset::find($crypto_asset_id);
-        if(!$crypto_asset) return Response::error(['Crypto Asset Not Found!']);
+        if(!$crypto_asset) return Response::error([__("Crypto Asset Not Found!")]);
 
         $gateway = $crypto_asset->gateway;
 
         $crypto_asset_address = collect($crypto_asset->credentials->credentials ?? [])->where('id', $wallet_credentials_id)->first()->address ?? null;
 
-        if(!$crypto_asset_address) return Response::error(['Crypto Address Not Found!']);
+        if(!$crypto_asset_address) return Response::error([__("Crypto Asset Not Found!")]);
 
         $validator = Validator::make($request->all(),[
             'text'  => 'required|string',

@@ -20,7 +20,7 @@ class SetupPagesController extends Controller
      */
     public function index()
     {
-        $page_title = "Setup Pages";
+        $page_title = __("Setup Pages");
         $type = Str::slug(GlobalConst::SETUP_PAGE);
         $setup_pages = SetupPage::where('type', $type)->get();
         return view('admin.sections.setup-pages.index',compact(
@@ -43,7 +43,7 @@ class SetupPagesController extends Controller
 
         $page = SetupPage::where('slug',$page_slug)->first();
         if(!$page) {
-            $error = ['error' => ['Page not found!']];
+            $error = ['error' => [__("Page not found!")]];
             return Response::error($error,null,404);
         }
 
@@ -53,11 +53,11 @@ class SetupPagesController extends Controller
             ]);
         }catch(Exception $e) {
             return $e;
-            $error = ['error' => ['Something went worng!. Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 
-        $success = ['success' => ['Setup Page status updated successfully!']];
+        $success = ['success' => [__("Setup Page status updated successfully!")]];
         return Response::success($success,null,200);
     }
 }

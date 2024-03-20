@@ -44,7 +44,7 @@
                 <div class="row justify-content-center mb-10-none">
                     <div class="col-xl-4 col-lg-4 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Background Image:",
+                            'label'             => __( "Background Image")."*",
                             'name'              => "bg_image",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path("site-section"),
@@ -66,28 +66,28 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="english" role="tabpanel" aria-labelledby="english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Footer Text*",
+                                            'label'     => __( "Footer Text*"),
                                             'name'      => $default_lang_code . "_footer_text",
                                             'value'     => old($default_lang_code . "_footer_text",$data->value->language->$default_lang_code->footer_text ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "App Text*",
+                                            'label'     => __( "App Text*"),
                                             'name'      => $default_lang_code . "_app_text",
                                             'value'     => old($default_lang_code . "_app_text",$data->value->language->$default_lang_code->app_text ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Footer Details*",
+                                            'label'     =>__( "Footer Details*"),
                                             'name'      => $default_lang_code . "_details",
                                             'value'     => old($default_lang_code . "_details",$data->value->language->$default_lang_code->details ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Newsletter Details*",
+                                            'label'     =>__( "Newsletter Details*"),
                                             'name'      => $default_lang_code . "_newsltter_details",
                                             'value'     => old($default_lang_code . "_newsltter_details",$data->value->language->$default_lang_code->newsltter_details ?? "")
                                         ])
@@ -101,28 +101,28 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="{{ $item->name }}" role="tabpanel" aria-labelledby="english-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Footer Text*",
+                                                'label'     => __( "Footer Text*"),
                                                 'name'      => $lang_code . "_footer_text",
                                                 'value'     => old($lang_code . "_footer_text",$data->value->language->$lang_code->footer_text ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "App Text*",
+                                                'label'     => __( "App Text*"),
                                                 'name'      => $lang_code . "_app_text",
                                                 'value'     => old($lang_code . "_app_text",$data->value->language->$lang_code->app_text ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.textarea',[
-                                                'label'     => "Footer Details*",
+                                                'label'     =>__( "Footer Details*"),
                                                 'name'      => $lang_code . "_details",
                                                 'value'     => old($lang_code . "_details",$data->value->language->$lang_code->details ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Newsletter Details*",
+                                                'label'     =>__( "Newsletter Details*"),
                                                 'name'      => $lang_code . "_newsltter_details",
                                                 'value'     => old($lang_code . "_newsltter_details",$data->value->language->$lang_code->newsltter_details ?? "")
                                             ])
@@ -135,7 +135,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>
@@ -155,9 +155,9 @@
                     <thead>
                         <tr>
 
-                            <th>Name</th>
-                            <th>Social Icon</th>
-                            <th>Link</th>
+                            <th>{{ __("name") }}</th>
+                            <th>{{ __("Social Icon") }}</th>
+                            <th>{{ __("Link") }}</th>
                             <th></th>
 
                         </tr>
@@ -211,14 +211,14 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="edit-modal-english" role="tabpanel" aria-labelledby="edit-modal-english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "name*",
+                                            'label'     =>__( "name")."*",
                                             'name'      => $default_lang_code . "_name_edit",
                                             'value'     => old($default_lang_code . "_name_edit",$data->value->language->$default_lang_code->name ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Social Icon*",
+                                            'label'     => __( "Social Icon")."*",
                                             'name'      => $default_lang_code . "_social_icon_edit",
                                             'value'     => old($default_lang_code . "_social_icon_edit",$data->value->language->$default_lang_code->social_icon ?? ""),
                                             'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -226,7 +226,7 @@
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Link*",
+                                            'label'     => __( "Link")."*",
                                             'name'      => $default_lang_code . "_link_edit",
                                             'value'     => old($default_lang_code . "_link_edit",$data->value->language->$default_lang_code->link ?? "")
                                         ])
@@ -240,14 +240,14 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="edit-modal-{{ $item->name }}" role="tabpanel" aria-labelledby="edit-modal-{{$item->name}}-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Name*",
+                                                'label'     =>__( "name")."*",
                                                 'name'      => $lang_code . "_name_edit",
                                                 'value'     => old($lang_code . "_name_edit",$data->value->language->$lang_code->name ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Social Icon*",
+                                                'label'     => __( "Social Icon")."*",
                                                 'name'      => $lang_code . "_social_icon_edit",
                                                 'value'     => old($lang_code . "_social_icon_edit",$data->value->language->$lang_code->social_icon ?? ""),
                                                 'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -255,7 +255,7 @@
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Link*",
+                                                'label'     => __( "Link")."*",
                                                 'name'      => $lang_code . "_link_edit",
                                                 'value'     => old($lang_code . "_link_edit",$data->value->language->$lang_code->link ?? "")
                                             ])
@@ -267,7 +267,7 @@
 
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

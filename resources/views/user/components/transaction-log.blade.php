@@ -13,7 +13,7 @@
                         </div>
                         <div class="dashboard-list-user-content">
                             @if ($item->type == payment_gateway_const()::TYPEADDMONEY)
-                                <h4 class="title">{{ __("Add Balance Via") }} <span class="text--warning">{{ @$item->currency->name }}</span></h4>
+                                <h4 class="title">{{ __("Add Balance via") }} <span class="text--warning">{{ @$item->currency->name }}</span></h4>
                             @elseif ($item->type == payment_gateway_const()::TYPEMONEYOUT)
                                 <h4 class="title">{{ __("Withdraw Money") }} <span class="text--warning">{{ @$item->currency->name }}</span></h4>
                             @elseif ($item->type == payment_gateway_const()::BILLPAY)
@@ -25,53 +25,64 @@
                             @elseif ($item->type == payment_gateway_const()::TYPEMONEYEXCHANGE)
                                 <h4 class="title">{{ __("Exchange Money") }} <span class="text--warning">{{ $item->details->request_currency }} To {{ $item->details->exchange_currency }}</span></h4>
                             @elseif ($item->type == payment_gateway_const()::TYPEADDSUBTRACTBALANCE)
-                                <h4 class="title">{{ __("Balance Update From Admin (".$item->user_wallet->currency->code.")") }} </h4>
+                                <h4 class="title">{{ __("Balance Update From Admin") }}{{ __(" (".$item->creator_wallet->currency->code.")") }} </h4>
                             @elseif ($item->type == payment_gateway_const()::TYPETRANSFERMONEY)
                                 @if ($item->isAuthUser())
 
                                     @if ($item->attribute == payment_gateway_const()::SEND)
-                                        <h4 class="title">{{ __("Send Money to @" . @$item->details->data->receiver_email) }} </h4>
+                                        <h4 class="title">{{ __("Send Money to") }} {{ __(" @" . @$item->details->receiver->username." (".@$item->details->receiver->email.")") }} </h4>
                                     @elseif ($item->attribute == payment_gateway_const()::RECEIVED)
-                                        <h4 class="title">{{ __("Received Money from @" .@$item->details->sender->username." (".@$item->details->sender->email.")") }} </h4>
+                                        <h4 class="title">{{ __("Received Money from") }} {{ __("@" .@$item->details->sender->username." (".@$item->details->sender->email.")") }} </h4>
                                     @endif
                                 @endif
                             @elseif ($item->type == payment_gateway_const()::TYPEMAKEPAYMENT)
                                 @if ($item->isAuthUser())
-
                                     @if ($item->attribute == payment_gateway_const()::SEND)
-                                        <h4 class="title">{{ __("Make Payment to @" . @$item->details->receiver->username." (".@$item->details->receiver->email.")") }} </h4>
+                                        <h4 class="title">{{ __("Make Payment to") }} {{ __("@" . @$item->details->receiver->username." (".@$item->details->receiver->email.")") }} </h4>
                                     @elseif ($item->attribute == payment_gateway_const()::RECEIVED)
-                                        <h4 class="title">{{ __("Make Payment from @" .@$item->details->sender->username." (".@$item->details->sender->email.")") }} </h4>
+                                        <h4 class="title">{{ __("Make Payment From") }} {{ __("@" .@$item->details->sender->username." (".@$item->details->sender->email.")") }} </h4>
                                     @endif
                                 @endif
 
                             @elseif ($item->type == payment_gateway_const()::SENDREMITTANCE)
                                 @if ($item->isAuthUser())
                                     @if ($item->attribute == payment_gateway_const()::SEND)
-                                        <h4 class="title">{{ __("Send Remittance to @" . $item->details->receiver->firstname.' '.@$item->details->receiver->lastname." (".@$item->details->receiver->mobile_code.@$item->details->receiver->mobile.")") }} </h4>
+                                        <h4 class="title">{{ __("Send Remittance to") }} {{ __("@" . $item->details->receiver->firstname.' '.@$item->details->receiver->lastname." (".@$item->details->receiver->email.")") }} </h4>
                                     @elseif ($item->attribute == payment_gateway_const()::RECEIVED)
-                                        <h4 class="title">{{ __("Received Remittance from @" .@$item->details->sender->fullname." (".@$item->details->sender->full_mobile.")") }} </h4>
+                                        <h4 class="title">{{ __("Received Remittance from") }} {{ __("@" .@$item->details->sender->fullname." (".@$item->details->sender->email.")") }} </h4>
                                     @endif
                                 @endif
                             @elseif ($item->type == payment_gateway_const()::MERCHANTPAYMENT)
                                 @if ($item->isAuthUser())
                                     @if ($item->attribute == payment_gateway_const()::SEND)
-                                        <h4 class="title">{{ __("Payment Money to @" . @$item->details->payment_to." (".@$item->details->pay_type.")") }} </h4>
+                                        <h4 class="title">{{ __("Payment Money to") }} {{ __("@" . @$item->details->payment_to." (".@$item->details->pay_type.")") }} </h4>
                                         <span class="d-block py-1 text-warning font-weight-bold">{{ @$item->details->env_type }}</span>
                                     @endif
                                 @endif
                             @elseif ($item->type == payment_gateway_const()::REQUESTMONEY)
                                 @if ($item->isAuthUser())
                                     @if ($item->attribute == payment_gateway_const()::SEND)
-                                        <h4 class="title">{{ __("Request Money to @" . $item->details->receiver_email) }} </h4>
+                                        <h4 class="title">{{ __("Request Money to") }} {{ __("@" . $item->details->receiver_email) }} </h4>
                                     @elseif ($item->attribute == payment_gateway_const()::RECEIVED)
-                                        <h4 class="title">{{ __("Request Money from @" . $item->details->sender_email) }} </h4>
+                                        <h4 class="title">{{ __("Request Money from") }} {{ __("@" . $item->details->sender_email) }} </h4>
                                     @endif
                                 @endif
                             @elseif ($item->type == payment_gateway_const()::TYPEPAYLINK)
-                                <h4 class="title">{{ __('Add Balance Via') }} <span class="text--warning">({{ $item->type }})</span></h4>
+                                <h4 class="title">{{ __('Add Balance via') }} <span class="text--warning">({{ $item->type }})</span></h4>
+                            @elseif ($item->type == payment_gateway_const()::AGENTMONEYOUT)
+                                @if ($item->isAuthUser())
+                                    @if ($item->attribute == payment_gateway_const()::SEND)
+                                        <h4 class="title">{{ __("Money Out to") }} {{ __("@" . @$item->details->receiver_email) }} </h4>
+                                    @endif
+                                @endif
+                            @elseif ($item->type == payment_gateway_const()::MONEYIN)
+                            @if ($item->isAuthUser())
+                                @if ($item->attribute == payment_gateway_const()::RECEIVED)
+                                    <h4 class="title">{{ __("Money In From") }} {{ __("@" . @$item->details->sender_email) }} </h4>
+                                @endif
                             @endif
-                            <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }} </span>
+                            @endif
+                            <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }} </span>
                         </div>
                     </div>
                 </div>
@@ -134,6 +145,16 @@
                     @elseif ($item->type == payment_gateway_const()::TYPEPAYLINK)
                         <h4 class="main-money text--base">{{ get_amount($item->request_amount, @$item->details->charge_calculation->sender_cur_code) }}</h4>
                         <h6 class="exchange-money text--warning">{{ get_amount($item->details->charge_calculation->conversion_payable,  @$item->details->charge_calculation->receiver_currency_code) }}</h6>
+                    @elseif ($item->type == payment_gateway_const()::AGENTMONEYOUT)
+                        @if ($item->attribute == payment_gateway_const()::SEND)
+                        <h6 class="exchange-money text--warning ">{{ get_amount($item->request_amount,get_default_currency_code()) }}</h6>
+                        <h4 class="main-money fw-bold">{{ get_amount($item->payable,get_default_currency_code()) }}</h4>
+                        @endif
+                    @elseif ($item->type == payment_gateway_const()::MONEYIN)
+                        @if ($item->attribute == payment_gateway_const()::RECEIVED)
+                        <h6 class="exchange-money text--warning ">{{ get_amount($item->request_amount,get_default_currency_code()) }}</h6>
+                        <h4 class="main-money fw-bold">{{ get_amount($item->payable,get_default_currency_code()) }}</h4>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -146,7 +167,7 @@
                                 <i class="lab la-tumblr"></i>
                             </div>
                             <div class="preview-list-user-content">
-                                <span>{{ __("Transaction ID") }}</span>
+                                <span>{{ __("web_trx_id") }}</span>
                             </div>
                         </div>
                     </div>
@@ -162,6 +183,8 @@
                 @if ($item->type != payment_gateway_const()::SENDREMITTANCE )
                 @if ($item->type != payment_gateway_const()::MERCHANTPAYMENT )
                 @if ($item->type != payment_gateway_const()::REQUESTMONEY )
+                @if ($item->type != payment_gateway_const()::AGENTMONEYOUT )
+                @if ($item->type != payment_gateway_const()::MONEYIN )
                 <div class="preview-list-item">
 
                     <div class="preview-list-left">
@@ -200,6 +223,8 @@
                 @endif
                 @endif
                 @endif
+                @endif
+                @endif
 
                 @if ($item->type == payment_gateway_const()::BILLPAY )
                     <div class="preview-list-item">
@@ -209,7 +234,7 @@
                                     <i class="las la-balance-scale"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Bill Type") }}</span>
+                                    <span>{{ __("bill Type") }}</span>
                                 </div>
                             </div>
                         </div>
@@ -241,7 +266,7 @@
                                     <i class="las la-balance-scale"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Topup Type") }}</span>
+                                    <span>{{ __("TopUp Type") }}</span>
                                 </div>
                             </div>
                         </div>
@@ -274,12 +299,12 @@
                                         <i class="las la-battery-half"></i>
                                     </div>
                                     <div class="preview-list-user-content">
-                                        <span>{{ __("Fees & Charge") }}</span>
+                                        <span>{{ __("fees And Charges") }}</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="preview-list-right">
-                                <span>{{ get_amount($item->charge->total_charge,get_default_currency_code()) }}</span>
+                                <span>{{ get_amount($item->charge->total_charge,$item->user_wallet->currency->code) }}</span>
                             </div>
                         </div>
                         <div class="preview-list-item">
@@ -297,8 +322,8 @@
                                 <span>{{ get_amount($item->details->recipient_amount,get_default_currency_code()) }}</span>
                             </div>
                         </div>
-                       @if ($item->type != payment_gateway_const()::TYPETRANSFERMONEY)
-                       <div class="preview-list-item">
+
+                        <div class="preview-list-item">
                             <div class="preview-list-left">
                                 <div class="preview-list-user-wrapper">
                                     <div class="preview-list-user-icon">
@@ -313,8 +338,6 @@
                                 <span class="text--base">{{ get_amount($item->available_balance,get_default_currency_code()) }}</span>
                             </div>
                         </div>
-                        @endif
-                        
                     @else
                     <div class="preview-list-item">
                         <div class="preview-list-left">
@@ -336,6 +359,8 @@
                     @if ($item->type != payment_gateway_const()::SENDREMITTANCE )
                     @if ($item->type != payment_gateway_const()::MERCHANTPAYMENT )
                     @if ($item->type != payment_gateway_const()::REQUESTMONEY )
+                    @if ($item->type != payment_gateway_const()::AGENTMONEYOUT )
+                    @if ($item->type != payment_gateway_const()::MONEYIN )
                     <div class="preview-list-item">
                         <div class="preview-list-left">
                             <div class="preview-list-user-wrapper">
@@ -343,7 +368,7 @@
                                     <i class="las la-battery-half"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Fees & Charge") }}</span>
+                                     <span>{{ __("fees And Charges") }}</span>
                                 </div>
                             </div>
                         </div>
@@ -372,12 +397,16 @@
                     @endif
                     @endif
                     @endif
+                    @endif
+                    @endif
                     @if ($item->type != payment_gateway_const()::BILLPAY)
                     @if ($item->type != payment_gateway_const()::MOBILETOPUP)
                     @if ($item->type != payment_gateway_const()::SENDREMITTANCE)
                     @if ($item->type != payment_gateway_const()::MERCHANTPAYMENT)
                     @if ($item->type != payment_gateway_const()::REQUESTMONEY)
                     @if ($item->type != payment_gateway_const()::TYPEPAYLINK)
+                    @if ($item->type != payment_gateway_const()::AGENTMONEYOUT)
+                    @if ($item->type != payment_gateway_const()::MONEYIN)
                     <div class="preview-list-item">
                         <div class="preview-list-left">
                             <div class="preview-list-user-wrapper">
@@ -396,9 +425,9 @@
                                     @elseif ($item->type == payment_gateway_const()::TYPEMONEYEXCHANGE)
                                         <span>{{ __("Total Payable") }}</span>
                                     @elseif ($item->type == payment_gateway_const()::TYPEADDSUBTRACTBALANCE)
-                                        <span>{{ __("Total Received") }}</span>
+                                        <span>{{ __("total Received") }}</span>
                                     @elseif ($item->type == payment_gateway_const()::VIRTUALCARD)
-                                        <span>{{ __("Card Amount") }}</span>
+                                        <span>{{ __("card Amount") }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -431,11 +460,15 @@
                     @endif
                     @endif
                     @endif
+                    @endif
+                    @endif
                     @if ($item->type != payment_gateway_const()::TYPEADDMONEY)
                     @if ($item->type != payment_gateway_const()::SENDREMITTANCE)
                     @if ($item->type != payment_gateway_const()::MERCHANTPAYMENT)
                     @if ($item->type != payment_gateway_const()::REQUESTMONEY)
                     @if ($item->type != payment_gateway_const()::TYPEPAYLINK)
+                    @if ($item->type != payment_gateway_const()::AGENTMONEYOUT)
+                    @if ($item->type != payment_gateway_const()::MONEYIN)
                         <div class="preview-list-item">
                             <div class="preview-list-left">
                                 <div class="preview-list-user-wrapper">
@@ -456,7 +489,7 @@
                                         @elseif ($item->type == payment_gateway_const()::TYPEMONEYEXCHANGE)
                                             <span>{{ __("Exchange Amount") }}</span>
                                         @elseif ($item->type == payment_gateway_const()::TYPEADDSUBTRACTBALANCE)
-                                            <span>{{ __("Remark") }}</span>
+                                            <span>{{ __("remark") }}</span>
                                         @endif
                                     </div>
                                 </div>
@@ -472,12 +505,22 @@
                                 @elseif ($item->type == payment_gateway_const()::MOBILETOPUP)
                                     <span class="text--danger">{{ get_amount($item->available_balance,get_default_currency_code()) }}</span>
                                 @elseif ($item->type == payment_gateway_const()::VIRTUALCARD)
-                                    @php
-                                        $card_pan = str_split($item->details->card_info->card_pan??$item->details->card_info->maskedPan??$item->details->card_info->card_number, 4);
-                                    @endphp
+                                @php
+                                    $card_number = $item->details->card_info->card_pan?? $item->details->card_info->maskedPan ?? $item->details->card_info->card_number ?? "";
+                                @endphp
+                                    @if ($card_number)
+                                        @php
+                                            $card_pan = str_split($card_number, 4);
+                                        @endphp
                                     @foreach($card_pan as $key => $value)
-                                    <span class="text--base fw-bold">{{ $value }}</span>
+                                        <span class="text--base fw-bold">{{ $value }}</span>
                                     @endforeach
+                                @else
+                                    <span class="text--base fw-bold">----</span>
+                                    <span class="text--base fw-bold">----</span>
+                                    <span class="text--base fw-bold">----</span>
+                                    <span class="text--base fw-bold">----</span>
+                                @endif
                                 @elseif ($item->type == payment_gateway_const()::TYPEMONEYEXCHANGE)
                                     <span class="text--warning">{{ get_amount($item->details->exchange_amount,$item->details->exchange_currency) }}</span>
                                 @elseif ($item->type == payment_gateway_const()::TYPEADDSUBTRACTBALANCE)
@@ -485,6 +528,8 @@
                                 @endif
                             </div>
                         </div>
+                    @endif
+                    @endif
                     @endif
                     @endif
                     @endif
@@ -532,7 +577,7 @@
                                     <i class="las la-battery-half"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Fees & Charge") }}</span>
+                                     <span>{{ __("fees And Charges") }}</span>
                                 </div>
                             </div>
                         </div>
@@ -548,7 +593,7 @@
                                     <i class="las la-flag"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Sending Country") }}</span>
+                                    <span>{{ __("sending Country") }}</span>
                                 </div>
                             </div>
                         </div>
@@ -616,13 +661,29 @@
                                     <i class="las la-piggy-bank"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Bank Name") }}</span>
+                                    <span>{{ __("bank Name") }}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="preview-list-right">
                         <span class="text-base"> {{ ucwords(str_replace('-', ' ', @$item->details->receiver->alias))}}</span>
+                        </div>
+                    </div>
+                    <div class="preview-list-item">
+                        <div class="preview-list-left">
+                            <div class="preview-list-user-wrapper">
+                                <div class="preview-list-user-icon">
+                                    <i class="las la-piggy-bank"></i>
+                                </div>
+                                <div class="preview-list-user-content">
+                                    <span>{{ __("account Number") }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-list-right">
+                        <span class="text-base"> {{ ucwords(str_replace('-', ' ', @$item->details->bank_account))}}</span>
                         </div>
                     </div>
                 @endif
@@ -652,7 +713,7 @@
                                     <i class="las la-piggy-bank"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Recipient Get") }}</span>
+                                   <span>{{ __("recipient Get") }}</span>
                                 </div>
                             </div>
                         </div>
@@ -704,7 +765,7 @@
                                         <i class="las la-user"></i>
                                     </div>
                                     <div class="preview-list-user-content">
-                                        <span>{{ __("Recipient") }}</span>
+                                        <span>{{ __("recipient") }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -719,7 +780,7 @@
                                         <i class="las la-receipt"></i>
                                     </div>
                                     <div class="preview-list-user-content">
-                                        <span>{{ __("Recipient Amount") }}</span>
+                                        <span>{{ __("recipient Amount") }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -738,7 +799,7 @@
                                         <i class="las la-receipt"></i>
                                     </div>
                                     <div class="preview-list-user-content">
-                                        <span>{{ __("Request Amount") }}</span>
+                                        <span>{{ __("request Amount") }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -769,7 +830,7 @@
                                     </div>
                                     <div class="preview-list-user-content">
 
-                                        <span>{{ __("Remark") }}</span>
+                                        <span>{{ __("remark") }}</span>
 
                                     </div>
                                 </div>
@@ -790,7 +851,7 @@
                                     <i class="las la-receipt"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Request Amount") }}</span>
+                                    <span>{{ __("request Amount") }}</span>
                                 </div>
                             </div>
                         </div>
@@ -805,7 +866,7 @@
                                     <i class="las la-battery-half"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __("Fees & Charge") }}</span>
+                                     <span>{{ __("fees And Charges") }}</span>
                                 </div>
                             </div>
                         </div>
@@ -836,7 +897,7 @@
                                 </div>
                                 <div class="preview-list-user-content">
 
-                                    <span>{{ __("Remark") }}</span>
+                                    <span>{{ __("remark") }}</span>
 
                                 </div>
                             </div>
@@ -860,7 +921,7 @@
                                     <i class="lab la-get-pocket"></i>
                                 </div>
                                 <div class="preview-list-user-content">
-                                    <span>{{ __('Available Balance') }}</span>
+                                    <span>{{ __('availabe Blance') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -914,6 +975,87 @@
                         </div>
                     </div>
                 @endif
+                 {{-- make Money Out --}}
+                 @if ($item->type == payment_gateway_const()::AGENTMONEYOUT)
+                    <div class="preview-list-item">
+                        <div class="preview-list-left">
+                            <div class="preview-list-user-wrapper">
+                                <div class="preview-list-user-icon">
+                                    <i class="las la-balance-scale"></i>
+                                </div>
+                                <div class="preview-list-user-content">
+                                     <span>{{ __("fees And Charges") }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-list-right">
+                            <span>{{ get_amount($item->charge->total_charge,$item->details->charges->sender_currency) }}</span>
+                        </div>
+                    </div>
+                    <div class="preview-list-item">
+                        <div class="preview-list-left">
+                            <div class="preview-list-user-wrapper">
+                                <div class="preview-list-user-icon">
+                                    <i class="lab la-get-pocket"></i>
+                                </div>
+                                <div class="preview-list-user-content">
+                                    <span>{{ __("Recipient Received") }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-list-right">
+                            <span>{{ get_amount($item->details->charges->receiver_amount,$item->details->charges->sender_currency) }}</span>
+                        </div>
+                    </div>
+                    <div class="preview-list-item">
+                        <div class="preview-list-left">
+                            <div class="preview-list-user-wrapper">
+                                <div class="preview-list-user-icon">
+                                    <i class="las la-balance-scale"></i>
+                                </div>
+                                <div class="preview-list-user-content">
+                                    <span>{{ __("Current Balance") }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-list-right">
+                            <span class="text--base">{{ get_amount($item->available_balance,get_default_currency_code()) }}</span>
+                        </div>
+                    </div>
+                @endif
+                {{-- Money In --}}
+                @if ($item->type == payment_gateway_const()::MONEYIN)
+                <div class="preview-list-item">
+                    <div class="preview-list-left">
+                        <div class="preview-list-user-wrapper">
+                            <div class="preview-list-user-icon">
+                                <i class="lab la-get-pocket"></i>
+                            </div>
+                            <div class="preview-list-user-content">
+                                <span>{{ __("Recipient Received") }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-list-right">
+                        <span>{{ get_amount($item->details->charges->receiver_amount,$item->details->charges->receiver_currency) }}</span>
+                    </div>
+                </div>
+                <div class="preview-list-item">
+                    <div class="preview-list-left">
+                        <div class="preview-list-user-wrapper">
+                            <div class="preview-list-user-icon">
+                                <i class="las la-balance-scale"></i>
+                            </div>
+                            <div class="preview-list-user-content">
+                                <span>{{ __("Current Balance") }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-list-right">
+                        <span class="text--base">{{ get_amount($item->available_balance,get_default_currency_code()) }}</span>
+                    </div>
+                </div>
+            @endif
                 <div class="preview-list-item">
                     <div class="preview-list-left">
                         <div class="preview-list-user-wrapper">
@@ -953,7 +1095,8 @@
                     </div>
                     @endif
                 @endif
-                @if( $item->status == 4 &&  $item->reject_reason != null)
+
+                @if( $item->status == 4 || $item->status == 6 &&  $item->reject_reason != null)
                 <div class="preview-list-item">
                     <div class="preview-list-left">
                         <div class="preview-list-user-wrapper">
@@ -966,7 +1109,7 @@
                         </div>
                     </div>
                     <div class="preview-list-right">
-                        <span class="text-danger">{{ $item->reject_reason }}</span>
+                        <span class="text-danger">{{ __($item->reject_reason) }}</span>
                     </div>
                 </div>
                 @endif
@@ -974,7 +1117,7 @@
         </div>
     @empty
         <div class="alert alert-primary text-center">
-            {{ __("No Record Found!") }}
+            {{ __("No data found!") }}
         </div>
     @endforelse
 

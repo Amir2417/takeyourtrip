@@ -22,7 +22,7 @@
     </div>
     <div class="dashboard-list-area mt-20">
         <div class="dashboard-list-wrapper">
-           
+
             @if(isset($data) && $data['data'] != null)
                 @if(array_key_exists('data', $data ))
                     @foreach($data['data']['card_transactions'] as $key => $value)
@@ -52,7 +52,7 @@
                                             <i class="las la-exchange-alt"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("TRX ID") }}</span>
+                                            <span>{{ __("web_trx_id") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -105,21 +105,21 @@
                                     <span>{{ @$value['reference']  }} </span>
                                 </div>
                             </div>
-                            
-                            
+
+
                         </div>
                     </div>
                     @endforeach
                 @endif
             @else
             <div class="alert alert-primary text-center">
-                {{ __("No Record Found!") }}
+                {{ __("No data found!") }}
             </div>
             @endif
-            
+
         </div>
     </div>
-   
+
 </div>
 @endsection
 

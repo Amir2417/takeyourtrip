@@ -116,7 +116,7 @@ class AddMoneyController extends Controller
     public function submitData(Request $request) {
          $validator = Validator::make($request->all(), [
             'currency'  => "required",
-            'amount'        => "required|numeric",
+            'amount'        => "required|numeric|gt:0",
         ]);
         if($validator->fails()){
             $error =  ['error'=>$validator->errors()->all()];
@@ -175,7 +175,7 @@ class AddMoneyController extends Controller
                 return Helpers::success($data,$message);
 
             }
-            $trx = $instance['response']['id']??$instance['response']['trx']??$instance['response']['reference_id']??$instance['response']['order_id']??$instance['response'];
+            $trx = $instance['response']['id']??$instance['response']['trx']??$instance['response']['reference_id']??$instance['response']['order_id']??$instance['response']['temp_identifier']??$instance['response']??'';
             $temData = TemporaryData::where('identifier',$trx)->first();
             if(!$temData){
                 $error = ['error'=>["Invalid Request"]];
@@ -303,13 +303,13 @@ class AddMoneyController extends Controller
                         'payable_amount' =>  getAmount($temData->data->amount->total_amount,4).' '.$temData->data->amount->sender_cur_code,
                     ];
                     $data =[
-                        'gateway_type' => $payment_gateway->type,
+                        'gateway_type'          => $payment_gateway->type,
                         'gateway_currency_name' => $payment_gateway_currency->name,
-                        'alias' => $payment_gateway_currency->alias,
-                        'identify' => $temData->type,
-                        'payment_informations' => $payment_informations,
-                        'url' => setRoute('api.add.money.razorPaymentLink',$trx),
-                        'method' => "get",
+                        'alias'                 => $payment_gateway_currency->alias,
+                        'identify'              => $temData->type,
+                        'payment_informations'  => $payment_informations,
+                        'url'                   => $instance['response']['redirect_url'],
+                        'method'                => "get",
                     ];
                     $message =  ['success'=>[__('Add Money Inserted Successfully')]];
                     return Helpers::success($data,$message);
@@ -332,6 +332,28 @@ class AddMoneyController extends Controller
                         'payment_informations' => $payment_informations,
                         'url' => @$temData->data->response->value,
                         'method' => "get",
+                    ];
+                    $message =  ['success'=>[__('Add Money Inserted Successfully')]];
+                    return Helpers::success($data,$message);
+
+                }else if($temData->type == PaymentGatewayConst::PERFECT_MONEY){
+                    $payment_informations =[
+                        'trx' =>  $temData->identifier,
+                        'gateway_currency_name' =>  $payment_gateway_currency->name,
+                        'request_amount' => getAmount($temData->data->amount->requested_amount,4).' '.$temData->data->amount->default_currency,
+                        'exchange_rate' => "1".' '.$temData->data->amount->default_currency.' = '.getAmount($temData->data->amount->sender_cur_rate,4).' '.$temData->data->amount->sender_cur_code,
+                        'total_charge' => getAmount($temData->data->amount->total_charge,4).' '.$temData->data->amount->sender_cur_code,
+                        'will_get' => getAmount($temData->data->amount->will_get,4).' '.$temData->data->amount->default_currency,
+                        'payable_amount' =>  getAmount($temData->data->amount->total_amount,4).' '.$temData->data->amount->sender_cur_code,
+                    ];
+                    $data =[
+                        'gateway_type'          => $payment_gateway->type,
+                        'gateway_currency_name' => $payment_gateway_currency->name,
+                        'alias'                 => $payment_gateway_currency->alias,
+                        'identify'              => $temData->type,
+                        'payment_informations'  => $payment_informations,
+                        'url'                   => $instance['response']['redirect_url'],
+                        'method'                => "get",
                     ];
                     $message =  ['success'=>[__('Add Money Inserted Successfully')]];
                     return Helpers::success($data,$message);
@@ -372,7 +394,6 @@ class AddMoneyController extends Controller
         }
         // return $instance;
     }
-
     public function success(Request $request, $gateway)
     {
         $requestData = $request->all();
@@ -435,58 +456,6 @@ class AddMoneyController extends Controller
              return Helpers::error($message);
         }
     }
-    public function razorPaymentLink($trx_id){
-        $identifier = $trx_id;
-        $output = TemporaryData::where('identifier', $identifier)->first();
-        if(!$output){
-            $message = ['error' => [__('Transaction failed. Record didn\'t saved properly. Please try again')]];
-            return  Helpers::error($message);
-        }
-        $data =  $output->data->response;
-        $orderId =  $output->data->response->order_id;
-        $page_title = __('razor Pay Payment');
-        return view('user.sections.add-money.automatic.razor-api', compact('page_title','output','data','orderId'));
-    }
-    public function razorCallback()
-    {
-        $request_data = request()->all();
-        //if payment is successful
-        if (isset($request_data['razorpay_order_id'])) {
-            $token = $request_data['razorpay_order_id'];
-
-            $checkTempData = TemporaryData::where("type",PaymentGatewayConst::RAZORPAY)->where("identifier",$token)->first();
-            if(!$checkTempData) {
-                $message = ['error' => [__('Transaction failed. Record didn\'t saved properly. Please try again')]];
-                return Helpers::error($message);
-            }
-            $checkTempData = $checkTempData->toArray();
-            $creator_table = $checkTempData['data']->creator_table ?? null;
-            $creator_id = $checkTempData['data']->creator_id ?? null;
-            $creator_guard = $checkTempData['data']->creator_guard ?? null;
-            $api_authenticated_guards = PaymentGatewayConst::apiAuthenticateGuard();
-
-            if($creator_table != null && $creator_id != null && $creator_guard != null) {
-                if(!array_key_exists($creator_guard,$api_authenticated_guards)) throw new Exception(__("Request user doesn\'t save properly. Please try again"));
-                $creator = DB::table($creator_table)->where("id",$creator_id)->first();
-                if(!$creator) throw new Exception(__("Request user doesn\'t save properly. Please try again"));
-                $api_user_login_guard = $api_authenticated_guards[$creator_guard];
-                Auth::guard($api_user_login_guard)->loginUsingId($creator->id);
-            }
-            try{
-                PaymentGatewayApi::init($checkTempData)->type(PaymentGatewayConst::TYPEADDMONEY)->responseReceive('razorpay');
-            }catch(Exception $e) {
-                $message = ['error' => [__("Something went wrong! Please try again.")]];
-                return Helpers::error($message);
-            }
-            $message = ['success' => [__("Payment Successful, Please Go Back Your App")]];
-            return Helpers::onlysuccess($message);
-
-        }
-        else{
-            $message = ['error' => [__("Transaction failed")]];
-            return Helpers::error($message);
-        }
-    }
      //stripe success
      public function stripePaymentSuccess($trx){
         $token = $trx;
@@ -495,7 +464,6 @@ class AddMoneyController extends Controller
 
         if(!$checkTempData) return Helpers::error($message);
         $checkTempData = $checkTempData->toArray();
-
         try{
             PaymentGatewayApi::init($checkTempData)->type(PaymentGatewayConst::TYPEADDMONEY)->responseReceive('stripe');
         }catch(Exception $e) {
@@ -637,7 +605,6 @@ class AddMoneyController extends Controller
         $message = ['success' => [__('Add money cancelled')]];
         return Helpers::onlysuccess($message);
     }
-
     public function cryptoPaymentConfirm(Request $request, $trx_id)
     {
         $transaction = Transaction::where('trx_id',$trx_id)->where('status', PaymentGatewayConst::STATUSWAITING)->first();
@@ -752,6 +719,90 @@ class AddMoneyController extends Controller
 
         $message = ['success' => [__('Payment Confirmation Success')]];
         return Helpers::onlysuccess($message);
+    }
+
+    public function redirectBtnPay(Request $request, $gateway)
+    {
+        try{
+            return PaymentGatewayApi::init([])->handleBtnPay($gateway, $request->all());
+        }catch(Exception $e) {
+            $message = ['error' => [$e->getMessage()]];
+            return Helpers::error($message);
+        }
+    }
+    public function successGlobal(Request $request, $gateway){
+        try{
+            $token = PaymentGatewayApi::getToken($request->all(),$gateway);
+            $temp_data = TemporaryData::where("identifier",$token)->first();
+
+            if(!$temp_data) {
+                if(Transaction::where('callback_ref',$token)->exists()) {
+                    $message = ['error' => [__('Transaction request sended successfully!')]];
+                    return Helpers::error($message);
+                }else {
+                    $message = ['error' => [__('Transaction failed. Record didn\'t saved properly. Please try again')]];
+                    return Helpers::error($message);
+                }
+            }
+
+            $update_temp_data = json_decode(json_encode($temp_data->data),true);
+            $update_temp_data['callback_data']  = $request->all();
+            $temp_data->update([
+                'data'  => $update_temp_data,
+            ]);
+            $temp_data = $temp_data->toArray();
+            $instance = PaymentGatewayApi::init($temp_data)->type(PaymentGatewayConst::TYPEADDMONEY)->responseReceive($temp_data['type']);
+
+            // return $instance;
+        }catch(Exception $e) {
+            $message = ['error' => [$e->getMessage()]];
+            return Helpers::error($message);
+        }
+        $message = ['success' => [__('Successfully Added Money')]];
+        return Helpers::onlysuccess($message);
+    }
+    public function cancelGlobal(Request $request,$gateway) {
+        $token = PaymentGatewayApi::getToken($request->all(),$gateway);
+        $temp_data = TemporaryData::where("identifier",$token)->first();
+        try{
+            if($temp_data != null) {
+                $temp_data->delete();
+            }
+        }catch(Exception $e) {
+            // Handel error
+        }
+        $message = ['success' => [__('Added Money Canceled Successfully')]];
+        return Helpers::error($message);
+    }
+    public function postSuccess(Request $request, $gateway)
+    {
+        try{
+            $token = PaymentGatewayApi::getToken($request->all(),$gateway);
+            $temp_data = TemporaryData::where("identifier",$token)->first();
+            if($temp_data && $temp_data->data->creator_guard != 'api') {
+                Auth::guard($temp_data->data->creator_guard)->loginUsingId($temp_data->data->creator_id);
+            }
+        }catch(Exception $e) {
+            $message = ['error' => [$e->getMessage()]];
+            return Helpers::error($message);
+        }
+
+        return $this->successGlobal($request, $gateway);
+    }
+    public function postCancel(Request $request, $gateway)
+    {
+        try{
+            $token = PaymentGatewayApi::getToken($request->all(),$gateway);
+            $temp_data = TemporaryData::where("identifier",$token)->first();
+            if($temp_data && $temp_data->data->creator_guard != 'api') {
+                Auth::guard($temp_data->data->creator_guard)->loginUsingId($temp_data->data->creator_id);
+            }
+        }catch(Exception $e) {
+            $message = ['error' => [$e->getMessage()]];
+            return Helpers::error($message);
+        }
+
+        return $this->cancelGlobal($request, $gateway);
     }
 
 }

@@ -26,14 +26,14 @@
                                 @endphp
                                <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'     => "Name*",
+                                   'label'     => __("name")."*",
                                     'name'      => $default_lang_code . "_name",
                                     'value'     => old($default_lang_code . "_name",$data->value->language->$default_lang_code->name ?? "")
                                 ])
                             </div>
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'     => "Icon*",
+                                   'label'     => __("Icon")."*",
                                     'name'      => $default_lang_code . "_icon",
                                     'value'     => old($default_lang_code . "_icon",$data->value->language->$default_lang_code->icon ?? ""),
                                     'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -49,14 +49,14 @@
                                 <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="modal-{{ $item->name }}" role="tabpanel" aria-labelledby="modal-{{$item->name}}-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Name*",
+                                           'label'     => __("name")."*",
                                             'name'      => $lang_code . "_name",
                                             'value'     => old($lang_code . "_name",$data->value->language->$lang_code->name ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Icon*",
+                                            'label'     => __("Icon")."*",
                                             'name'      => $lang_code . "_icon",
                                             'value'     => old($lang_code . "_icon",$data->value->language->$lang_code->icon ?? ""),
                                             'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",

@@ -28,16 +28,16 @@
                 <div class="row mb-10-none">
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input',[
-                            'label'         => "Subject*",
+                            'label'         => __("Subject")."*",
                             'name'          => "subject",
                             'data_limit'    => 150,
-                            'placeholder'   => "Write Subject...",
+                            'placeholder'   => __("Write Subject..."),
                             'value'         => old('subject'),
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-text-rich',[
-                            'label'         => "Details*",
+                             'label'         => __("Details")."*",
                             'name'          => "message",
                             'value'         => old('message'),
                         ])
@@ -46,7 +46,7 @@
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
                             'permission'    => "admin.admins.send.email",
-                            'text'          => "Send Email",
+                            'text'          => __("Send Email"),
                         ])
                     </div>
                 </div>
@@ -56,5 +56,5 @@
 @endsection
 
 @push('script')
-    
+
 @endpush

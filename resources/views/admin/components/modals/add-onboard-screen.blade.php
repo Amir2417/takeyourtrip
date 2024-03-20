@@ -5,14 +5,14 @@
                 <h5 class="modal-title">{{ __("Add New Screen") }}</h5>
             </div>
             <div class="modal-form-data">
-                <form class="modal-form" method="POST" action="{{ setRoute('admin.app.settings.onboard.screen.store') }}" enctype="multipart/form-data">
+                <form class="modal-form" method="POST" action="{{ setRoute('admin.app.settings.onboard.screen.store',$type) }}" enctype="multipart/form-data">
                     @csrf
                     <div class="row mb-10-none">
                         <div class="card-body">
                             <div class="row mb-10-none">
                                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 form-group">
                                     @include('admin.components.form.input-file',[
-                                        'label'             => 'Image: <span class="text--danger">(577*433)</span>',
+                                        'label'             => __("Image").': <span class="text--danger">(577*433)</span>',
                                         'class'             => "file-holder",
                                         'name'              => "image",
                                     ])
@@ -21,19 +21,21 @@
 
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Title",
+                                            'label'     => __("titleS"),
                                             'name'      => "title",
                                             'attribute' => "data-limit=120",
                                             'value'     => old('title'),
+                                            'placeholder'   => __( "Write Here.."),
                                         ])
                                     </div>
 
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Sub Title",
+                                            'label'     => __("web_sub_title"),
                                             'name'      => "sub_title",
                                             'attribute' => "data-limit=255",
                                             'value'     => old('sub_title'),
+                                            'placeholder'   => __( "Write Here.."),
                                         ])
                                     </div>
 

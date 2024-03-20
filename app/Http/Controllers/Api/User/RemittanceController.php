@@ -116,6 +116,8 @@ class RemittanceController extends Controller
                     'lastname' => $data->lastname,
                     'mobile_code' => $data->mobile_code,
                     'mobile' => $data->mobile,
+                    'email'  => $data->email,
+                    'account_number' => $data->account_number??'',
                     'city' => $data->city,
                     'state' => $data->state,
                     'address' => $data->address,
@@ -136,6 +138,8 @@ class RemittanceController extends Controller
                     'lastname' => $data->lastname,
                     'mobile_code' => $data->mobile_code,
                     'mobile' => $data->mobile,
+                    'email'  => $data->email,
+                    'account_number' => $data->account_number??'',
                     'city' => $data->city,
                     'state' => $data->state,
                     'address' => $data->address,
@@ -168,7 +172,7 @@ class RemittanceController extends Controller
                             'type' =>$item->attribute,
                             'trx' => @$item->trx_id,
                             'transaction_type' => $item->type,
-                            'transaction_heading' => "Send Remitance to @" . $item->details->receiver->firstname.' '.@$item->details->receiver->lastname." (".@$item->details->receiver->mobile_code.@$item->details->receiver->mobile.")",
+                            'transaction_heading' => "Send Remitance to @" . $item->details->receiver->firstname.' '.@$item->details->receiver->lastname." (".@$item->details->receiver->email.")",
                             'request_amount' => getAmount(@$item->request_amount,2).' '.get_default_currency_code() ,
                             'total_charge' => getAmount(@$item->charge->total_charge,2).' '.get_default_currency_code(),
                             'exchange_rate' => "1".' '. get_default_currency_code().' = '. get_amount($item->details->to_country->rate,$item->details->to_country->code),
@@ -184,6 +188,8 @@ class RemittanceController extends Controller
                             'date_time' => @$item->created_at ,
                             'status_info' =>(object)@$statusInfo ,
                             'rejection_reason' =>$item->reject_reason??"" ,
+                            'account_number' => @$item->details->bank_account??""
+
                         ];
                     }elseif(@$item->details->remitance_type == Str::slug(GlobalConst::TRX_BANK_TRANSFER)){
                         return[
@@ -191,7 +197,7 @@ class RemittanceController extends Controller
                             'type' =>$item->attribute,
                             'trx' => @$item->trx_id,
                             'transaction_type' => $item->type,
-                            'transaction_heading' => "Send Remitance to @" . $item->details->receiver->firstname.' '.@$item->details->receiver->lastname." (".@$item->details->receiver->mobile_code.@$item->details->receiver->mobile.")",
+                            'transaction_heading' => "Send Remitance to @" . $item->details->receiver->firstname.' '.@$item->details->receiver->lastname." (".@$item->details->receiver->email.")",
                             'request_amount' => getAmount(@$item->request_amount,2).' '.get_default_currency_code() ,
                             'total_charge' => getAmount(@$item->charge->total_charge,2).' '.get_default_currency_code(),
                             'exchange_rate' => "1".' '. get_default_currency_code().' = '. get_amount($item->details->to_country->rate,$item->details->to_country->code),
@@ -203,6 +209,7 @@ class RemittanceController extends Controller
                             'remittance_type_name' => $transactionType ,
                             'receipient_get' =>  get_amount(@$item->details->recipient_amount,$item->details->to_country->code),
                             'bank_name' => ucwords(str_replace('-', ' ', @$item->details->receiver->alias)),
+                            'account_number' => @$item->details->bank_account??"",
                             'current_balance' => getAmount(@$item->available_balance,2).' '.get_default_currency_code(),
                             'status' => @$item->stringStatus->value ,
                             'date_time' => @$item->created_at ,
@@ -215,7 +222,7 @@ class RemittanceController extends Controller
                             'type' =>$item->attribute,
                             'trx' => @$item->trx_id,
                             'transaction_type' => $item->type,
-                            'transaction_heading' => "Send Remitance to @" . $item->details->receiver->firstname.' '.@$item->details->receiver->lastname." (".@$item->details->receiver->mobile_code.@$item->details->receiver->mobile.")",
+                            'transaction_heading' => "Send Remitance to @" . $item->details->receiver->firstname.' '.@$item->details->receiver->lastname." (".@$item->details->receiver->email.")",
                             'request_amount' => getAmount(@$item->request_amount,2).' '.get_default_currency_code() ,
                             'total_charge' => getAmount(@$item->charge->total_charge,2).' '.get_default_currency_code(),
                             'exchange_rate' => "1".' '. get_default_currency_code().' = '. get_amount($item->details->to_country->rate,$item->details->to_country->code),
@@ -232,6 +239,7 @@ class RemittanceController extends Controller
                             'date_time' => @$item->created_at ,
                             'status_info' =>(object)@$statusInfo ,
                             'rejection_reason' =>$item->reject_reason??"" ,
+                            'account_number' => @$item->details->bank_account??''
                         ];
                     }
 
@@ -241,7 +249,7 @@ class RemittanceController extends Controller
                         'type' =>$item->attribute,
                         'trx' => @$item->trx_id,
                         'transaction_type' => $item->type,
-                        'transaction_heading' => "Received Remitance from @" .@$item->details->sender->fullname." (".@$item->details->sender->full_mobile.")",
+                        'transaction_heading' => "Received Remitance from @" .@$item->details->sender->fullname." (".@$item->details->sender->email.")",
                         'request_amount' => getAmount(@$item->request_amount,2).' '.get_default_currency_code() ,
                         'sending_country' => @$item->details->form_country,
                         'receiving_country' => @$item->details->to_country->country,
@@ -445,6 +453,7 @@ class RemittanceController extends Controller
                 'to_country' => $to_country,
                 'remitance_type' => $transaction_type,
                  'sender' => $user,
+                 'bank_account' => $receipient->account_number??'',
             ];
             if($transaction_type == Str::slug(GlobalConst::TRX_WALLET_TO_WALLET_TRANSFER)){
                 $status = 1;
@@ -535,6 +544,7 @@ class RemittanceController extends Controller
                 'to_country' => $to_country,
                 'remitance_type' => $transaction_type,
                 'sender' => $user,
+                'bank_account' => $receipient->account_number??'',
             ];
             DB::beginTransaction();
             try{

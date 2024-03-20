@@ -24,18 +24,18 @@
                                 @php
                                     $default_lang_code = language_const()::NOT_REMOVABLE;
                                 @endphp
-                           
+
                             <div class="form-group">
                                 @include('admin.components.form.input',[
-                                    'label'     => "Question*",
+                                      'label'     => __( "Question")."*",
                                     'name'      => $default_lang_code . "_question",
                                     'value'     => old($default_lang_code . "_question",$data->value->language->$default_lang_code->question ?? "")
                                 ])
                             </div>
-                            
+
                             <div class="form-group">
                                 @include('admin.components.form.textarea',[
-                                    'label'     => "Answer*",
+                                    'label'     => __( "Answer*"),
                                     'name'      => $default_lang_code . "_answer",
                                     'value'     => old($default_lang_code . "_answer",$data->value->language->$default_lang_code->answer ?? "")
                                 ])
@@ -48,23 +48,23 @@
                                     $lang_code = $item->code;
                                 @endphp
                                 <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="modal-{{ $item->name }}" role="tabpanel" aria-labelledby="modal-{{$item->name}}-tab">
-                                   
+
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Question*",
+                                              'label'     => __( "Question")."*",
                                             'name'      => $lang_code . "_question",
                                             'value'     => old($lang_code . "_question",$data->value->language->$lang_code->question ?? "")
                                         ])
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Answer*",
+                                            'label'     => __( "Answer*"),
                                             'name'      => $lang_code . "_answer",
                                             'value'     => old($lang_code . "_answer",$data->value->language->$lang_code->answer ?? "")
                                         ])
                                     </div>
-        
+
                                 </div>
                             @endforeach
                         </div>

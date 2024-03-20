@@ -38,7 +38,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6  form-group">
-                                    <label>{{ __("Mobile TopUp") }} <span class="text--base">*</span></label>
+                                    <label>{{ __("Mobile Topup") }} <span class="text--base">*</span></label>
                                     <select class="form--control" name="topup_type">
                                         @foreach ($topupType ??[] as $type)
                                         <option value="{{ $type->id }}" data-name="{{ $type->name }}">{{ $type->name }}</option>
@@ -47,15 +47,15 @@
                                     </select>
                                 </div>
                                 <div class="col-xl-6 col-lg-6  form-group">
-                                    <label>Mobile Number <span class="text--base">*</span></label>
-                                    <input type="number" class="form--control" name="mobile_number" placeholder="Enter Mobile Number" value="{{ old('mobile_number') }}">
+                                    <label>{{ __("Mobile Number") }} <span class="text--base">*</span></label>
+                                    <input type="text" class="form--control number-input" name="mobile_number" placeholder="{{ __("enter Mobile Number") }}" value="{{ old('mobile_number') }}">
 
                                 </div>
 
                                 <div class="col-xxl-12 col-xl-12 col-lg-12  form-group">
                                     <label>{{ __("Amount") }}<span>*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form--control" required placeholder="Enter Amount" name="amount" value="{{ old("amount") }}">
+                                        <input type="text" class="form--control number-input" required placeholder="{{__('enter Amount')}}" name="amount" value="{{ old("amount") }}">
                                         <select class="form--control nice-select currency" name="currency">
                                             <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                         </select>
@@ -231,7 +231,7 @@
            if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
                var min_limit_calc = parseFloat(min_limit/currencyRate).toFixed(2);
                var max_limit_clac = parseFloat(max_limit/currencyRate).toFixed(2);
-               $('.limit-show').html("Limit " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
+               $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
 
                return {
                    minLimit:min_limit_calc,
@@ -304,7 +304,7 @@
            if (charges == false) {
                return false;
            }
-           $(".fees-show").html("TopUp Fee: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
+           $(".fees-show").html("{{ __('TopUp Fee') }}: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
        }
        function getPreview() {
                var senderAmount = $("input[name=amount]").val();

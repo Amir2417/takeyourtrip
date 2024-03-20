@@ -20,7 +20,7 @@
                 <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-20">
                     <div class="dashbord-item">
                         <div class="dashboard-content">
-                            <span class="sub-title">{{__("Balance")}}</span>
+                            <span class="sub-title">{{__("balance")}}</span>
                             <h3 class="title">{{ authWalletBalance() }} <span class="text--base">{{ @$baseCurrency->code }}</span></h3>
                         </div>
 
@@ -98,8 +98,8 @@
                 <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-20">
                     <div class="dashbord-item">
                         <div class="dashboard-content">
-                            <span class="sub-title">{{ __("Total Transaction") }}</span>
-                            <h3 class="title">{{ getAmount($data['toatlTransactions'],2) }} <span class="text--base">{{ @$baseCurrency->code }}</span></h3>
+                            <span class="sub-title">{{ __("Total Transactions") }}</span>
+                            <h3 class="title">{{$data['total_transaction'] }} <span class="text--base"></span></h3>
                         </div>
                         <div class="dashboard-icon">
                             <i class="fas fa-arrows-alt-h"></i>
@@ -156,19 +156,19 @@
     var options = {
         series: [
             {
-            name: 'Pending',
+            name: "{{ __('Pending') }}",
             color: "#0C56DB",
             data: chart_one_data.pending_data
             }, {
-            name: 'Completed',
+            name: "{{ __('Completed') }}",
             color: "rgba(0, 227, 150, 0.85)",
             data: chart_one_data.success_data
             }, {
-            name: 'Canceled',
+            name: "{{ __('Canceled') }}",
             color: "#dc3545",
             data: chart_one_data.canceled_data
             }, {
-            name: 'Hold',
+            name: "{{ __('Hold') }}",
             color: "#ded7e9",
             data: chart_one_data.hold_data
             }
@@ -207,19 +207,19 @@ var month_day = chart3.data("month_day");
 var options = {
     series: [
         {
-            name: 'Pending',
+            name: "{{ __('Pending') }}",
             color: "#0C56DB",
             data: chart_three_data.pending_data
             }, {
-            name: 'Completed',
+            name: "{{ __('Completed') }}",
             color: "rgba(0, 227, 150, 0.85)",
             data: chart_three_data.success_data
             }, {
-            name: 'Canceled',
+            name: "{{ __('Canceled') }}",
             color: "#dc3545",
             data: chart_three_data.canceled_data
             }, {
-            name: 'Hold',
+            name: "{{ __('Hold') }}",
             color: "#ded7e9",
             data: chart_three_data.hold_data
             }

@@ -10,7 +10,7 @@
         <div class="row mb-10-none">
             <div class="col-xl-3 col-lg-3 form-group">
                 @include('admin.components.form.input-file',[
-                    'label'             => "Gateway Image",
+                    'label'             => __("Gateway Image"),
                     'class'             => "file-holder",
                     'name'              => "image",
                 ])
@@ -18,39 +18,39 @@
             <div class="col-xl-9 col-lg-9">
                 <div class="form-group">
                     @include('admin.components.form.input',[
-                        'label'         => "Gateway Name*",
+                        'label'         => __("Gateway Name*"),
                         'name'          => "gateway_name",
-                        'placeholder'   => "ex: Paypal",
+                        'placeholder'   => __("ex").": Paypal",
                         'value'         => old("gateway_name"),
                         'data_limit'    => 60,
                         'attribute'     => "required",
-                    ])  
+                    ])
                 </div>
                 <div class="form-group">
                     @include('admin.components.form.input',[
-                        'label'         => "Currency Name*",
+                        'label'         => __("Currency Name*"),
                         'name'          => "currency_name",
-                        'placeholder'   => "ex: United State Dollar",
+                        'placeholder'   => __("ex").": United State Dollar",
                         'value'         => old("currency_name"),
                         'data_limit'    => 60,
-                    ])  
+                    ])
                 </div>
                 <div class="form-group">
                     @include('admin.components.form.input',[
-                        'label'         => "Currency Code*",
+                    'label'     =>__( "Currency Code")."*",
                         'name'          => "currency_code",
-                        'placeholder'   => "ex: USD",
+                        'placeholder'   => __("ex").": USD",
                         'value'         => old("currency_code"),
                         'class'         => "currency_type",
                         'data_limit'    => 8,
                         'attribute'     => "required",
-                    ]) 
+                    ])
                 </div>
                 <div class="form-group">
                     @include('admin.components.form.input',[
-                        'label'         => "Currency Symbol*",
+                       'label'     =>__( "Currency Symbol")."*",
                         'name'          => "currency_symbol",
-                        'placeholder'   => "ex: $",
+                        'placeholder'   => __("ex").": $",
                         'value'         => old("currency_symbol"),
                         'data_limit'    => 10,
                     ])

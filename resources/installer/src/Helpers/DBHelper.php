@@ -4,7 +4,6 @@ namespace Project\Installer\Helpers;
 
 use Exception;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Symfony\Component\Process\Process;
@@ -12,9 +11,7 @@ use Symfony\Component\Process\Process;
 class DBHelper {
 
     public function create(array $data) {
-
         $this->updateEnv([
-            // 'APP_NAME'          => $data['app_name'],
             'DB_CONNECTION'     => "mysql",
             'DB_HOST'           => $data['host'],
             'DB_PORT'           =>"3306",
@@ -43,21 +40,17 @@ class DBHelper {
         $update_array = ["APP_ENV" => App::environment()];
 
         foreach ($env_content as $key => $value) {
-
             foreach ($array_going_to_modify as $modify_key => $modify_value) {
 
                 if(!array_key_exists($modify_key,$env_content) && !array_key_exists($modify_key,$update_array)) {
-                    // $update_array[$modify_key] = '"'.$modify_value.'"';
                     $update_array[$modify_key] = $this->setEnvValue($modify_key,$modify_value);
                     break;
                 }
 
                 if ($key == $modify_key) {
-                    // $update_array[$key] = '"'.$modify_value.'"';
                     $update_array[$key] = $this->setEnvValue($key,$modify_value);
                     break;
                 } else {
-                    // $update_array[$key] = '"'.$value.'"';
                     $update_array[$key] = $this->setEnvValue($key,$value);
                 }
             }
@@ -98,16 +91,18 @@ class DBHelper {
     }
 
     public function migrate() {
-        Artisan::call("migrate:fresh --seed");
+        self::execute("php artisan migrate:fresh --seed");
         self::execute("php artisan migrate");
         self::execute("php artisan passport:install");
 
         $this->setMigrateStepSession();
 
+        $helper = new Helper();
+        $data = cache()->driver("file")->get($helper->cache_key);
+
         // update env to production
         $this->updateEnv([
-            'APP_ENV'       => "production",
-
+            'APP_ENV'               => "production",
         ]);
     }
 
@@ -116,6 +111,16 @@ class DBHelper {
     }
 
     public function updateAccountSettings(array $data) {
+
+        $helper = new Helper();
+        $helper->cache($data);
+
+        $p_code = $helper->cache()['code'] ?? "";
+        if($p_code == "") {
+            cache()->driver('file')->forget($helper->cache_key);
+            throw new Exception("Something went wrong! Purchase code registration failed! Please try again");
+        }
+
         $admin = DB::table('admins')->first();
         if(!$admin) {
             DB::table('admins')->insert([
@@ -133,9 +138,10 @@ class DBHelper {
             ]);
         }
 
-        $helper = new Helper();
-        $helper->cache($data);
-        $helper->connection($helper->cache());
+        $validator = new ValidationHelper();
+        if($validator->isLocalInstallation() == false) {
+            $helper->connection($helper->cache());
+        }
 
         $client_host = parse_url(url('/'))['host'];
         $filter_host = preg_replace('/^www\./', '', $client_host);
@@ -159,7 +165,8 @@ class DBHelper {
 
         $db = new DBHelper();
         $db->updateEnv([
-            'PURCHASE_CODE' => $helper->cache()['code'] ?? "",
+            'PURCHASE_CODE' => $p_code,
+            'APP_MODE'      => "live",
         ]);
 
         // $helper->generateAppKey();

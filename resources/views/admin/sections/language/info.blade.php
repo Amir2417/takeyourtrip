@@ -28,7 +28,7 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Key</th>
+                            <th>{{ __("Key") }}</th>
                             <th>{{ ucwords($language->name) }}</th>
                             <th></th>
                         </tr>
@@ -44,10 +44,6 @@
                                     <td>{{ $innerKey }}</td>
                                     <td>{{ $innerValue }}</td>
                                     <td></td>
-                                    {{-- <td>
-                                        <button class="btn btn--base" data-bs-toggle="modal" data-bs-target="#editModal"><i class="las la-pencil-alt"></i></button>
-                                        <button class="btn btn--base btn--danger" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="las la-trash-alt"></i></button>
-                                    </td> --}}
                                 </tr>
                             @endforeach
                         @empty
@@ -71,14 +67,14 @@
                     <div class="row mb-10-none mt-2">
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Language Name*',
+                                'label'         => __("Language Name*"),
                                 'name'          => 'name',
                                 'value'         => old('name')
                             ])
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Language Code*',
+                                'label'         => __("Language Code*"),
                                 'name'          => 'code',
                                 'value'         => old('code')
                             ])
@@ -107,21 +103,21 @@
                     <div class="row mb-10-none mt-2">
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Language Name*',
+                                'label'         => __("Language Name*"),
                                 'name'          => 'edit_name',
                                 'value'         => old('edit_name')
                             ])
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Language Code*',
+                                'label'         => __("Language Code*"),
                                 'name'          => 'edit_code',
                                 'value'         => old('edit_code')
                             ])
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

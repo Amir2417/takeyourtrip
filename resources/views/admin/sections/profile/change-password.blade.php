@@ -19,7 +19,7 @@
 @section('content')
     <div class="custom-card">
         <div class="card-header">
-            <h6 class="title">Password Change</h6>
+            <h6 class="title">{{ __('Password Change') }}</h6>
         </div>
         <div class="card-body">
             <form class="card-form" action="{{ setRoute('admin.profile.change.password.update') }}" method="POST">
@@ -28,21 +28,21 @@
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-password',[
-                            'label'         => 'Current Password*',
+                            'label'         => __("Current Password")."*",
                             'placeholder'   => '********' ,
                             'name'          => 'current_password',
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-password',[
-                            'label'         => 'New Password*',
+                            'label'         => __("new Password")."*",
                             'placeholder'   => '********' ,
                             'name'          => 'password',
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-password',[
-                            'label'         => 'Confirm Password*',
+                            'label'         => __("confirm Password")."*",
                             'placeholder'   => '********' ,
                             'name'          => 'password_confirmation',
                         ])
@@ -57,5 +57,5 @@
 @endsection
 
 @push('script')
-        
+
 @endpush

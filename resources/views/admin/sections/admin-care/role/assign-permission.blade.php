@@ -38,7 +38,7 @@
                     @include('admin.components.link.add-default',[
                         'href'          => "#permission-assign-add",
                         'class'         => "modal-btn",
-                        'text'          => "Add New",
+                        'text'          => __("Add New"),
                         'permission'    => "admin.admins.role.permission.assign",
                     ])
                 </div>
@@ -47,10 +47,10 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>SL NO</th>
-                            <th>URI</th>
-                            <th>Title</th>
-                            <th>Role Name</th>
+                            <th>{{ __("SL NO") }}</th>
+                            <th>{{ __("URI") }}</th>
+                            <th>{{ __("titleS") }}</th>
+                            <th>{{ __("Role Name") }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -89,7 +89,7 @@
 
             var actionRoute =  "{{ setRoute('admin.admins.role.permission.assign.delete',$permission->slug) }}";
             var target      = oldData;
-            var message     = "Are you sure to delete this permission?";
+            var message     = '{{ __("Are you sure to delete this permission?") }}';
 
             openDeleteModal(actionRoute,target,message);
         });

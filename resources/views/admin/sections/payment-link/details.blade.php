@@ -29,31 +29,31 @@
                 <div class="row align-items-center mb-10-none">
                     <div class="col-xl-4 col-lg-4 form-group">
                         <ul class="user-profile-list-two">
-                            <li class="one">Date: <span>{{ dateFormat('d M y h:i:s A', $data->created_at) }}</span></li>
-                            <li class="two">TRX ID: <span>{{ @$data->trx_id }}</span></li>
-                            <li class="three">Email: <span>
+                            <li class="one">{{ __("Date") }}: <span>{{ dateFormat('d M y h:i:s A', $data->created_at) }}</span></li>
+                            <li class="two">{{ __("web_trx_id") }}: <span>{{ @$data->trx_id }}</span></li>
+                            <li class="three">{{ __("Email") }}: <span>
                                 @if($data->user_id != null)
                                     <a href="{{ setRoute('admin.users.details',$data->creator->username) }}">{{ $data->creator->email }} ({{ __("USER") }})</a>
                                 @elseif($data->merchant_id != null)
                                     <a href="{{ setRoute('admin.merchants.details',$data->creator->username) }}">{{ $data->creator->email }} ({{ __("MERCHANT") }})</a>
                                 @endif
                                 </span></li>
-                            <li class="four">Method: <span>{{ @$data->type }}</span></li>
-                            <li class="five">Amount: <span>{{ get_amount(@$data->request_amount,null,4) }} {{ @$data->details->charge_calculation->sender_cur_code }}</span></li>
+                            <li class="four">{{ __("Method") }}: <span>{{ @$data->type }}</span></li>
+                            <li class="five">{{ __("Amount") }}: <span>{{ get_amount(@$data->request_amount,null,4) }} {{ @$data->details->charge_calculation->sender_cur_code }}</span></li>
                         </ul>
                     </div>
                     <div class="col-xl-4 col-lg-4 form-group">
                         <div class="user-profile-thumb">
-                            <img src="{{ @$data->user->userImage }}" alt="payment">
+                            <img src="{{ @$data->creator->userImage }}" alt="payment">
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 form-group">
                         <ul class="user-profile-list two">
-                            <li class="one">Charge: <span>{{ get_amount(@$data->charge->total_charge,null,4) }} {{ @$data->details->charge_calculation->sender_cur_code }}</span></li>
-                            <li class="two">After Charge: <span>{{ get_amount(@$data->payable,null,4) }} {{ @$data->details->charge_calculation->sender_cur_code }}</span></li>
-                            <li class="four">Conversion Payable: <span>{{ get_amount(@$data->details->charge_calculation->conversion_payable,@$data->details->charge_calculation->receiver_currency_code,4) }}</span></li>
-                            <li class="three">Rate: <span>1 {{ get_default_currency_code() }} = {{ get_amount(@$data->details->sender_currency->rate,@$data->details->sender_currency->currency_code,4) }} {{ @$data->currency->currency_code }}</span></li>
-                            <li class="five">Status:  <span class="{{ @$data->stringStatus->class }}">{{ @$data->stringStatus->value }}</span></li>
+                            <li class="one">{{ __("Charge") }}: <span>{{ get_amount(@$data->charge->total_charge,null,4) }} {{ @$data->details->charge_calculation->sender_cur_code }}</span></li>
+                            <li class="two">{{ __("After Charge") }}: <span>{{ get_amount(@$data->payable,null,4) }} {{ @$data->details->charge_calculation->sender_cur_code }}</span></li>
+                            <li class="four">{{ __("Conversion Payable") }}: <span>{{ get_amount(@$data->details->charge_calculation->conversion_payable,@$data->details->charge_calculation->receiver_currency_code,4) }}</span></li>
+                            <li class="three">{{ __("Rate") }}: <span>1 {{ get_default_currency_code() }} = {{ get_amount(@$data->details->sender_currency->rate,@$data->details->sender_currency->currency_code,4) }} {{ @$data->currency->currency_code }}</span></li>
+                            <li class="five">{{__("Status") }}:  <span class="{{ @$data->stringStatus->class }}">{{ __(@$data->stringStatus->value) }}</span></li>
                         </ul>
                     </div>
                 </div>

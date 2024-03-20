@@ -15,18 +15,14 @@ class ReceiveMoneyController extends Controller
         $user->createQr();
         $userQrCode = $user->qrCode()->first();
         $uniqueCode = $userQrCode->qr_code??'';
-        $web_link   = route('send.money.index') . '?' . "email=" .$uniqueCode;
-        
-        $qrCode = generateQr($web_link);
-        $result = [
+        $qrCode = generateQr($uniqueCode);
+        $data = [
             'uniqueCode' => @$uniqueCode,
-            'web_link'   => $web_link,
-            'qrCode'     => $qrCode
+            'qrCode' => @$qrCode,
         ];
-        
 
         $message = ['success' => [__('Receive Money')]];
-        return Helpers::success($result, $message);
+        return Helpers::success($data, $message);
 
     }
 }

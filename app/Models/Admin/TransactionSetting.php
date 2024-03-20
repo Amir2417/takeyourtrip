@@ -21,6 +21,9 @@ class TransactionSetting extends Model
         'monthly_limit' => 'double',
         'daily_limit' => 'double',
         'status' => 'integer',
+        'agent_fixed_commissions' => 'double',
+        'agent_percent_commissions' => 'double',
+        'agent_profit' => 'boolean',
     ];
 
 

@@ -37,27 +37,29 @@ class Transaction extends Model
     }
 
     protected $casts = [
-        'admin_id'                      => 'integer',
-        'user_id'                       => 'integer',
-        'user_wallet_id'                => 'integer',
-        'merchant_id'                   => 'integer',
-        'merchant_wallet_id'            => 'integer',
-        'payment_gateway_currency_id'   => 'integer',
-        'send_money_gateway_id'         => 'integer',
-        'type'                          => 'string',
-        'trx_id'                        => 'string',
-        'request_amount'                => 'double',
-        'payable'                       => 'double',
-        'available_balance'             => 'double',
-        'remark'                        => 'string',
-        'status'                        => 'integer',
-        'details'                       => 'object',
-        'reject_reason'                 => 'string',
+        'admin_id' => 'integer',
+        'user_id' => 'integer',
+        'user_wallet_id' => 'integer',
+        'merchant_id' => 'integer',
+        'merchant_wallet_id' => 'integer',
+        'payment_gateway_currency_id' => 'integer',
+        'trx_id' => 'string',
+        'request_amount' => 'double',
+        'payable' => 'double',
+        'available_balance' => 'double',
+        'remark' => 'string',
+        'status' => 'integer',
+        'details' => 'object',
+        'reject_reason' => 'string',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class);
     }
 
     public function merchant()
@@ -69,7 +71,10 @@ class Transaction extends Model
     {
         return $this->belongsTo(UserWallet::class, 'user_wallet_id');
     }
-
+    public function agent_wallet()
+    {
+        return $this->belongsTo(AgentWallet::class, 'agent_wallet_id');
+    }
     public function merchant_wallet()
     {
         return $this->belongsTo(MerchantWallet::class, 'merchant_wallet_id');
@@ -77,6 +82,8 @@ class Transaction extends Model
     public function creator() {
         if($this->user_id != null) {
             return $this->user();
+        }else if($this->agent_id != null) {
+            return $this->agent();
         }else if($this->merchant_id != null) {
             return $this->merchant();
         }
@@ -84,11 +91,12 @@ class Transaction extends Model
     public function creator_wallet() {
         if($this->user_id != null) {
             return $this->user_wallet();
+        }else if($this->agent_id != null) {
+            return $this->agent_wallet();
         }else if($this->merchant_id != null) {
             return $this->merchant_wallet();
         }
     }
-
 
     public function currency()
     {
@@ -101,6 +109,9 @@ class Transaction extends Model
     public function scopeMerchantAuth($query) {
         $query->where("merchant_id",auth()->user()->id);
     }
+    public function scopeAgentAuth($query) {
+        $query->where("agent_id",auth()->user()->id);
+    }
 
     public function getStringStatusAttribute() {
         $status = $this->status;
@@ -111,7 +122,7 @@ class Transaction extends Model
         if($status == PaymentGatewayConst::STATUSSUCCESS) {
             $data = [
                 'class'     => "badge badge--success",
-                'value'     => "Success",
+                'value'     => "success",
             ];
         }else if($status == PaymentGatewayConst::STATUSPENDING) {
             $data = [
@@ -133,6 +144,11 @@ class Transaction extends Model
                 'class'     => "badge badge--danger",
                 'value'     => "Waiting",
             ];
+        }else if($status == PaymentGatewayConst::STATUSFAILD) {
+            $data = [
+                'class'     => "badge badge--danger",
+                'value'     => "Failed",
+            ];
         }
 
         return (object) $data;
@@ -151,6 +167,9 @@ class Transaction extends Model
     }
     public function scopeSenMoney($query) {
         return $query->where("type",PaymentGatewayConst::TYPETRANSFERMONEY);
+    }
+    public function scopeMoneyIn($query) {
+        return $query->where("type",PaymentGatewayConst::MONEYIN);
     }
     public function scopeBillPay($query) {
         return $query->where("type",PaymentGatewayConst::BILLPAY);
@@ -178,6 +197,10 @@ class Transaction extends Model
     }
     public function scopePayLink($query) {
         return $query->where("type",PaymentGatewayConst::TYPEPAYLINK);
+    }
+
+    public function scopeAgentMoneyOut($query) {
+        return $query->where("type",PaymentGatewayConst::AGENTMONEYOUT);
     }
 
     public function scopeSearch($query,$data) {
@@ -210,7 +233,10 @@ class Transaction extends Model
         if($this->merchant_id === auth()->user()->id) return true;
         return false;
     }
-
+    public function isAuthUserAgent() {
+        if($this->agent_id === auth()->user()->id) return true;
+        return false;
+    }
     public function gateway_currency() {
         return $this->belongsTo(PaymentGatewayCurrency::class,'payment_gateway_currency_id');
     }

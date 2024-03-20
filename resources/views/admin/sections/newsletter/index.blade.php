@@ -28,7 +28,7 @@
 @section('content')
     <div class="table-area">
         <div class="table-wrapper">
-            @includeUnless($default_currency,'admin.components.alerts.warning',['message' => "There is no default currency in your system."])
+            @includeUnless($default_currency,'admin.components.alerts.warning',['message' => __("There is no default currency in your system.")])
             <div class="table-header">
                 <h5 class="title">{{ __("Newsletters") }}</h5>
                 <div class="table-btn-area">
@@ -36,7 +36,7 @@
                         'name'  => 'newslatter_search',
                     ])
                     @include('admin.components.link.send-default',[
-                        'text'          => "Send Email",
+                        'text'          => __("Send Email"),
                         'href'          => "#send-email",
                         'class'         => "modal-btn",
                         'permission'    => "admin.newsletter.send.email",

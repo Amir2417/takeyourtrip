@@ -2,6 +2,7 @@
     $default_lang_code = language_const()::NOT_REMOVABLE;
     $system_default_lang = get_default_language_code();
     $languages_for_js_use = $languages->toJson();
+    $system_default    = $default_language_code;
 @endphp
 @extends('admin.layouts.master')
 
@@ -49,11 +50,11 @@
                 <div class="row mb-10-none mt-3">
                     <div class="col-xl-12">
                         <div class="form-group">
-                            <label for="category">Category</label>
+                            <label for="category">{{ __("Select Category") }}</label>
                             <select name="category_id" id="category" class="form--control nice-select"
                                 required>
                                 @foreach ($categories ??[] as $cat)
-                                    <option value="{{ $cat->id }}" {{ $data->category_id == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                    <option value="{{ $cat->id }}" {{ $data->category_id == $cat->id ? 'selected' : '' }}>{{  $cat->data?->language?->$system_default_lang?->name ?? $cat->data?->language?->$system_default?->nam }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -81,23 +82,11 @@
                                 @php
                                     $default_lang_code = language_const()::NOT_REMOVABLE;
                                 @endphp
-
-
                                 <div class="row">
-                                    {{-- <div class="col-xl-12">
-                                        <div class="form-group">
-                                            @include('admin.components.form.input', [
-                                                'label' => 'Short Title*',
-                                                'name' => $default_lang_code . '_short_title',
-                                                'value' =>  $data->short_title->language->$default_lang_code->short_title ?? '',
-                                            ])
-                                        </div>
-                                    </div> --}}
-
                                     <div class="col-xl-12">
                                         <div class="form-group">
                                             @include('admin.components.form.input', [
-                                                'label' => 'Name*',
+                                               'label'     =>__( "name")."*",
                                                 'name' => $default_lang_code . '_name',
                                                 'value' => old(
                                                     $default_lang_code . '_name',
@@ -108,11 +97,26 @@
 
                                 </div>
 
-
                                 <div class="form-group">
-                                    <label>{{ 'Details*' }}</label>
+                                    <label>{{ __( "Details") }}*</label>
                                     <textarea name="{{ $default_lang_code . '_details' }}" class="form--control rich-text-editor">
                                     {!! old($default_lang_code . '_details', $data->details->language->$default_lang_code->details) !!}</textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    @php
+                                        $old_tags = $data->lan_tags?->language?->$default_lang_code?->tags ?? [];
+                                        if( gettype($old_tags) === "string"){
+                                            $old_tags = json_decode( $old_tags,true);
+                                        }
+                                    @endphp
+                                    <label for="tags">{{ __('Tags') }}*</label>
+                                    <select name="{{ $default_lang_code }}_tags[]" multiple id=""
+                                        class="select2-auto-tokenize">
+                                        @foreach ($old_tags as $tag)
+                                        <option value="{{ $tag }}" selected>{{ $tag }}</option>
+                                    @endforeach
+                                    </select>
                                 </div>
 
                             </div>
@@ -126,19 +130,11 @@
                                     aria-labelledby="edit-modal-{{ $item->name }}-tab">
 
                                     <div class="row">
-                                        {{-- <div class="col-xl-12">
-                                            <div class="form-group">
-                                                @include('admin.components.form.input', [
-                                                    'label' => 'Short Title*',
-                                                    'name' => $lang_code . '_short_title',
-                                                    'value' => old( $lang_code . '_short_title', $data->short_title->language->$lang_code->short_title ?? ''),
-                                                ])
-                                            </div>
-                                        </div> --}}
+
                                         <div class="col-xl-12">
                                             <div class="form-group">
                                                 @include('admin.components.form.input', [
-                                                    'label' => 'Name*',
+                                                    'label'     =>__( "name")."*",
                                                     'name' => $lang_code . '_name',
                                                     'value' => old( $lang_code . '_name', $data->name->language->$lang_code->name ?? ''),
                                                 ])
@@ -148,29 +144,36 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label>{{ 'Details*' }}</label>
+                                        <label>{{ __( "Details") }}*</label>
                                         <textarea name="{{ $lang_code . '_details' }}" class="form--control rich-text-editor">
                                             {!! old(@$lang_code . '_details', @$data->details->language->$lang_code->details) !!}
                                         </textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        @php
+                                            $old_tags = $data->lan_tags?->language?->$lang_code?->tags ?? [];
+                                            if( gettype($old_tags) === "string"){
+                                                $old_tags = json_decode( $old_tags,true);
+                                            }
+                                        @endphp
+                                        <label for="tags">{{ __('Tags') }}*</label>
+                                        <select name="{{ $lang_code }}_tags[]" multiple id=""
+                                            class="select2-auto-tokenize">
+                                            @foreach ($old_tags as $tag)
+                                            <option value="{{ $tag }}" selected>{{ $tag }}</option>
+                                        @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             @endforeach
 
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="tags">{{ __('Tags') }}*</label>
-                        <select name="tags[]" multiple id=""
-                            class="select2-auto-tokenize">
-                            @foreach ($data->tags ?? [] as $item)
-                                <option value="{{ $item }}" selected>{{ $item }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+
 
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-file', [
-                            'label' => 'Image:',
+                            'label' => __("Image").' :',
                             'name' => 'image',
                             'class' => 'file-holder',
                             'old_files_path' => files_asset_path('blog'),
@@ -178,7 +181,6 @@
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
-                        {{-- <button type="button" class="btn btn--danger modal-close">{{ __('Cancel') }}</button> --}}
                         <button type="submit" class="btn btn--base w-100">{{ __('Update') }}</button>
                     </div>
                 </div>

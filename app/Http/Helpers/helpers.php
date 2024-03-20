@@ -1,7 +1,6 @@
 <?php
 
 use App\Constants\AdminRoleConst;
-use App\Constants\BankAccountConst;
 use App\Constants\ExtensionConst;
 use App\Constants\GlobalConst;
 use App\Constants\LanguageConst;
@@ -25,15 +24,23 @@ use App\Models\Admin\GatewayAPi;
 use App\Models\Admin\Language;
 use App\Models\Admin\ModuleSetting;
 use App\Models\Admin\PaymentGateway;
+use App\Models\AgentAuthorization;
+use App\Models\AgentNotification;
+use App\Models\AgentWallet;
 use App\Models\Merchants\MerchantAuthorization;
 use App\Models\Merchants\MerchantNotification;
 use App\Models\Merchants\MerchantWallet;
+use App\Models\StripeVirtualCard;
+use App\Models\StrowalletVirtualCard;
+use App\Models\SudoVirtualCard;
 use App\Models\TransactionCharge;
 use App\Models\UserAuthorization;
 use App\Models\UserNotification;
 use App\Models\UserSupportTicket;
 use App\Models\UserWallet;
+use App\Models\VirtualCard;
 use App\Models\VirtualCardApi;
+use App\Notifications\Agent\Auth\SendAuthorizationCode as AgentAuthSendAuthorizationCode;
 use App\Notifications\Merchant\Auth\SendAuthorizationCode as AuthSendAuthorizationCode;
 use App\Notifications\User\Auth\SendAuthorizationCode;
 use App\Providers\Admin\BasicSettingsProvider;
@@ -291,7 +298,6 @@ function upload_files_from_path_dynamic($files_path, $destination_path, $old_fil
 
             $store_file_name = $file_name . ".webp";
             try {
-                // dd($save_path);
                 if ($file_extension != "webp") {
                     $webp = Webp::make($file_instance)->save($save_path . "/" . $store_file_name);
                     array_push($output_files_name, $store_file_name);
@@ -476,9 +482,6 @@ function files_path($slug)
         'kyc-files'         => [
             'path'          => 'backend/files/kyc-files'
         ],
-        'send-money-gateway'         => [
-            'path'          => 'backend/images/send-money-gateways'
-        ],
         'blog'         => [
             'path'          => 'backend/files/blog'
         ],
@@ -490,9 +493,6 @@ function files_path($slug)
         ],
         'card-api'   => [
             'path'      => 'backend/images/card-settings',
-        ],
-        'bank'   => [
-            'path'      => 'backend/images/bank',
         ],
         'payment-link-image'         => [
             'path'              => 'backend/images/payment-link-image',
@@ -512,8 +512,12 @@ function files_asset_path($slug)
 
 function get_amount($amount, $currency = null, $precision = null)
 {
-    if (!is_numeric($amount)) return "Not Number";
-    $amount = ($precision) ? number_format($amount, $precision, ".", ",") : number_format($amount, 2, ".", ",");
+    if (!is_numeric($amount)) return __("Not Number");
+    if($precision == "double") {
+        $amount = (double) $amount;
+    }else {
+        $amount = ($precision) ? number_format($amount, $precision, ".", "") : number_format($amount, 2, ".", "");
+    }
     if (!$currency) return $amount;
     $amount = $amount . " " . $currency;
     return $amount;
@@ -547,6 +551,72 @@ function get_logo($basic_settings, $type = null)
             }
         } else {
             $logo = files_asset_path('image-assets') . "/" . $basic_settings->site_logo;
+        }
+    }
+
+    return $logo;
+}
+function get_logo_merchant($basic_settings, $type = null)
+{
+    $logo = "";
+    if ($type == 'white') {
+        if (!$basic_settings->site_logo) {
+            $logo = files_asset_path('default');
+        } else {
+            $logo = files_asset_path('image-assets') . "/" . $basic_settings->merchant_site_logo;
+        }
+    }
+
+    if ($type == 'dark') {
+        if (!$basic_settings->site_logo_dark) {
+            $logo = files_asset_path('default');
+        } else {
+            $logo = files_asset_path('image-assets') . "/" . $basic_settings->merchant_site_logo_dark;
+        }
+    }
+
+    if ($type == null) {
+        if (!$basic_settings->merchant_site_logo) {
+            if (!$basic_settings->merchant_site_logo_dark) {
+                $logo = files_asset_path('default');
+            } else {
+                $logo = files_asset_path('image-assets') . "/" . $basic_settings->merchant_site_logo_dark;
+            }
+        } else {
+            $logo = files_asset_path('image-assets') . "/" . $basic_settings->merchant_site_logo;
+        }
+    }
+
+    return $logo;
+}
+function get_logo_agent($basic_settings, $type = null)
+{
+    $logo = "";
+    if ($type == 'white') {
+        if (!$basic_settings->site_logo) {
+            $logo = files_asset_path('default');
+        } else {
+            $logo = files_asset_path('image-assets') . "/" . $basic_settings->agent_site_logo;
+        }
+    }
+
+    if ($type == 'dark') {
+        if (!$basic_settings->site_logo_dark) {
+            $logo = files_asset_path('default');
+        } else {
+            $logo = files_asset_path('image-assets') . "/" . $basic_settings->agent_site_logo_dark;
+        }
+    }
+
+    if ($type == null) {
+        if (!$basic_settings->agent_site_logo) {
+            if (!$basic_settings->agent_site_logo_dark) {
+                $logo = files_asset_path('default');
+            } else {
+                $logo = files_asset_path('image-assets') . "/" . $basic_settings->agent_site_logo_dark;
+            }
+        } else {
+            $logo = files_asset_path('image-assets') . "/" . $basic_settings->agent_site_logo;
         }
     }
 
@@ -615,6 +685,72 @@ function get_fav($basic_settings, $type = null)
             }
         } else {
             $fav = files_asset_path('image-assets') . "/" . $basic_settings->site_fav;
+        }
+    }
+
+    return $fav;
+}
+function get_fav_merchant($basic_settings, $type = null)
+{
+    $fav = "";
+    if ($type == 'white') {
+        if (!$basic_settings->merchant_site_fav) {
+            $fav = files_asset_path('default');
+        } else {
+            $fav = files_asset_path('image-assets') . "/" . $basic_settings->merchant_site_fav;
+        }
+    }
+
+    if ($type == 'dark') {
+        if (!$basic_settings->merchant_site_fav_dark) {
+            $fav = files_asset_path('default');
+        } else {
+            $fav = files_asset_path('image-assets') . "/" . $basic_settings->merchant_site_fav_dark;
+        }
+    }
+
+    if ($type == null) {
+        if (!$basic_settings->merchant_site_fav) {
+            if (!$basic_settings->merchant_site_fav_dark) {
+                $fav = files_asset_path('default');
+            } else {
+                $fav = files_asset_path('image-assets') . "/" . $basic_settings->merchant_site_fav_dark;
+            }
+        } else {
+            $fav = files_asset_path('image-assets') . "/" . $basic_settings->merchant_site_fav;
+        }
+    }
+
+    return $fav;
+}
+function get_fav_agent($basic_settings, $type = null)
+{
+    $fav = "";
+    if ($type == 'white') {
+        if (!$basic_settings->agent_site_fav) {
+            $fav = files_asset_path('default');
+        } else {
+            $fav = files_asset_path('image-assets') . "/" . $basic_settings->agent_site_fav;
+        }
+    }
+
+    if ($type == 'dark') {
+        if (!$basic_settings->agent_site_fav_dark) {
+            $fav = files_asset_path('default');
+        } else {
+            $fav = files_asset_path('image-assets') . "/" . $basic_settings->agent_site_fav_dark;
+        }
+    }
+
+    if ($type == null) {
+        if (!$basic_settings->agent_site_fav) {
+            if (!$basic_settings->agent_site_fav_dark) {
+                $fav = files_asset_path('default');
+            } else {
+                $fav = files_asset_path('image-assets') . "/" . $basic_settings->agent_site_fav_dark;
+            }
+        } else {
+            $fav = files_asset_path('image-assets') . "/" . $basic_settings->agent_site_fav;
         }
     }
 
@@ -745,7 +881,6 @@ function upload_files_from_path_static($files_path, $destination_path, $old_file
             $store_file_name = $file_name . ".webp";
             try {
                 if ($file_extension != "webp") {
-                    // dd($save_path);
                     $webp = Webp::make($file_instance)->save($save_path . "/" . $store_file_name);
                     array_push($output_files_name, $store_file_name);
                 } else {
@@ -753,7 +888,6 @@ function upload_files_from_path_static($files_path, $destination_path, $old_file
                     array_push($output_files_name, $file_base_name);
                 }
             } catch (Exception $e) {
-                // dd($e);
                 return back()->with(['error' => ['Something went wrong! Failed to upload file.']]);
             }
         } else { // IF Other Files
@@ -945,41 +1079,41 @@ function decorate_input_fields($validated)
  * Function for replace ENV Value based on key
  * @param array $replace_array
  */
-function modifyEnv($replace_array = [])
-{
+// function modifyEnv($replace_array = [])
+// {
 
-    $array_going_to_modify  = $replace_array;
+//     $array_going_to_modify  = $replace_array;
 
-    if (count($array_going_to_modify) == 0) {
-        return false;
-    }
+//     if (count($array_going_to_modify) == 0) {
+//         return false;
+//     }
 
-    $env_file = App::environmentFilePath();
-    $env_content = $_ENV;
+//     $env_file = App::environmentFilePath();
+//     $env_content = $_ENV;
 
-    $update_array = ["APP_ENV" => App::environment()];
+//     $update_array = ["APP_ENV" => App::environment()];
 
-    foreach ($env_content as $key => $value) {
-        foreach ($array_going_to_modify as $modify_key => $modify_value) {
-            if ($key == $modify_key) {
-                $update_array[$key] = '"'.$modify_value.'"';
-                break;
-            } else {
-                $update_array[$key] = '"'.$value.'"';
-            }
-        }
-    }
+//     foreach ($env_content as $key => $value) {
+//         foreach ($array_going_to_modify as $modify_key => $modify_value) {
+//             if ($key == $modify_key) {
+//                 $update_array[$key] = '"'.$modify_value.'"';
+//                 break;
+//             } else {
+//                 $update_array[$key] = '"'.$value.'"';
+//             }
+//         }
+//     }
 
-    $string_content = "";
-    foreach ($update_array as $key => $item) {
-        $line = $key . "=" . $item;
-        $string_content .= $line . "\n\r";
-    }
+//     $string_content = "";
+//     foreach ($update_array as $key => $item) {
+//         $line = $key . "=" . $item;
+//         $string_content .= $line . "\n\r";
+//     }
 
-    sleep(2);
+//     sleep(2);
 
-    file_put_contents($env_file, $string_content);
-}
+//     file_put_contents($env_file, $string_content);
+// }
 
 // Role Permission START
 
@@ -1087,8 +1221,6 @@ function auth_admin_incomming_permission()
 {
     $incomming_access = Route::currentRouteName();
     $auth_admin_permissions = auth_admin_permissions();
-    // dd($auth_admin_permissions);
-    // dd(permission_protected());
     if (auth_is_super_admin() == true) return true;
     if (!in_array($incomming_access, permission_protected())) return true;
     if (in_array($incomming_access, $auth_admin_permissions)) return true;
@@ -1397,7 +1529,7 @@ function get_percentage_from_two_number($total,$available,$result_type = "int") 
 }
 
 function remove_speacial_char($string) {
-    return preg_replace("/[^A-Za-z0-9]/"," ",$string);
+    return preg_replace("/[^A-Za-z0-9]/","",$string);
 }
 
 function check_email($string) {
@@ -1452,7 +1584,7 @@ function mailVerificationTemplateMerchant($merchant) {
 
     DB::beginTransaction();
     try{
-        if( $basic_settings->email_notification == true){
+        if( $basic_settings->merchant_email_verification == true){
             $merchant->notify(new AuthSendAuthorizationCode((object) $data));
         }
         MerchantAuthorization::where("merchant_id",$merchant->id)->delete();
@@ -1465,6 +1597,31 @@ function mailVerificationTemplateMerchant($merchant) {
     }
 
     return redirect()->route('merchant.authorize.mail',$data['token'])->with(['warning' => [__("Please verify your mail address. Check your mail inbox to get verification code")]]);
+}
+function mailVerificationTemplateAgent($agent) {
+    $basic_settings = BasicSettingsProvider::get();
+    $data = [
+        'agent_id'       => $agent->id,
+        'code'          => generate_random_code(),
+        'token'         => generate_unique_string("agent_authorizations","token",200),
+        'created_at'    => now(),
+    ];
+
+    DB::beginTransaction();
+    try{
+        if( $basic_settings->agent_email_verification == true){
+            $agent->notify(new AgentAuthSendAuthorizationCode((object) $data));
+        }
+        AgentAuthorization::where("agent_id",$agent->id)->delete();
+        DB::table("agent_authorizations")->insert($data);
+
+        DB::commit();
+    }catch(Exception $e) {
+        DB::rollBack();
+        return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
+    }
+
+    return redirect()->route('agent.authorize.mail',$data['token'])->with(['warning' => [__("Please verify your mail address. Check your mail inbox to get verification code")]]);
 }
 function mailVerificationTemplateApi($user) {
     $basic_settings = BasicSettingsProvider::get();
@@ -1505,11 +1662,37 @@ function merchantMailVerificationTemplateApi($user) {
 
     DB::beginTransaction();
     try{
-        if( $basic_settings->email_notification == true){
+        if( $basic_settings->merchant_email_verification == true){
             $user->notify(new AuthSendAuthorizationCode((object) $data));
         }
         MerchantAuthorization::where("merchant_id",$user->id)->delete();
         DB::table("merchant_authorizations")->insert($data);
+        DB::commit();
+    }catch(Exception $e) {
+        DB::rollBack();
+        $error = ['error'=>[__("Something went wrong! Please try again.")]];
+        return Helpers::error($error);
+    }
+      $error = ['errors'=>[__("Email verification is required")]];
+      return Helpers::error($error);
+
+}
+function agentMailVerificationTemplateApi($user) {
+    $basic_settings = BasicSettingsProvider::get();
+    $data = [
+        'agent_id'       => $user->id,
+        'code'          => generate_random_code(),
+        'token'         => generate_unique_string("agent_authorizations","token",200),
+        'created_at'    => now(),
+    ];
+
+    DB::beginTransaction();
+    try{
+        if( $basic_settings->agent_email_verification == true){
+            $user->notify(new AgentAuthSendAuthorizationCode((object) $data));
+        }
+        AgentAuthorization::where("agent_id",$user->id)->delete();
+        DB::table("agent_authorizations")->insert($data);
         DB::commit();
     }catch(Exception $e) {
         DB::rollBack();
@@ -1527,9 +1710,6 @@ function extension_const() {
 
 function global_const() {
     return GlobalConst::class;
-}
-function bank_account_const() {
-    return BankAccountConst::class;
 }
 
 function imageExtenstions() {
@@ -1581,10 +1761,7 @@ function slug($string)
 {
     return Illuminate\Support\Str::slug($string);
 }
-// function getSectionData($slug){
-//     $data = SiteSections::where('key', $slug)->first();
-//     return $data;
-// }
+
 //moveable
 function getDialCode()
 {
@@ -1605,8 +1782,7 @@ function getDialCode()
         'os'            => $agent->platform() ?? "",
     ];
     $dial_code = get_country_phone_code($data['country']);
-    // return $dial_code;
-    return 880;
+    return $dial_code;
 }
 function payment_gateway_const() {
     return PaymentGatewayConst::class;
@@ -1614,14 +1790,13 @@ function payment_gateway_const() {
 function get_user_notifications()
 {
     if(auth()->guard('web')->check()){
-        $user = auth()->user();
         $notifications = UserNotification::auth()->latest()->take(5)->get();
-        return $notifications;
     } else if(auth()->guard('merchant')->check()){
-        $user = auth()->user();
         $notifications = MerchantNotification::auth()->latest()->take(5)->get();
-        return $notifications;
+    }else if(auth()->guard('agent')->check()){
+        $notifications = AgentNotification::auth()->latest()->take(5)->get();
     }
+    return $notifications;
 
 }
 function selectedLang(){
@@ -1655,6 +1830,9 @@ function authWalletBalance(){
         return number_format($wallet->balance,2);
     }else if(auth()->guard('merchant')->check()){
         $wallet = MerchantWallet::where('merchant_id',auth()->user()->id)->first();
+        return number_format($wallet->balance,2);
+    }else if(auth()->guard('agent')->check()){
+        $wallet = AgentWallet::where('agent_id',auth()->user()->id)->first();
         return number_format($wallet->balance,2);
     }
 
@@ -1691,19 +1869,27 @@ function userGuard() {
     if(auth()->guard('web')->check()){
         $user = auth()->guard('web')->user();
         $userType = 'USER';
-        $guard = "1";
+        $guard = "web";
     } else if(auth()->guard('api')->check()){
         $user = auth()->guard('api')->user();
         $userType = 'USER';
-        $guard = "2";
-    } else if(auth()->guard('merchant')->check()){
+        $guard = "api";
+    }else if(auth()->guard('merchant')->check()){
         $user = auth()->guard('merchant')->user();
         $userType = 'MERCHANT';
-        $guard = "4";
+        $guard = "merchant";
     }else if(auth()->guard('merchant_api')->check()){
         $user = auth()->guard('merchant_api')->user();
         $userType = 'MERCHANT';
-        $guard = "4";
+        $guard = "merchant_api";
+    }else if(auth()->guard('agent')->check()){
+        $user = auth()->guard('agent')->user();
+        $userType = 'AGENT';
+        $guard = "agent";
+    }else if(auth()->guard('agent_api')->check()){
+        $user = auth()->guard('agent_api')->user();
+        $userType = 'AGENT';
+        $guard = "agent_api";
     }
 
     return [
@@ -1737,6 +1923,10 @@ function googleTwoFactorVerificationTemplate($user) {
 function merchantGoogleTwoFactorVerificationTemplate($user) {
     return redirect()->route('merchant.authorize.google.2fa')->with(['error' => [__("Please verify two factor authentication")]]);
 }
+function agentGoogleTwoFactorVerificationTemplate($user) {
+    return redirect()->route('agent.authorize.google.2fa')->with(['error' => [__("Please verify two factor authentication")]]);
+}
+
 
 function google_2fa_verify($secret_key,$code) {
     $google2FA = new \PragmaRX\Google2FA\Google2FA();
@@ -1780,6 +1970,10 @@ function get_auth_guard() {
         return "merchant";
     }else if(auth()->guard("merchant_api")->check()) {
         return "merchant_api";
+    }else if(auth()->guard("agent")->check()) {
+        return "agent";
+    }else if(auth()->guard("agent_api")->check()) {
+        return "agent_api";
     }
     return "";
 }
@@ -1843,11 +2037,11 @@ function module_access($key,$module = null)
     if (!$module) {
         $module = ModuleSetting::query();
     }
-    return $module->where('user_type',userGuard()['type'])->where('slug',$key)->first();
+    return $module->where('slug',$key)->first();
 }
 function module_access_api($key)
 {
-    $module = ModuleSetting::where('slug',$key)->where('user_type',userGuard()['type'])->first();
+    $module = ModuleSetting::where('slug',$key)->first();
     return  $module->status;
 }
 function module_access_merchant_api($key)
@@ -1857,6 +2051,7 @@ function module_access_merchant_api($key)
 }
 //flutterwave automatic withdrawal helper functions
 function getFlutterwaveBanks($iso2){
+
     $cardApi = PaymentGateway::where('type',"AUTOMATIC")->where('alias','flutterwave-money-out')->first();
     $secretKey = getPaymentCredentials($cardApi->credentials,'Secret key');
     $base_url =getPaymentCredentials($cardApi->credentials,'Base Url');
@@ -1923,6 +2118,7 @@ function getPaymentCredentials($credentials,$label){
     return $data->value;
 }
 function flutterwaveBalance($secret_key = null){
+
     $cardApi = VirtualCardApi::first();
     $secretKey = $secret_key??$cardApi->config->flutterwave_secret_key;
     $base_url = $cardApi->config->flutterwave_url;
@@ -1957,14 +2153,14 @@ function flutterwaveBalance($secret_key = null){
         $balance = $base_curr->available_balance;
        $data =[
         'status' => true,
-        'message' => $result->message,
+        'message' => __("SuccessFully Fetch Account Balance"),
         'balance' => $balance,
        ];
 
     }else{
         $data =[
             'status' => false,
-            'message' => $result->message,
+            'message' => __("Something went wrong! Please try again."),
             'balance' => 0.0,
            ];
 
@@ -2110,6 +2306,32 @@ function virtual_card_system($name)
 
     return  $active_virtual_system??"";
  }
+ function activeCardData(){
+    if(virtual_card_system('flutterwave') == "flutterwave"){
+        $virtual_cards = VirtualCard::toBase()->count();
+        $active_cards =  VirtualCard::toBase()->where('is_active',1)->count();
+        $inactive_cards = VirtualCard::toBase()->where('is_active',0)->count();
+    }elseif(virtual_card_system('sudo') == "sudo"){
+        $virtual_cards = SudoVirtualCard::toBase()->count();
+        $active_cards =  SudoVirtualCard::toBase()->where('status',1)->count();
+        $inactive_cards = SudoVirtualCard::toBase()->where('status',0)->count();
+    }elseif(virtual_card_system('stripe') == "stripe"){
+        $virtual_cards = StripeVirtualCard::toBase()->count();
+        $active_cards =  StripeVirtualCard::toBase()->where('status',1)->count();
+        $inactive_cards = StripeVirtualCard::toBase()->where('status',0)->count();
+    }elseif(virtual_card_system('strowallet') == "strowallet"){
+        $virtual_cards = StrowalletVirtualCard::toBase()->count();
+        $active_cards =  StrowalletVirtualCard::toBase()->where('is_active',1)->count();
+        $inactive_cards = StrowalletVirtualCard::toBase()->where('is_active',0)->count();
+    }
+    $virtual_card_info =[
+        'virtual_cards'  =>  $virtual_cards,
+        'active_cards'  => $active_cards,
+        'inactive_cards'  => $inactive_cards,
+    ];
+
+    return  $virtual_card_info??[];
+ }
  function get_transaction_numeric_attribute(string $attribute) {
     if($attribute == PaymentGatewayConst::SEND) {
         return "-";
@@ -2207,7 +2429,94 @@ function generate_random_number($length = 12)
     }
     return $randomString;
 }
-
+function authGuardApi(){
+    if (Auth::check()) {
+        $guardName = Auth::getDefaultDriver();
+        if( $guardName == 'web'){
+            $userType = 'USER';
+        } else if( $guardName == 'api'){
+            $userType = 'USER';
+        } else if( $guardName == 'agent'){
+            $userType = 'AGENT';
+        } else if($guardName == 'agent_api'){
+            $userType = 'AGENT';
+        } else if($guardName == 'merchant'){
+            $userType = 'MERCHANT';
+        } else if($guardName == 'merchant_api'){
+            $userType = 'MERCHANT';
+        }
+        if(auth()->guard($guardName)->check()){
+            $user = auth()->user();
+            $userType = $userType;
+            $guard = $guardName;
+        }
+        return [
+            'user'=>$user,
+            'type'=> $userType,
+            'guard'=>$guard
+        ];
+    }
+}
 function files_asset_path_basename($slug) {
     return "public/" . files_path($slug)->path;
+}
+
+function modifyEnv(array $replace_array) {
+    $array_going_to_modify  = $replace_array;
+
+    if (count($array_going_to_modify) == 0) {
+        return false;
+    }
+
+    $env_file = App::environmentFilePath();
+    $env_content = $_ENV;
+
+    $update_array = ["APP_ENV" => App::environment()];
+
+    foreach ($env_content as $key => $value) {
+
+        foreach ($array_going_to_modify as $modify_key => $modify_value) {
+
+            if(!array_key_exists($modify_key,$env_content) && !array_key_exists($modify_key,$update_array)) {
+                // $update_array[$modify_key] = '"'.$modify_value.'"';
+                $update_array[$modify_key] = setEnvValue($modify_key,$modify_value);
+                break;
+            }
+
+            if ($key == $modify_key) {
+                // $update_array[$key] = '"'.$modify_value.'"';
+                $update_array[$key] = setEnvValue($key,$modify_value);
+                break;
+            } else {
+                // $update_array[$key] = '"'.$value.'"';
+                $update_array[$key] = setEnvValue($key,$value);
+            }
+        }
+    }
+
+    $string_content = "";
+    foreach ($update_array as $key => $item) {
+        $line = $key . "=" . $item;
+        $string_content .= $line . "\n\r";
+    }
+
+    sleep(2);
+
+    file_put_contents($env_file, $string_content);
+}
+function setEnvValue($key,$value) {
+    if($key == "APP_KEY") {
+        return $value;
+    }
+    return '"'.$value.'"';
+}
+function checkSeederValue($value){
+    $input_value = explode('/',$value);
+    if(isset($input_value) && isset($input_value[0]) && $input_value[0] ==  'seeder'){
+        $oldImage = null;
+    }else{
+        $oldImage = $value;
+    }
+    return $oldImage;
+
 }

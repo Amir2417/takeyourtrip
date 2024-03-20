@@ -42,9 +42,9 @@
  <!-- main -->
  <script src="{{ asset('public/frontend/') }}/js/main.js"></script>
  <script>
-    function laravelCsrf() {
+function laravelCsrf() {
     return $("head meta[name=csrf-token]").attr("content");
-  }
+}
 //for popup
 function openAlertModal(URL,target,message,actionBtnText = "Remove",method = "DELETE"){
     if(URL == "" || target == "") {
@@ -67,7 +67,7 @@ function openAlertModal(URL,target,message,actionBtnText = "Remove",method = "DE
                                     <input type="hidden" name="target" value="${target}">
                                 </div>
                                 <div class="foot d-flex align-items-center justify-content-between">
-                                    <button type="button" class="modal-close btn btn--info rounded text-light">Close</button>
+                                    <button type="button" class="modal-close btn btn--info rounded text-light">{{ __('Close') }}</button>
                                     <button type="submit" class="alert-submit-btn btn btn--danger btn-loading rounded text-light">${actionBtnText}</button>
                                 </div>
                             </form>

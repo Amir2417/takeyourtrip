@@ -37,7 +37,7 @@
                             </div>
                             <div class="content">
                                 <span class="sub-title">{{ __("Get It On") }}</span>
-                                <h5 class="title">{{ __("Google Play") }}</h5>
+                                <h5 class="title">{{ __("google Play") }}</h5>
                             </div>
                         </a>
                         <a href="{{ @$app_urls->iso_url }}" class="app-btn" target="_blank">

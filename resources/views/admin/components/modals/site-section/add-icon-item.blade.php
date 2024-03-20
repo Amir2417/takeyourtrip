@@ -25,14 +25,14 @@
                                 @endphp
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Name*",
+                                          'label'     =>__( "name")."*",
                                         'name'      => $default_lang_code . "_name",
                                         'value'     => old($default_lang_code . "_name",$data->value->language->$default_lang_code->name ?? "")
                                     ])
                                 </div>
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Social Icon*",
+                                        'label'     => __( "Social Icon")."*",
                                         'name'      => $default_lang_code . "_social_icon",
                                         'value'     => old($default_lang_code . "_social_icon",$data->value->language->$default_lang_code->social_icon ?? ""),
                                         'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="form-group">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Link*",
+                                        'label'     => __( "Link")."*",
                                         'name'      => $default_lang_code . "_link",
                                         'value'     => old($default_lang_code . "_link",$data->value->language->$default_lang_code->link ?? ""),
 
@@ -56,14 +56,14 @@
                                 <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="modal-{{ $item->name }}" role="tabpanel" aria-labelledby="modal-{{$item->name}}-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Name*",
+                                              'label'     =>__( "name")."*",
                                             'name'      => $lang_code . "_name",
                                             'value'     => old($lang_code . "_name",$data->value->language->$lang_code->name ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Social Icon*",
+                                            'label'     => __( "Social Icon")."*",
                                             'name'      => $lang_code . "_social_icon",
                                             'value'     => old($lang_code . "_social_icon",$data->value->language->$lang_code->social_icon ?? ""),
                                             'class'     => "form--control icp icp-auto iconpicker-element iconpicker-input",
@@ -71,7 +71,7 @@
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Link*",
+                                            'label'     => __( "Link")."*",
                                             'name'      => $lang_code . "_link",
                                             'value'     => old($lang_code . "_link",$data->value->language->$lang_code->link ?? ""),
 

@@ -30,20 +30,20 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text copytext">{{ __("Email") }}</span>
+                                <span class="input-group-text copytext"><span>{{ __("Email") }}</span></span>
                             </div>
-                            <input type="email" name="credentials" class="form--control checkUser mobile" placeholder="Enter Email Address...">
+                            <input type="email" name="credentials" class="form--control checkUser mobile" placeholder="{{ __('enter Email Address') }}">
 
                         </div>
                         <small class="text-danger exits"></small>
                     </div>
 
                     <div class="col-lg-12 form-group text-center">
-                        <button type="submit"  class="btn--base w-100 btn-loading">Continue</button>
+                        <button type="submit"  class="btn--base w-100 btn-loading">{{ __("Continue") }}</button>
                     </div>
                     <div class="col-lg-12 text-center">
                         <div class="account-item">
-                            <label>{{ __("Already Have An Account?") }} <a href="{{ setRoute('user.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
+                            <label>{{ __("already Have An Account") }} <a href="{{ setRoute('user.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
                         </div>
                     </div>
                 </div>

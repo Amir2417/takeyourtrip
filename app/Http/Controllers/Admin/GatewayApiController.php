@@ -36,9 +36,9 @@ class GatewayApiController extends Controller
         try {
             GatewayAPi::updateOrCreate(['id' => 1],$validated);
         } catch (\Exception $e) {
-            return back()->with(['error' => ['Something Went Wrong, Please Try Again!']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Stripe Api Key Updated Successful']]);
+        return back()->with(['success' => [__("Stripe Api Key Updated Successful")]]);
     }
 }

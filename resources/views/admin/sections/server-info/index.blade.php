@@ -25,7 +25,7 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>{{ __("Name") }}</th>
+                            <th>{{ __("name") }}</th>
                             <th>{{ __("Version") }}</th>
                         </tr>
                     </thead>
@@ -36,7 +36,7 @@
                                     <li><img src="{{ asset('public/backend/images/icon/laravel.png') }}" alt="laravel"></li>
                                 </ul>
                             </td>
-                            <td>{{ __("App Name") }}</td>
+                            <td>{{ __("Server App Name") }}</td>
                             <td><span>{{ env("APP_NAME","AppDevs") }}</span></td>
                         </tr>
                         <tr>
@@ -173,5 +173,5 @@
 @endsection
 
 @push('script')
-    
+
 @endpush

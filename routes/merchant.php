@@ -70,7 +70,6 @@ Route::prefix("merchant")->name("merchant.")->group(function(){
     //transactions
     Route::controller(TransactionController::class)->prefix("transactions")->name("transactions.")->group(function(){
         Route::get('/{slug?}','index')->name('index')->whereIn('slug',['add-money','withdraw','transfer-money','money-exchange','bill-pay','mobile-topup','virtual-card','remittance','merchant-payment']);
-        // Route::get('log/{slug?}','log')->name('log')->whereIn('slug',['add-money','money-out','transfer-money']);
         Route::post('search','search')->name('search');
     });
     //google-2fa
@@ -140,7 +139,7 @@ Route::get('merchant/pusher/beams-auth', function (Request $request) {
     try{
         $beamsToken = $beamsClient->generateToken($publisherUserId);
     }catch(Exception $e) {
-        return response(['Server Error. Faild to generate beams token.'], 500);
+        return response(['Server Error. Failed to generate beams token.'], 500);
     }
 
     return response()->json($beamsToken);

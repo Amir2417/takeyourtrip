@@ -10,7 +10,7 @@
             'name'  => __("Dashboard"),
             'url'   => setRoute("merchant.dashboard"),
         ]
-    ], 'active' => __("Profile")])
+    ], 'active' => __("profile")])
 @endsection
 
 @section('content')
@@ -21,7 +21,7 @@
                 <div class="custom-card mt-10">
                     <div class="dashboard-header-wrapper">
                         <h4 class="title">{{ __('Profile Settings') }}</h4>
-                        <a href="javascript:void(0)" class="btn--base btn btn-sm delete-btn">{{ __("Delete Account") }}</a>
+                        <a href="javascript:void(0)" class="btn--base btn btn-sm delete-btn">{{ __("delete Account") }}</a>
                     </div>
                     <div class="card-body profile-body-wrapper">
                         <form class="card-form" method="POST" action="{{ setRoute('merchant.profile.update') }} " enctype="multipart/form-data">
@@ -30,7 +30,7 @@
                             <div class="profile-settings-wrapper">
                                 <div class="preview-thumb profile-wallpaper">
                                     <div class="avatar-preview">
-                                        <div class="profilePicPreview bg_img" data-background="{{ asset('public/frontend/') }}/images/element/virtual-card.png"></div>
+                                        <div class="profilePicPreview merchant bg_img" data-background="{{ asset('public/frontend/') }}/images/element/virtual-card.png"></div>
                                     </div>
                                 </div>
                                 <div class="profile-thumb-content">
@@ -52,47 +52,50 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="profile-form-area">
+                               <div class="profile-form-area">
                                 <div class="row">
-                                    <div class="col-xl-6 col-lg-6 form-group">
+                                    <div class="col-xl-4 col-lg-4 form-group">
                                         @include('admin.components.form.input',[
-                                            'label'         => "First Name<span>*</span>",
+                                            'label'         => __('first Name')."<span>*</span>",
                                             'name'          => "firstname",
-                                            'placeholder'   => "Enter First Name...",
+                                            'placeholder'   => __("enter First Name"),
                                             'value'         => old('firstname',auth()->user()->firstname)
                                         ])
                                     </div>
-                                    <div class="col-xl-6 col-lg-6 form-group">
+                                    <div class="col-xl-4 col-lg-4 form-group">
                                         @include('admin.components.form.input',[
-                                            'label'         => "Last Name<span>*</span>",
+                                            'label'         => __('last Name')."<span>*</span>",
                                             'name'          => "lastname",
-                                            'placeholder'   => "Enter Last Name...",
+                                           'placeholder'   => __("enter Last Name"),
                                             'value'         => old('lastname',auth()->user()->lastname)
                                         ])
                                     </div>
+                                    <div class="col-xl-4 col-lg-4 form-group">
+                                        @include('admin.components.form.input',[
+                                            'label'         => __('business Name')."<span>*</span>",
+                                            'name'          => "business_name",
+                                           'placeholder'   => __("enter Business Name"),
+                                            'value'         => old('business_name',auth()->user()->business_name)
+                                        ])
+                                    </div>
                                     <div class="col-xl-6 col-lg-6 form-group">
-                                        <label>{{ __("Country") }}<span>*</span></label>
-                                        <select name="country" class="form--control select2-auto-tokenize country-select" data-placeholder="Select Country" data-old="{{ old('country',auth()->user()->address->country ?? "") }}">
-                                        </select>
+                                        <label>{{ __("country") }}<span>*</span></label>
+                                        <select name="country" class="form--control select2-auto-tokenize country-select" data-placeholder="{{ __('select Country') }}" data-old="{{ old('country',auth()->user()->address->country ?? "") }}"></select>
                                     </div>
                                     <div class="col-xl-6 col-lg-6 form-group">
                                         <label>{{ __("Phone") }}<span>*</span></label>
                                         <div class="input-group">
                                             <div class="input-group-text phone-code">+{{ auth()->user()->mobile_code }}</div>
                                             <input class="phone-code" type="hidden" name="phone_code" value="{{ auth()->user()->mobile_code }}" />
-                                            <input type="text" class="form--control" placeholder="Enter Phone ..." name="phone" value="{{ old('phone',auth()->user()->mobile) }}">
+                                            <input type="text" class="form--control" placeholder="{{ __("enter Phone Number") }}" name="phone" value="{{ old('phone',auth()->user()->mobile) }}">
                                         </div>
-                                        @error("phone")
-                                            <span class="invalid-feedback d-block" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
+
                                     </div>
                                     <div class="col-xl-6 col-lg-6 form-group">
                                         @include('admin.components.form.input',[
-                                            'label'         => "Address",
+                                            'label'         => __("address"),
                                             'name'          => "address",
-                                            'placeholder'   => "Enter Address...",
+                                             'placeholder'   => __("enter Address"),
                                             'value'         => old('address',auth()->user()->address->address ?? "")
                                         ])
                                     </div>
@@ -101,9 +104,9 @@
                                         $old_city = old('city',auth()->user()->address->city ?? "");
                                         @endphp
                                         @include('admin.components.form.input',[
-                                            'label'         => "City",
+                                            'label'         => __("city"),
                                             'name'          => "city",
-                                            'placeholder'   => "Enter City...",
+                                            'placeholder'   =>__('enter City'),
                                             'value'         => old('city', $old_city)
                                         ])
 
@@ -114,23 +117,23 @@
                                     @endphp
 
                                     @include('admin.components.form.input',[
-                                        'label'         => "State",
+                                        'label'         => __("state"),
                                         'name'          => "state",
-                                        'placeholder'   => "Enter State...",
+                                        'placeholder'   => __('enter State'),
                                         'value'         => old('state', $old_state)
                                     ])
                                     </div>
                                     <div class="col-xl-6 col-lg-6 form-group">
                                         @include('admin.components.form.input',[
-                                            'label'         => "Zip Code",
+                                            'label'         => __("zip Code"),
                                             'name'          => "zip_code",
-                                            'placeholder'   => "Enter Zip...",
+                                            'placeholder'   => __('enter Zip Code'),
                                             'value'         => old('zip_code',auth()->user()->address->zip ?? "")
                                         ])
                                     </div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12">
-                                    <button type="submit" class="btn--base w-100 btn-loading">{{ __("Update") }}</button>
+                                    <button type="submit" class="btn--base w-100 btn-loading">{{ __("update") }}</button>
                                 </div>
                             </div>
                         </form>
@@ -149,28 +152,28 @@
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 form-group show_hide_password">
                                     @include('admin.components.form.input',[
-                                    'label'     => "Current Password<span>*</span>",
+                                   'label'     => __("Current Password")."<span>*</span>",
                                     'name'      => "current_password",
                                     'type'      => "password",
-                                    'placeholder'   => "Enter Password...",
+                                    'placeholder'   => __("enter Password"),
                                 ])
                                 <a href="javascript:void(0)" class="show-pass profile"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 form-group show_hide_password-2">
                                     @include('admin.components.form.input',[
-                                    'label'     => "New Password<span>*</span>",
+                                      'label'     => __("new Password")."<span>*</span>",
                                     'name'      => "password",
                                     'type'      => "password",
-                                    'placeholder'   => "Enter Password...",
+                                    'placeholder'   => __("enter Password"),
                                 ])
                                 <a href="javascript:void(0)" class="show-pass profile"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 form-group show_hide_password-3">
                                     @include('admin.components.form.input',[
-                                        'label'     => "Confirm Password<span>*</span>",
+                                       'label'     => __("confirm Password")."<span>*</span>",
                                         'name'      => "password_confirmation",
                                         'type'      => "password",
-                                        'placeholder'   => "Enter Password...",
+                                        'placeholder'   => __("enter Password"),
                                     ])
                                     <a href="javascript:void(0)" class="show-pass profile"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                                 </div>
@@ -203,11 +206,16 @@
         $(".delete-btn").click(function(){
             var actionRoute =  "{{ setRoute('merchant.profile.delete.account') }}";
             var target      = 1;
-            var btnText = "Delete Account";
-            var projectName = "{{ @$basic_settings->site_name }}";
+            var btnText = '{{ __("delete Account") }}';
+            var projectName = "{{ @$basic_settings->merchant_site_name }}";
             var name = $(this).data('name');
-            var message     = `Are you sure to delete <strong>your account</strong>?<br>If you do not think you will use “<strong>${projectName}</strong>”  again and like your account deleted, we can take card of this for you. Keep in mind you will not be able to reactivate your account or retrieve any of the content or information you have added. If you would still like your account deleted, click “Delete Account”.?`;
+            var deleteSureText = '{{ __("Are you sure to") }}';
+            var firstText = '{{ __("If you do not think you will use") }}';
+            var fullText = '{{ __("body_text_web") }}'
+
+            var message     = `${deleteSureText} <strong> ${btnText}</strong>?<br>${firstText} “<strong>${projectName}</strong>”  ${fullText}, click “${btnText}”.?`;
             openAlertModal(actionRoute,target,message,btnText,"DELETE");
+
         });
     </script>
 @endpush

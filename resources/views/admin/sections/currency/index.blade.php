@@ -28,9 +28,10 @@
 @section('content')
     <div class="table-area">
         <div class="table-wrapper">
-            @includeUnless($default_currency,'admin.components.alerts.warning',['message' => "There is no default currency in your system."])
+            @includeUnless($default_currency,'admin.components.alerts.warning',['message' => __("There is no default currency in your system.")])
             <div class="table-header">
                 <h5 class="title">{{ __("Setup Currency") }}</h5>
+
             </div>
             <div class="table-responsive">
                 @include('admin.components.data-table.currency-table',[

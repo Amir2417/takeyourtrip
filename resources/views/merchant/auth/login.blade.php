@@ -17,8 +17,8 @@
         <div class="account-wrapper">
             <div class="account-logo text-center">
                 <a href="{{ setRoute('index') }}" class="site-logo">
-                    <img src="{{ get_logo($basic_settings) }}"  data-white_img="{{ get_logo($basic_settings,'white') }}"
-                            data-dark_img="{{ get_logo($basic_settings,'dark') }}"
+                    <img src="{{ get_logo_merchant($basic_settings) }}"  data-white_img="{{ get_logo_merchant($basic_settings,'white') }}"
+                            data-dark_img="{{ get_logo_merchant($basic_settings,'dark') }}"
                                 alt="site-logo">
                 </a>
             </div>
@@ -36,20 +36,21 @@
                         </div>
                     </div>
                     <div class="col-lg-12 form-group" id="show_hide_password">
-                        <input type="password" required class="form-control form--control" name="password" placeholder="Password">
+                        <input type="password" required class="form-control form--control" name="password"placeholder="{{ __('enter Password') }}">
                         <a href="javascript:void(0)" class="show-pass"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                     </div>
                     <div class="col-lg-12 form-group">
                         <div class="forgot-item">
-                            <label><a href="{{ setRoute('merchant.password.forgot') }}">{{ __("Forgot Password?") }}</a></label>
+                            <label><a href="{{ setRoute('merchant.password.forgot') }}">{{ __("Forgot Password") }}?</a></label>
                         </div>
                     </div>
                     <div class="col-lg-12 form-group text-center">
                         <button type="submit" class="btn--base w-100 btn-loading">{{ __("Login Now") }} <i class="las la-arrow-right"></i></button>
                     </div>
+                    @if($basic_settings->merchant_registration)
                     <div class="or-area">
                         <span class="or-line"></span>
-                        <span class="or-title">Or</span>
+                        <span class="or-title">{{ __("Or") }}</span>
                         <span class="or-line"></span>
                     </div>
                     <div class="col-lg-12 text-center">
@@ -57,6 +58,7 @@
                             <label>{{ __("Don't Have An Account?") }} <a href="{{ setRoute('merchant.register') }}" class="account-control-btn">{{ __("Register Now") }}</a></label>
                         </div>
                     </div>
+                    @endif
                 </div>
             </form>
         </div>

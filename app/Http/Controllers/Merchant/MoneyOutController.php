@@ -48,7 +48,7 @@ class MoneyOutController extends Controller
         ]);
         $basic_setting = BasicSettings::first();
         $user = userGuard()['user'];
-        if($basic_setting->kyc_verification){
+        if($basic_setting->merchant_kyc_verification){
             if( $user->kyc_verified == 0){
                 return redirect()->route('merchant.profile.index')->with(['error' => [__('Please submit kyc information!')]]);
             }elseif($user->kyc_verified == 2){
@@ -140,7 +140,7 @@ class MoneyOutController extends Controller
             return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
     }else{
-        $page_title = "Withdraw Via ".$gateway->name;
+        $page_title = __("Withdraw Via")." ".$gateway->name;
         return view('merchant.sections.withdraw.preview',compact('page_title','gateway','moneyOutData'));
     }
 
@@ -157,16 +157,16 @@ class MoneyOutController extends Controller
         try{
             //send notifications
             $user = auth()->user();
-            $inserted_id = $this->insertRecordManual($moneyOutData,$gateway,$get_values);
+            $inserted_id = $this->insertRecordManual($moneyOutData,$gateway,$get_values,$reference= null,PaymentGatewayConst::STATUSPENDING);
             $this->insertChargesManual($moneyOutData,$inserted_id);
             $this->insertDeviceManual($moneyOutData,$inserted_id);
             session()->forget('moneyoutData');
-             if( $basic_setting->email_notification == true){
+             if( $basic_setting->merchant_email_notification == true){
                 $user->notify(new WithdrawMail($user,$moneyOutData));
             }
             return redirect()->route("merchant.withdraw.index")->with(['success' => [__('Withdraw money request send to admin successful')]]);
         }catch(Exception $e) {
-            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
+            return redirect()->route("merchant.withdraw.index")->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
    }
@@ -174,7 +174,7 @@ class MoneyOutController extends Controller
     $basic_setting = BasicSettings::first();
     if($request->gateway_name == 'flutterwave'){
         $request->validate([
-            'bank_name' => 'required|numeric|gt:0',
+            'bank_name' => 'required',
             'account_number' => 'required'
         ]);
         $moneyOutData = (object)session()->get('moneyoutData');
@@ -184,17 +184,18 @@ class MoneyOutController extends Controller
         $data = null;
         $secret_key = getPaymentCredentials($credentials,'Secret key');
         $base_url = getPaymentCredentials($credentials,'Base Url');
-        $callback_url = getPaymentCredentials($credentials,'Callback Url');
+        $callback_url = url('/').'/flutterwave/withdraw_webhooks';
 
         $ch = curl_init();
         $url =  $base_url.'/transfers';
+        $reference =  generateTransactionReference();
         $data = [
             "account_bank" => $request->bank_name,
             "account_number" => $request->account_number,
             "amount" => $moneyOutData->will_get,
             "narration" => "Withdraw from wallet",
-            "currency" => $moneyOutData->gateway_currency,
-            "reference" => generateTransactionReference(),
+            "currency" =>$moneyOutData->gateway_currency,
+            "reference" => $reference,
             "callback_url" => $callback_url,
             "debit_currency" => $moneyOutData->gateway_currency
         ];
@@ -218,11 +219,11 @@ class MoneyOutController extends Controller
                 try{
                     //send notifications
                     $user = auth()->user();
-                    $inserted_id = $this->insertRecordManual($moneyOutData,$gateway,$get_values = null);
+                    $inserted_id = $this->insertRecordManual($moneyOutData,$gateway,$get_values = null,$reference,PaymentGatewayConst::STATUSWAITING);
                     $this->insertChargesAutomatic($moneyOutData,$inserted_id);
                     $this->insertDeviceManual($moneyOutData,$inserted_id);
                     session()->forget('moneyoutData');
-                    if( $basic_setting->email_notification == true){
+                    if( $basic_setting->merchant_email_notification == true){
                         $user->notify(new WithdrawMail($user,$moneyOutData));
                     }
                     return redirect()->route("merchant.withdraw.index")->with(['success' => [__('Withdraw money request send successful')]]);
@@ -250,15 +251,15 @@ class MoneyOutController extends Controller
     return response( $exist);
    }
 
-    public function insertRecordManual($moneyOutData,$gateway,$get_values) {
-        if($moneyOutData->gateway_type == "AUTOMATIC"){
-            $status = 1;
-        }else{
-            $status = 2;
-        }
+    public function insertRecordManual($moneyOutData,$gateway,$get_values,$reference,$status) {
         $trx_id = $moneyOutData->trx_id ??'MO'.getTrxNum();
         $authWallet = MerchantWallet::where('id',$moneyOutData->wallet_id)->where('merchant_id',$moneyOutData->merchant_id)->first();
-        $afterCharge = ($authWallet->balance - ($moneyOutData->amount));
+        if($moneyOutData->gateway_type != "AUTOMATIC"){
+            $afterCharge = ($authWallet->balance - ($moneyOutData->amount));
+        }else{
+            $afterCharge = $authWallet->balance;
+        }
+
         DB::beginTransaction();
         try{
             $id = DB::table("transactions")->insertGetId([
@@ -273,9 +274,12 @@ class MoneyOutController extends Controller
                 'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPEMONEYOUT," ")) . " by " .$gateway->name,
                 'details'                       => json_encode($get_values),
                 'status'                        => $status,
+                'callback_ref'                  => $reference??null,
                 'created_at'                    => now(),
             ]);
-            $this->updateWalletBalanceManual($authWallet,$afterCharge);
+            if($moneyOutData->gateway_type != "AUTOMATIC"){
+                $this->updateWalletBalanceManual($authWallet,$afterCharge);
+            }
 
             DB::commit();
         }catch(Exception $e) {

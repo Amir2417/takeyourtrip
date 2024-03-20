@@ -32,7 +32,7 @@ class AdminCareController extends Controller
      */
     public function index()
     {
-        $page_title = "All Admin";
+        $page_title = __("All Admin");
         $admins = Admin::paginate(10);
 
         if(system_super_admin() == true) {
@@ -54,7 +54,7 @@ class AdminCareController extends Controller
      */
     public function emailAllAdmins()
     {
-        $page_title = "Email To Admin";
+        $page_title = __("Email To Admin");
         return view('admin.sections.admin-care.email-to-admins', compact(
             'page_title',
         ));
@@ -74,11 +74,11 @@ class AdminCareController extends Controller
         try{
             Notification::send($admins,new SendEmailToAll($validated));
         }catch(Exception $e) {
-            return back()->with(['error' => ["Opps! Faild to send mail. Please recheck your mail credentials or reconfigure mail"]]);
+            return back()->with(['error' => [__("Ops! Failed to send mail. Please recheck your mail credentials or reconfigure mail")]]);
         }
 
-        return back()->with(['success' => ['Email send successfully!']]);
-        
+        return back()->with(['success' => [__("Email send successfully!")]]);
+
     }
 
     /**
@@ -122,7 +122,7 @@ class AdminCareController extends Controller
                 $upload_file = upload_files_from_path_dynamic($image, "admin-profile");
                 $validated['image'] = $upload_file;
             } catch (Exception $e) {
-                return back()->with(['error' => ['Opps! Faild to upload image.']]);
+                return back()->with(['error' => [__("Ops! Failed to upload image.")]]);
             }
         }
 
@@ -135,7 +135,7 @@ class AdminCareController extends Controller
             $validated['password'] = $request->password;
             Notification::route('mail',$validated['email'])->notify(new NewAdminCredential($validated));
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         try{
@@ -146,10 +146,10 @@ class AdminCareController extends Controller
                 'last_edit_by'  => Auth::user()->id,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Role assign faild!']]);
+            return back()->with(['error' => [__("Role assign failed!")]]);
         }
 
-        return back()->with(['success' => ['New admin created successfully!']]);
+        return back()->with(['success' => [__("New admin created successfully!")]]);
     }
 
     /**
@@ -169,7 +169,7 @@ class AdminCareController extends Controller
         })->first();
 
         if (!$admin) {
-            return back()->with(['warning' => ['Opps! Target admin not found!']]);
+            return back()->with(['warning' => [__("Ops! Target admin not found!")]]);
         }
         $request->merge(['old_image' => $admin->image]);
 
@@ -211,7 +211,7 @@ class AdminCareController extends Controller
         try {
             $admin->update($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         $role_data = [];
@@ -253,10 +253,10 @@ class AdminCareController extends Controller
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
-            return back()->with(['error' => ['Faild to assign role.']]);
+            return back()->with(['error' => [__("Failed to assign role.")]]);
         }
 
-        return back()->with(['success' => ['Admin information updated successfully!']]);
+        return back()->with(['success' => [__("Admin information updated successfully!")]]);
     }
 
     /**
@@ -264,7 +264,7 @@ class AdminCareController extends Controller
      */
     public function roleIndex()
     {
-        $page_title = "Admin Roles";
+        $page_title = __("Admin Roles");
         $roles = AdminRole::with('assignRole')->get();
         return view('admin.sections.admin-care.role.index', compact(
             'page_title',
@@ -292,7 +292,7 @@ class AdminCareController extends Controller
 
         $admin = Admin::where('username',$username)->first();
         if(!$admin) {
-            $error = ['error' => ['Admin not found!']];
+            $error = ['error' => [__("Admin not found!")]];
             return Response::error($error,null,404);
         }
 
@@ -301,11 +301,11 @@ class AdminCareController extends Controller
                 'status' => ($validated['status'] == true) ? false : true,
             ]);
         }catch(Exception $e) {
-            $error = ['error' => ['Something went worng!. Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 
-        $success = ['success' => ['Admin status updated successfully!']];
+        $success = ['success' => [__("Admin status updated successfully!")]];
         return Response::success($success,null,200);
     }
 
@@ -329,10 +329,10 @@ class AdminCareController extends Controller
         try {
             AdminRole::create($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Admin role created successfully!']]);
+        return back()->with(['success' => [__("Admin role created successfully!")]]);
     }
 
     /**
@@ -343,12 +343,12 @@ class AdminCareController extends Controller
     {
 
         if (!isset($request->target)) {
-            return back()->with(['error' => ['Opps! Target not found!']]);
+            return back()->with(['error' => [__("Ops! Target not found!")]]);
         }
 
         $role = AdminRole::find($request->target);
         if (!$role) {
-            return back()->with(['error' => "Opps! Target role not found!"]);
+            return back()->with(['error' => __("Ops! Target role not found!")]);
         }
 
         $validator = Validator::make($request->all(), [
@@ -369,11 +369,11 @@ class AdminCareController extends Controller
         try {
             $role->update($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
 
-        return back()->with(['success' => ["Admin role updated successfully!"]]);
+        return back()->with(['success' => [__("Admin role updated successfully!")]]);
     }
 
 
@@ -388,20 +388,20 @@ class AdminCareController extends Controller
         ]);
 
         $validated = $validator->validate();
-        
+
         $role = AdminRole::find($validated['target']);
         if(!$role) return back()->with(['error' => ['Target role not found!']]);
         if($role->name == AdminRoleConst::SUPER_ADMIN) {
-            return back()->with(['error' => ['Super admin role can\'t deletable.']]);
+            return back()->with(['error' => [__("Super admin role can't deletable.")]]);
         }
 
         try {
             $role->delete();
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Admin role deleted successfully!']]);
+        return back()->with(['success' => [__("Admin role deleted successfully!")]]);
     }
 
 
@@ -410,8 +410,7 @@ class AdminCareController extends Controller
      */
     public function rolePermissionIndex()
     {
-        // dd('working');
-        $page_title = "Permission Group";
+        $page_title = __("Permission Group");
         $roles = AdminRole::get();
         $permissions = AdminRolePermission::get();
         return view('admin.sections.admin-care.role.permissions', compact(
@@ -447,10 +446,10 @@ class AdminCareController extends Controller
         try {
             AdminRolePermission::create($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Permission created successfully!']]);
+        return back()->with(['success' => [__("Permission created successfully!")]]);
     }
 
 
@@ -462,12 +461,12 @@ class AdminCareController extends Controller
     {
 
         if (!isset($request->target)) {
-            return back()->with(['error' => ['Target not found!']]);
+            return back()->with(['error' => [__("Target not found!")]]);
         }
 
         $permission = AdminRolePermission::find($request->target);
         if (!$permission) {
-            return back()->with(['error' => ['Permission not found!']]);
+            return back()->with(['error' => [__("Permission not found!")]]);
         }
 
         $validator = Validator::make($request->all(), [
@@ -489,10 +488,10 @@ class AdminCareController extends Controller
         try {
             $permission->update($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Permission updated successfully!']]);
+        return back()->with(['success' => [__("Permission updated successfully!")]]);
     }
 
 
@@ -511,10 +510,10 @@ class AdminCareController extends Controller
         try {
             AdminRolePermission::find($validated['target'])->delete();
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Permission deleted successfully!']]);
+        return back()->with(['success' => [__("Permission deleted successfully!")]]);
     }
 
     /**
@@ -525,7 +524,7 @@ class AdminCareController extends Controller
     {
         $permission = AdminRolePermission::where("slug", $slug)->first();
         if (!$permission) {
-            return back()->with(['error' => ['Role permission not found!']]);
+            return back()->with(['error' => [__("Role permission not found!")]]);
         }
 
         $routes = [];
@@ -553,7 +552,7 @@ class AdminCareController extends Controller
     {
         $permission = AdminRolePermission::where("slug", $slug)->first();
         if (!$permission) {
-            return back()->with(['error' => ['Permission not found!']]);
+            return back()->with(['error' => [__("Permission not found!")]]);
         }
 
         $validator = Validator::make($request->all(), [
@@ -564,7 +563,7 @@ class AdminCareController extends Controller
             return back()->withErrors($validator)->withInput()->with('modal', "permission-assign-add");
         }
         $has_permissions = AdminRoleHasPermission::where("admin_role_permission_id",$permission->id)->pluck("route")->toArray();
-        
+
         $validated = $validator->validate();
 
         $new_permissions = array_diff($validated['title'],$has_permissions);
@@ -590,10 +589,10 @@ class AdminCareController extends Controller
         try{
             AdminRoleHasPermission::insert($metch_items);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Permission assign successfully!']]);
+        return back()->with(['success' => [__("Permission assign successfully!")]]);
     }
 
     public function rolePermissionAssignDelete(Request $request,$slug) {
@@ -606,17 +605,17 @@ class AdminCareController extends Controller
         $validated = $validator->validate();
 
         $permission = AdminRolePermission::where("slug",$validated['slug'])->first();
-        if(!$permission) {   
-            return back()->with(['error' => ['Permission not found!']]);
+        if(!$permission) {
+            return back()->with(['error' => [__("Permission not found!")]]);
         }
 
         try{
             AdminRoleHasPermission::where("admin_role_permission_id",$permission->id)->where("id",$validated['target'])->delete();
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Permission deleted successfully!']]);
+        return back()->with(['success' => [__("Permission deleted successfully!")]]);
     }
 
     public function deleteAdmin(Request $request) {
@@ -628,17 +627,17 @@ class AdminCareController extends Controller
 
         $admin = Admin::where("username",$validated['target'])->first();
         if($admin->isSuperAdmin()) {
-            return back()->with(['warning' => ['Can\'t deletable system super admin']]);
+            return back()->with(['warning' => [__("Can't deletable system super admin")]]);
         }
 
         try{
             $admin->delete();
             delete_file(get_files_path('admin-profile').'/'.$admin->image);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Admin deleted successfully!']]);
+        return back()->with(['success' => [__("Admin deleted successfully!")]]);
     }
 
     public function adminSearch(Request $request) {

@@ -26,7 +26,7 @@ class PushNotificationController extends Controller
      */
     public function configuration()
     {
-        $page_title = "Setup Notification";
+        $page_title = __("Setup Notification");
         $push_notification = BasicSettingsProvider::get()->push_notification_config ?? null;
         $broadcast_config   = BasicSettingsProvider::get()->broadcast_config ?? null;
         return view('admin.sections.push-notification.config', compact(
@@ -44,7 +44,7 @@ class PushNotificationController extends Controller
      */
     public function index()
     {
-        $page_title = "Send Notification";
+        $page_title = __("Send Notification");
         $notifications = PushNotificationRecord::orderByDesc("id")->paginate(10);
         return view('admin.sections.push-notification.send', compact(
             'page_title',
@@ -67,17 +67,17 @@ class PushNotificationController extends Controller
 
         $basic_settings = BasicSettingsProvider::get();
         if(!$basic_settings) {
-            return back()->with(['error' => ['Opps! Basic settings not found!']]);
+            return back()->with(['error' => [__("Oops! Basic settings not found!")]]);
         }
 
         if(!$basic_settings->push_notification_config) {
-            return back()->with(['error' => ['Sorry! You have to configure first to send push notification.']]);
+            return back()->with(['error' => [__("Sorry! You have to configure first to send push notification.")]]);
         }
 
         $saved_method = $basic_settings->push_notification_config->method ?? null;
 
         if($saved_method == null) {
-            return back()->with(['error' => ['Please configure your push notification with valid credentials.']]);
+            return back()->with(['error' => [__("Please configure your push notification with valid credentials.")]]);
         }
 
         $methodDristribute = [
@@ -107,20 +107,20 @@ class PushNotificationController extends Controller
         $basic_settings = BasicSettingsProvider::get();
 
         if(!$basic_settings) {
-            return back()->with(['error' => ['Opps! Basic settings not found!']]);
+            return back()->with(['error' => [__("Oops! Basic settings not found!")]]);
         }
 
         $notification_config = $basic_settings->push_notification_config;
 
         if(!$notification_config) {
-            return back()->with(['error' => ['Sorry! You have to configure first to send push notification.']]);
+            return back()->with(['error' => [__("Sorry! You have to configure first to send push notification.")]]);
         }
 
         $instance_id    = $notification_config->instance_id ?? null;
         $primary_key    = $notification_config->primary_key ?? null;
 
         if($instance_id == null || $primary_key == null) {
-            return back()->with(['error' => ['Sorry! You have to configure first to send push notification.']]);
+            return back()->with(['error' => [__("Sorry! You have to configure first to send push notification.")]]);
         }
 
         $notification = new PushNotifications(
@@ -161,7 +161,7 @@ class PushNotificationController extends Controller
                 sleep(2);
             }
         }catch(Exception $e){
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         // Insert notification record to database
@@ -174,10 +174,10 @@ class PushNotificationController extends Controller
             ];
             PushNotificationRecord::create($push_notification_record);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Opps! Faild to store information.']]);
+            return back()->with(['error' => [__("Oops! Failed to store information.")]]);
         }
 
-        return back()->with(['success' => ['Notification sended successfully!']]);
+        return back()->with(['success' => [__("Notification sended successfully!")]]);
 
     }
 
@@ -219,7 +219,7 @@ class PushNotificationController extends Controller
 
         $basic_settings = BasicSettings::first();
         if(!$basic_settings) {
-            return back()->with(['error' => ['Opps! Basic setting not found!']]);
+            return back()->with(['error' => [__("Oops! Basic setting not found!")]]);
         }
 
         try{
@@ -228,10 +228,10 @@ class PushNotificationController extends Controller
                 'push_notification_config' => $data,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Push notification configuration updated successfully!']]);
+        return back()->with(['success' => [__("Push notification configuration updated successfully!")]]);
     }
 
 }

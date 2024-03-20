@@ -38,12 +38,12 @@
                                     </div>
                                 </div>
                                 <div class="col-xxl-6 col-xl-12 col-lg-6 form-group paste-wrapper">
-                                    <label>{{ __("Email Address") }} ({{ __("User") }})<span class="text--base">*</span></label>
+                                    <label>{{ __("email Address") }} ({{ __("User") }})<span class="text--base">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text copytext">{{ __("Email") }}</span>
+                                            <span class="input-group-text copytext"><span>{{ __("Email") }}</span></span>
                                         </div>
-                                        <input type="email" name="email" class="form--control checkUser" id="username" placeholder="Enter Email" value="{{ old('email') }}" />
+                                        <input type="email" name="email" class="form--control checkUser" id="username" placeholder="{{ __('enter Email Address') }}" value="{{ old('email') }}" />
                                     </div>
                                     <button type="button" class="paste-badge scan"  data-toggle="tooltip" title="Scan QR"><i class="fas fa-camera"></i></button>
                                     <label class="exist text-start"></label>
@@ -53,7 +53,7 @@
                                 <div class="col-xxl-6 col-xl-12 col-lg-6 form-group">
                                     <label>{{ __("Amount") }}<span>*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form--control" required placeholder="Enter Request Amount" name="request_amount" value="{{ old("request_amount") }}">
+                                        <input type="text" class="form--control number-input" required placeholder="{{ __("Enter Request Amount") }}" name="request_amount" value="{{ old("request_amount") }}">
                                         <select class="form--control nice-select currency" name="currency">
                                             @foreach ($sender_wallets as  $wallet)
                                             <option value="{{ $wallet->currency->code}}">{{ $wallet->currency->code}}</option>
@@ -65,15 +65,15 @@
                                 </div>
                                 <div class="col-xl-12 col-lg-12 form-group">
                                     @include('admin.components.form.textarea',[
-                                        'label'         => "Remarks <span class='text--base'>(Optional)</span>",
+                                        'label'         => __("Remarks"),
                                         'name'          => "remark",
-                                        'placeholder'   => "Explain Transaction Purposes Here…",
+                                        'placeholder'   => __("explain Trx"),
                                         'value'         => old("remark"),
                                     ])
                                 </div>
 
                                 <div class="col-xl-12 col-lg-12">
-                                    <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
+                                    <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("confirm") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
                                 </div>
                             </div>
                         </form>
@@ -160,7 +160,7 @@
     </div>
     <div class="dashboard-list-area mt-20">
         <div class="dashboard-header-wrapper">
-            <h4 class="title ">{{__("Request Money Log")}}</h4>
+            <h4 class="title ">{{__("request Money Log")}}</h4>
             <div class="dashboard-btn-wrapper">
                 <div class="dashboard-btn mb-2">
                     <a href="{{  setRoute('user.request.money.log.list') }}" class="btn--base">{{__("View More")}}</a>
@@ -179,7 +179,7 @@
                 <video id="preview" class="p-1 border" style="width:300px;"></video>
             </div>
             <div class="modal-footer justify-content-center">
-              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">@lang('close')</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">{{ __("Close") }}</button>
             </div>
       </div>
     </div>
@@ -279,7 +279,7 @@
             if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
                 var min_limit_calc = parseFloat(min_limit/currencyRate).toFixed(2);
                 var max_limit_clac = parseFloat(max_limit/currencyRate).toFixed(2);
-                $('.limit-show').html("Limit " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
+                $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
 
                 return {
                     minLimit:min_limit_calc,
@@ -346,7 +346,7 @@
             if (charges == false) {
                 return false;
             }
-            $(".fees-show").html("Charge & Fee: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
+            $(".fees-show").html("{{ __('fee And Charge') }} : " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
         }
         function getPreview() {
                 var senderAmount = $("input[name=request_amount]").val();

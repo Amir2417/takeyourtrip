@@ -18,7 +18,7 @@ class CookieController extends Controller
      */
     public function index()
     {
-        $page_title = "GDPR Cookie";
+        $page_title = __("GDPR Cookie");
         $site_cookie = SiteSections::siteCookie();
 
         return view('admin.sections.cookie.index',compact(
@@ -98,10 +98,10 @@ class CookieController extends Controller
         try{
             SiteSections::updateOrCreate(['key' => $type],['key' => $type , 'value' => $validated, 'status' => $validated['status']]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Cookie information updated successfully!']]);
+        return back()->with(['success' => [__("Cookie information updated successfully!")]]);
     }
 
     /**

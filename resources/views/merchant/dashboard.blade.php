@@ -18,10 +18,10 @@
         </div>
         <div class="dashboard-item-area">
             <div class="row mb-20-none">
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-20">
+                <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-20">
                     <div class="dashbord-item">
                         <div class="dashboard-content">
-                            <span class="sub-title">{{__("Balance")}}</span>
+                            <span class="sub-title">{{__("balance")}}</span>
                             <h3 class="title">{{ authWalletBalance() }} <span class="text--base">{{ @$baseCurrency->code }}</span></h3>
                         </div>
 
@@ -30,7 +30,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-20">
+                <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-20">
                     <div class="dashbord-item">
                         <div class="dashboard-content">
                             <span class="sub-title">{{__("Total Withdraw")}}</span>
@@ -41,10 +41,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-20">
+                <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-20">
                     <div class="dashbord-item">
                         <div class="dashboard-content">
-                            <span class="sub-title">{{ __("Total Received") }}</span>
+                            <span class="sub-title">{{ __("total Received") }}</span>
                             <h3 class="title">{{ getAmount($data['receive_money']) }} <span class="text--base">{{ @$baseCurrency->code }}</span></h3>
                         </div>
                         <div class="dashboard-icon">
@@ -52,8 +52,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-20">
+                <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-20">
                     <div class="dashbord-item">
                         <div class="dashboard-content">
                             <span class="sub-title">{{ __("Total Transactions") }}</span>
@@ -82,7 +81,7 @@
             <div class="col-xxl-12 col-xl-12 col-lg-12 mb-20">
                 <div class="chart-wrapper">
                     <div class="dashboard-header-wrapper">
-                        <h4 class="title">Buy Coin Chart</h4>
+                        <h4 class="title">{{ __("Withdraw Money Chart") }}</h4>
                     </div>
                     <div class="chart-container">
                         <div id="chart1"  data-chart_one_data="{{ json_encode($chartData['chart_one_data']) }}" data-month_day="{{ json_encode($chartData['month_day']) }}" class="chart"></div>
@@ -97,7 +96,7 @@
             <h4 class="title">{{ __("Latest Transactions") }}</h4>
             <div class="dashboard-btn-wrapper">
                 <div class="dashboard-btn mb-2">
-                    <a href="{{ setRoute('user.transactions.index') }}" class="btn--base">{{__("View More")}}</a>
+                    <a href="{{ setRoute('merchant.transactions.index') }}" class="btn--base">{{__("View More")}}</a>
                 </div>
             </div>
         </div>
@@ -116,19 +115,19 @@
     var options = {
         series: [
             {
-            name: 'Pending',
+            name: "{{ __('Pending') }}",
             color: "#0C56DB",
             data: chart_one_data.pending_data
             }, {
-            name: 'Completed',
+            name: "{{ __('Completed') }}",
             color: "rgba(0, 227, 150, 0.85)",
             data: chart_one_data.success_data
             }, {
-            name: 'Canceled',
+            name: "{{ __('Canceled') }}",
             color: "#dc3545",
             data: chart_one_data.canceled_data
             }, {
-            name: 'Hold',
+            name: "{{ __('Hold') }}",
             color: "#ded7e9",
             data: chart_one_data.hold_data
             }
@@ -160,6 +159,6 @@
     var chart = new ApexCharts(document.querySelector("#chart1"), options);
     chart.render();
 
-    
+
 </script>
 @endpush

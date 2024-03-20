@@ -21,41 +21,41 @@
 
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => "First Name*",
+                                'label'         => __("first Name")."*",
                                 'name'          => "firstname",
-                                'placeholder'   => "First Name",
-                                'value'         => old("firstname"),  
+                              'placeholder'   => __("first Name"),
+                                'value'         => old("firstname"),
                             ])
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => "Last Name*",
+                                'label'         =>__("last Name")."*",
                                 'name'          => "lastname",
-                                'placeholder'   => "Last Name",
-                                'value'         => old("lastname"),   
+                                'placeholder'   => __("last Name"),
+                                'value'         => old("lastname"),
                             ])
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => "Username*",
+                                'label'         => __("Username")."*",
                                 'name'          => "username",
-                                'placeholder'   => "Username",
-                                'value'         => old("username"),       
+                                'placeholder'   =>__("Username"),
+                                'value'         => old("username"),
                             ])
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => "Email*",
+                                'label'         =>__("Email")."*",
                                 'name'          => "email",
-                                'placeholder'   => "Email",
-                                'value'         => old("email"),     
+                                'placeholder'   =>__("Email"),
+                                'value'         => old("email"),
                             ])
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group">
-                            <label>{{ __("Password*") }}</label>
+                            <label>{{ __("password") }}*</label>
                             <div class="input-group">
-                                <input type="text" class="form--control place_random_password @error("password") is-invalid @enderror" placeholder="Password" name="password">
-                                <button class="input-group-text rand_password_generator" type="button">Generate</button>
+                                <input type="text" class="form--control place_random_password @error("password") is-invalid @enderror"placeholder="{{ __('enter Password') }}" name="password">
+                                <button class="input-group-text rand_password_generator" type="button">{{ __("Generate") }}</button>
                             </div>
                             @error("password")
                                 <span class="invalid-feedback d-block" role="alert">
@@ -65,16 +65,16 @@
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => "Phone*",
+                                'label'         => __("Phone")."*",
                                 'name'          => "phone",
-                                'placeholder'   => "Phone",
+                                'placeholder'   => __("Phone"),
                                 'value'         => old("phone"),
                             ])
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
-                            <label>{{ __("Role*") }}</label>
+                            <label>{{ __("Role") }}*</label>
                             <select class="form--control nice-select" name="role" data-old="{{ old("role") }}">
-                                <option selected disabled>Select Role</option>
+                                <option selected disabled>{{ __("Select Role") }}</option>
                                 @foreach ($admin_roles as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach

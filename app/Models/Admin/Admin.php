@@ -73,8 +73,8 @@ class Admin extends Authenticatable
 
     public function getStringStatusAttribute() {
         $status = [
-            true    => "Active",
-            false   => "Banned",
+            true    => "active",
+            false   => "banned",
         ];
 
         return $status[$this->status];

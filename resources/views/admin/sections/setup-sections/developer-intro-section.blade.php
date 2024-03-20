@@ -42,7 +42,7 @@
                 <div class="row justify-content-center mb-10-none">
                     <div class="col-xl-4 col-lg-4 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Intro Image:",
+                            'label'             => __( "Intro Image*"),
                             'name'              => "intro_image",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path("site-section"),
@@ -66,21 +66,21 @@
 
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Heading*",
+                                            'label'     =>__( "Heading*"),
                                             'name'      => $default_lang_code . "_heading",
                                             'value'     => old($default_lang_code . "_heading",$data->value->language->$default_lang_code->heading ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Details*",
+                                            'label'     => __( "Details")."*",
                                             'name'      => $default_lang_code . "_details",
                                             'value'     => old($default_lang_code . "_details",$data->value->language->$default_lang_code->details ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Intro Details*",
+                                            'label'     => __( "Intro Details*"),
                                             'name'      => $default_lang_code . "_intro_details",
                                             'value'     => old($default_lang_code . "_intro_details",$data->value->language->$default_lang_code->intro_details ?? "")
                                         ])
@@ -96,7 +96,7 @@
 
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Heading*",
+                                                'label'     =>__( "Heading*"),
                                                 'name'      =>$item->code . "_heading",
                                                 'value'     => old($item->code . "_heading",$data->value->language->$lang_code->heading ?? "")
                                             ])
@@ -104,14 +104,14 @@
 
                                         <div class="form-group">
                                             @include('admin.components.form.textarea',[
-                                                'label'     => "Details*",
+                                                'label'     => __( "Details")."*",
                                                 'name'      => $item->code . "_details",
                                                 'value'     => old($item->code . "_details",$data->value->language->$lang_code->details ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.textarea',[
-                                                'label'     => "Sub Heading*",
+                                                'label'     => __( "Sub Heading*"),
                                                 'name'      => $item->code . "_intro_details",
                                                 'value'     => old($item->code . "_intro_details",$data->value->language->$lang_code->intro_details ?? "")
                                             ])
@@ -125,7 +125,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>

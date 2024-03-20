@@ -38,7 +38,7 @@ class UserCareController extends Controller
      */
     public function index()
     {
-        $page_title = "All Users";
+        $page_title = __("All Users");
         $users = User::orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.user-care.index', compact(
             'page_title',
@@ -52,7 +52,7 @@ class UserCareController extends Controller
      */
     public function active()
     {
-        $page_title = "Active Users";
+        $page_title = __("Active Users");
         $users = User::active()->orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.user-care.index', compact(
             'page_title',
@@ -67,7 +67,7 @@ class UserCareController extends Controller
      */
     public function banned()
     {
-        $page_title = "Banned Users";
+        $page_title = __("Banned Users");
         $users = User::banned()->orderBy('id', 'desc')->paginate(12);
         return view('admin.sections.user-care.index', compact(
             'page_title',
@@ -81,7 +81,7 @@ class UserCareController extends Controller
      */
     public function emailUnverified()
     {
-        $page_title = "Email Unverified Users";
+        $page_title = __("Email Unverified Users");
         $users = User::active()->orderBy('id', 'desc')->emailUnverified()->paginate(12);
         return view('admin.sections.user-care.index', compact(
             'page_title',
@@ -95,7 +95,7 @@ class UserCareController extends Controller
      */
     public function SmsUnverified()
     {
-        $page_title = "SMS Unverified Users";
+        $page_title = __("SMS Unverified Users");
          $users = User::active()->orderBy('id', 'desc')->smsUnverified()->paginate(12);
         return view('admin.sections.user-care.index', compact(
             'page_title','users'
@@ -108,7 +108,7 @@ class UserCareController extends Controller
      */
     public function KycUnverified()
     {
-        $page_title = "KYC Unverified Users";
+        $page_title = __("KYC Unverified Users");
         $users = User::kycUnverified()->orderBy('id', 'desc')->paginate(8);
         return view('admin.sections.user-care.index', compact(
             'page_title',
@@ -122,7 +122,7 @@ class UserCareController extends Controller
      */
     public function emailAllUsers()
     {
-        $page_title = "Email To Users";
+        $page_title = __("Email To Users");
         return view('admin.sections.user-care.email-to-users', compact(
             'page_title',
         ));
@@ -134,9 +134,9 @@ class UserCareController extends Controller
      */
     public function userDetails($username)
     {
-        $page_title = "User Details";
+        $page_title = __("User Details");
         $user = User::where('username', $username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! User not exists']]);
+        if(!$user) return back()->with(['error' => [__('Oops! User not exists')]]);
 
         $balance = UserWallet::where('user_id', $user->id)->first()->balance ?? 0;
         $add_money_amount = Transaction::toBase()->where('user_id', $user->id)->where('type', PaymentGatewayConst::TYPEADDMONEY)->where('status', 1)->sum('request_amount');
@@ -187,10 +187,10 @@ class UserCareController extends Controller
                 Notification::send($users,new SendMail((object) $request->all()));
             }
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Email successfully sended']]);
+        return back()->with(['success' => [__("Email successfully sended")]]);
 
     }
 
@@ -217,9 +217,9 @@ class UserCareController extends Controller
                 $user->notify(new SendMail((object) $validated));
             }
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-        return back()->with(['success' => ['Mail successfully sended']]);
+        return back()->with(['success' => [__("Mail successfully sended")]]);
     }
 
     public function userDetailsUpdate(Request $request, $username)
@@ -254,22 +254,22 @@ class UserCareController extends Controller
         $validated['full_mobile']       = $validated['mobile_code'] . $validated['mobile'];
 
         $user = User::where('username', $username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! User not exists']]);
+        if(!$user) return back()->with(['error' => [__("Oops! User not exists")]]);
 
         try {
             $user->update($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Profile Information Updated Successfully!']]);
+        return back()->with(['success' => [__("Profile Information Updated Successfully!")]]);
     }
 
     public function loginLogs($username)
     {
-        $page_title = "Login Logs";
+        $page_title = __("Login Logs");
         $user = User::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! User doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Ops! User doesn't exists")]]);
         $logs = UserLoginLog::where('user_id',$user->id)->paginate(12);
         return view('admin.sections.user-care.login-logs', compact(
             'logs',
@@ -278,9 +278,9 @@ class UserCareController extends Controller
     }
 
     public function mailLogs($username) {
-        $page_title = "User Email Logs";
+        $page_title = __("User Email Logs");
         $user = User::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! User doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Ops! User doesn't exists")]]);
         $logs = UserMailLog::where("user_id",$user->id)->paginate(12);
         return view('admin.sections.user-care.mail-logs',compact(
             'page_title',
@@ -306,7 +306,7 @@ class UserCareController extends Controller
 
     public function kycDetails($username) {
         $user = User::where("username",$username)->first();
-        if(!$user) return back()->with(['error' => ['Opps! User doesn\'t exists']]);
+        if(!$user) return back()->with(['error' => [__("Ops! User doesn't exists")]]);
 
         $page_title = "KYC Profile";
         return view('admin.sections.user-care.kyc-details',compact("page_title","user"));
@@ -334,9 +334,9 @@ class UserCareController extends Controller
             $user->update([
                 'kyc_verified'  => GlobalConst::PENDING,
             ]);
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-        return back()->with(['success' => ['User KYC successfully approved']]);
+        return back()->with(['success' => [__("User KYC successfully approved")]]);
     }
 
     public function kycReject(Request $request, $username) {
@@ -346,8 +346,8 @@ class UserCareController extends Controller
         ]);
         $basic_setting = BasicSettings::first();
         $user = User::where("username",$request->target)->first();
-        if(!$user) return back()->with(['error' => ['User doesn\'t exists']]);
-        if($user->kyc == null) return back()->with(['error' => ['User KYC information not found']]);
+        if(!$user) return back()->with(['error' => [__("Ops! User doesn't exists")]]);
+        if($user->kyc == null) return back()->with(['error' => [__("User KYC information not found")]]);
 
         try{
             if( $basic_setting->email_notification == true){
@@ -368,10 +368,10 @@ class UserCareController extends Controller
                 'reject_reason' => null,
             ]);
 
-            return back()->with(['error' => ['Something went wrong! Please try again']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['User KYC information is rejected']]);
+        return back()->with(['success' => [__("User KYC information is rejected")]]);
     }
 
 
@@ -407,7 +407,7 @@ class UserCareController extends Controller
         $user_wallet = UserWallet::whereHas('user',function($q) use ($username){
             $q->where('username',$username);
         })->find($validated['wallet']);
-        if(!$user_wallet) return back()->with(['error' => ['User wallet not found!']]);
+        if(!$user_wallet) return back()->with(['error' => [__("User wallet not found!")]]);
 
         DB::beginTransaction();
         try{
@@ -427,7 +427,7 @@ class UserCareController extends Controller
                         $user_wallet_balance = $user_wallet->balance - $validated['amount'];
                         $user_wallet->balance -= $validated['amount'];
                     }else {
-                        return back()->with(['error' => ['User do not have sufficient balance']]);
+                        return back()->with(['error' => [__("User do not have sufficient balance")]]);
                     }
                     break;
             }
@@ -507,9 +507,9 @@ class UserCareController extends Controller
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
-            return back()->with(['error' => ['Transaction Failed! '. $e->getMessage()]]);
+            return back()->with(['error' => [__("Transaction Failed!")]]);
         }
 
-        return back()->with(['success' => ['Transaction success']]);
+        return back()->with(['success' => [__("Transaction success")]]);
     }
 }

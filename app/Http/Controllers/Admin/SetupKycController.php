@@ -20,7 +20,7 @@ class SetupKycController extends Controller
      */
     public function index()
     {
-        $page_title = "Setup KYC";
+        $page_title = __("Setup KYC");
         $kycs = SetupKyc::orderByDesc('id')->get();
         return view('admin.sections.setup-kyc.index',compact(
             'page_title',
@@ -68,7 +68,7 @@ class SetupKycController extends Controller
      */
     public function edit($slug)
     {
-        $page_title = "KYC Data Form";
+        $page_title =__( "KYC Data Form");
         $kyc = SetupKyc::where('slug',$slug)->firstOrfail();
         return view('admin.sections.setup-kyc.edit',compact(
             'page_title',
@@ -122,11 +122,11 @@ class SetupKycController extends Controller
         try{
             SetupKyc::where('slug',$slug)->update($validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
 
-        return back()->with(['success' => ['Information updated successfully!']]);
+        return back()->with(['success' => [__("Information updated successfully!")]]);
     }
 
     /**
@@ -137,7 +137,7 @@ class SetupKycController extends Controller
      */
     public function destroy($id)
     {
-        
+
     }
 
     /**
@@ -165,7 +165,7 @@ class SetupKycController extends Controller
         // find terget Item
         $kyc = SetupKyc::find($validated['data_target']);
         if(!$kyc) {
-            $error = ['error' => ['Invalid KYC or KYC not found!']];
+            $error = ['error' => [__("Invalid KYC or KYC not found!")]];
             return Response::error($error,null,404);
         }
 
@@ -174,11 +174,11 @@ class SetupKycController extends Controller
                 'status'        => $status[$validated['status']],
             ]);
         }catch(Exception $e) {
-            $error = ['error' => ['Something went worng! Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 
-        $success = ['success' => ['KYC status updated successfully!']];
+        $success = ['success' => [__("KYC status updated successfully!")]];
         return Response::success($success);
 
     }

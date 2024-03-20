@@ -25,7 +25,7 @@ class DeveloperApiController extends Controller
     public function updateMode(Request $request) {
         $basic_setting = BasicSettings::first();
         $user = auth()->user();
-        if($basic_setting->kyc_verification){
+        if($basic_setting->merchant_kyc_verification){
             if( $user->kyc_verified == 0){
                 $error = ['error'=>[__('Please submit kyc information!')]];
                 return Helpers::error($error);

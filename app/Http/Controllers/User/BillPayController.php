@@ -163,7 +163,7 @@ class BillPayController extends Controller
             //notification
             $notification_content = [
                 'title'         =>__("Bill Pay"),
-                'message'       => __("Bill pay request send to admin successful")." " .$amount.' '.get_default_currency_code()." ".__("Successful"),
+                'message'       => __("Bill pay request send to admin")." " .$amount.' '.get_default_currency_code()." ".__("Successful"),
                 'image'         => get_image($user->image,'user-profile'),
             ];
 
@@ -181,7 +181,7 @@ class BillPayController extends Controller
             ]);
 
            //admin notification
-           $notification_content['title'] = __("Bill pay request send to admin successful ")." ".$amount.' '.get_default_currency_code().' '.__("Successful").' ('.$user->username.')';
+           $notification_content['title'] = __("Bill pay request send to admin")." ".$amount.' '.get_default_currency_code().' '.__("Successful").' ('.$user->username.')';
            AdminNotification::create([
                'type'      => NotificationConst::BILL_PAY,
                'admin_id'  => 1,

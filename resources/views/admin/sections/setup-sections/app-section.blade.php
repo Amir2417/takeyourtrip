@@ -39,7 +39,7 @@
                 <div class="row justify-content-center mb-10-none">
                     <div class="col-xl-6 col-lg-6 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Google Play Image:",
+                            'label'             => __("Google Play Image:"),
                             'name'              => "google_play",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path("site-section"),
@@ -48,7 +48,7 @@
                     </div>
                     <div class="col-xl-6 col-lg-6 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Apple Store Image:",
+                            'label'             => __("Apple Store Image:"),
                             'name'              => "appple_store",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path("site-section"),
@@ -72,14 +72,14 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="english" role="tabpanel" aria-labelledby="english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Google Play Link*",
+                                            'label'     => __("Google Play Link")."*",
                                             'name'      => $default_lang_code . "_google_link",
                                             'value'     => old($default_lang_code . "_google_link",$data->value->language->$default_lang_code->google_link ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Apple Store Link*",
+                                            'label'     => __("Apple Link")."*",
                                             'name'      => $default_lang_code . "_apple_link",
                                             'value'     => old($default_lang_code . "_apple_link",$data->value->language->$default_lang_code->apple_link ?? "")
                                         ])
@@ -94,14 +94,14 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="{{ $item->name }}" role="tabpanel" aria-labelledby="english-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Google Play Link*",
+                                                'label'     => __("Google Play Link")."*",
                                                 'name'      => $lang_code . "_google_link",
                                                 'value'     => old($lang_code . "_google_link",$data->value->language->$lang_code->google_link ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Apple Store Link*",
+                                                'label'     => __("Apple Link")."*",
                                                 'name'      => $lang_code . "_apple_link",
                                                 'value'     => old($lang_code . "_apple_link",$data->value->language->$lang_code->apple_link ?? "")
                                             ])
@@ -115,7 +115,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>

@@ -81,7 +81,7 @@
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
-                                <h4>{{ __("Request Amount") }}</h4>
+                                <h4>{{ __("request Amount") }}</h4>
                                 <h4 class="enter-amount">{{ get_amount($transaction->request_amount, $transaction->creator_wallet->currency->code) }}</h4>
                             </div>
                             <hr>

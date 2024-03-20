@@ -1,18 +1,7 @@
 @extends('user.layouts.master')
 
 @push('css')
-<style>
-    .jp-card .jp-card-back, .jp-card .jp-card-front {
 
-      background-image: linear-gradient(160deg, #2583C5 0%, #813FD6 100%) !important;
-      }
-      label{
-          color: #000 !important;
-      }
-      .form--control{
-          color: #000 !important;
-      }
-  </style>
 @endpush
 
 @section('breadcrumb')
@@ -21,7 +10,7 @@
             'name'  => __("Dashboard"),
             'url'   => setRoute("user.dashboard"),
         ]
-    ], 'active' => __("Withdraw")])
+    ], 'active' => __("withdraw")])
 @endsection
 
 @section('content')
@@ -55,11 +44,11 @@
                                             @if($item->required == true)
                                             <span class="text-danger">*</span>
                                             @else
-                                            <span class="">( Optional )</span>
+                                            <span class="">( {{ __("Optional") }} )</span>
                                             @endif
                                         </label>
                                         <select name="{{ $item->name }}" id="{{ $item->name }}" class="form--control nice-select">
-                                            <option selected disabled>Choose One</option>
+                                            <option selected disabled>{{ __("Choose One") }}</option>
                                             @foreach ($item->validation->options as $innerItem)
                                                 <option value="{{ $innerItem }}">{{ $innerItem }}</option>
                                             @endforeach
@@ -76,7 +65,7 @@
                                             @if($item->required == true)
                                             <span class="text-danger">*</span>
                                             @else
-                                            <span class="">( Optional )</span>
+                                            <span class="">( {{ __("Optional") }} )</span>
                                             @endif
                                         </label>
                                         <input type="{{ $item->type }}" class="form--control"  name="{{ $item->name }}" value="{{ old($item->name) }}">
@@ -87,7 +76,7 @@
                                             @if($item->required == true)
                                             <span class="text-danger">*</span>
                                             @else
-                                            <span class="">( Optional )</span>
+                                            <span class="">( {{ __("Optional") }} )</span>
                                             @endif
                                         </label>
                                         <input type="{{ $item->type }}" class="form--control" placeholder="{{ ucwords(str_replace('_',' ', $item->name)) }}" name="{{ $item->name }}" value="{{ old($item->name) }}">
@@ -103,7 +92,7 @@
                                 @endif
                             @endforeach
                                 <div class="col-xl-12 col-lg-12">
-                                    <button type="submit" class="btn--base w-100 btn-loading"> {{ __("Confirm") }}
+                                    <button type="submit" class="btn--base w-100 btn-loading"> {{ __("confirm") }}
 
                                     </button>
                                 </div>
@@ -118,7 +107,7 @@
                 <div class="dash-payment-item active">
                     <div class="dash-payment-title-area">
                         <span class="dash-payment-badge">!</span>
-                        <h5 class="title">{{_("Withdraw Information")}}</h5>
+                        <h5 class="title">{{_("Withdraw Money Information!")}}</h5>
                     </div>
                     <div class="dash-payment-body">
                         <div class="preview-list-wrapper">

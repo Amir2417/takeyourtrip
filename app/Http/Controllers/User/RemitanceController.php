@@ -180,7 +180,8 @@ class RemitanceController extends Controller
                 'form_country' => $form_country,
                 'to_country' => $to_country,
                 'remitance_type' => $transaction_type,
-                 'sender' => $user,
+                'sender' => $user,
+                'bank_account' => $receipient->account_number??'',
             ];
             if($transaction_type == Str::slug(GlobalConst::TRX_WALLET_TO_WALLET_TRANSFER)){
                 $status = 1;
@@ -278,6 +279,7 @@ class RemitanceController extends Controller
                 'to_country' => $to_country,
                 'remitance_type' => $transaction_type,
                 'sender' => $user,
+                'bank_account' => $receipient->account_number??'',
             ];
             DB::beginTransaction();
             try{

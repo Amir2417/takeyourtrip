@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-
+use App\Constants\NotificationConst;
 use App\Exports\RemittanceTransactionExport;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\Response;
 use App\Models\Admin\ReceiverCounty;
+use App\Models\AgentNotification;
+use App\Models\AgentWallet;
 use App\Models\RemitanceBankDeposit;
 use App\Models\RemitanceCashPickup;
 use App\Models\Transaction;
+use App\Models\UserNotification;
 use App\Models\UserWallet;
 use App\Notifications\User\Remittance\Approved;
 use App\Notifications\User\Remittance\Rejected;
@@ -18,6 +21,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -34,7 +38,7 @@ class RemitanceController extends Controller
     ///========================Receiver countries start=============================================
         public function allCountries()
         {
-            $page_title = "Receiver Countries";
+            $page_title = __("Receiver Countries");
             $allCountries = ReceiverCounty::latest()->paginate(20);
             return view('admin.sections.remitance.countries.index', compact(
                 'page_title','allCountries'
@@ -64,7 +68,7 @@ class RemitanceController extends Controller
             try{
                 $country = ReceiverCounty::create($validated);
             }catch(Exception $e) {
-                return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
 
             // Uplaod File
@@ -78,18 +82,18 @@ class RemitanceController extends Controller
                         'flag'  => $uploadFlag,
                     ]);
                 }catch(Exception $e) {
-                    return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                    return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
                 }
             }
 
-            return back()->with(['success' => ['Country Saved Successfully!']]);
+            return back()->with(['success' => [__("Country Saved Successfully!")]]);
         }
         public function updateCountry(Request $request) {
 
             $target = $request->target ?? $request->currency_code;
             $country = ReceiverCounty::where('code',$target)->first();
             if(!$country) {
-                return back()->with(['warning' => ['Country not found!']]);
+                return back()->with(['warning' => [__("Country not found!")]]);
             }
             $request->merge(['old_flag' =>$country->flag]);
 
@@ -116,17 +120,17 @@ class RemitanceController extends Controller
                     $uploadFlag = upload_files_from_path_dynamic($image,'country-flag',$country->flag);
                     $validated['currency_flag'] = $uploadFlag;
                 }catch(Exception $e) {
-                    return back()->withErrors($validator)->withInput()->with(['error' => ['Image file upload faild!']]);
+                    return back()->withErrors($validator)->withInput()->with(['error' => [__("Image file upload failed!")]]);
                 }
             }
             $validated = replace_array_key($validated,"currency_");
             try{
             $country->update($validated);
             }catch(Exception $e) {
-                return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
 
-            return back()->with(['success' => ['Successfully updated the information.']]);
+            return back()->with(['success' => [__("Successfully updated the information.")]]);
         }
         public function deleteCountry(Request $request) {
             $validator = Validator::make($request->all(),[
@@ -139,10 +143,10 @@ class RemitanceController extends Controller
                 $country->delete();
                 delete_file(get_files_path('country-flag').'/'.$country->flag);
             }catch(Exception $e) {
-                return back()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
 
-            return back()->with(['success' => ['Country deleted successfully!']]);
+            return back()->with(['success' => [__("Country deleted successfully!")]]);
         }
         public function statusUpdateCountry(Request $request) {
             $validator = Validator::make($request->all(),[
@@ -158,7 +162,7 @@ class RemitanceController extends Controller
 
             $Country = ReceiverCounty::where('code',$currency_code)->first();
             if(!$Country) {
-                $error = ['error' => ['Country record not found in our system.']];
+                $error = ['error' => [__("Country record not found in our system.")]];
                 return Response::error($error,null,404);
             }
 
@@ -167,11 +171,11 @@ class RemitanceController extends Controller
                     'status' => ($validated['status'] == true) ? false : true,
                 ]);
             }catch(Exception $e) {
-                $error = ['error' => ['Something went worng!. Please try again.']];
+                $error = ['error' => [__("Something went wrong! Please try again.")]];
                 return Response::error($error,null,500);
             }
 
-            $success = ['success' => ['Country status updated successfully!']];
+            $success = ['success' => [__("Country status updated successfully!")]];
             return Response::success($success,null,200);
         }
         public function searchCountry(Request $request) {
@@ -194,7 +198,7 @@ class RemitanceController extends Controller
     ///========================Receiver countries end===============================================
     ///========================Bank Deposits end===============================================
         public function bankDeposits(){
-            $page_title = "Bank Deposit Type";
+            $page_title = __("Bank Deposit Type");
             $banks = RemitanceBankDeposit::latest()->paginate(20);
             return view('admin.sections.remitance.banks.index', compact(
                 'page_title','banks'
@@ -212,7 +216,7 @@ class RemitanceController extends Controller
             $slugData = Str::slug($request->name);
             $makeUnique = RemitanceBankDeposit::where('alias',  $slugData)->first();
             if($makeUnique){
-                return back()->with(['error' => [ $request->name.' '.'Bank Already Exists!']]);
+                return back()->with(['error' => [__("Bank Already Exists!")]]);
             }
             $admin = Auth::user();
 
@@ -221,9 +225,9 @@ class RemitanceController extends Controller
             $validated['alias']          = $slugData;
             try{
                 RemitanceBankDeposit::create($validated);
-                return back()->with(['success' => ['Bank Saved Successfully!']]);
+                return back()->with(['success' => [__("Bank Saved Successfully!")]]);
             }catch(Exception $e) {
-                return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }
         public function bankDepositUpdate(Request $request){
@@ -240,7 +244,7 @@ class RemitanceController extends Controller
             $slugData = Str::slug($request->name);
             $makeUnique = RemitanceBankDeposit::where('id',"!=",$bank->id)->where('alias',  $slugData)->first();
             if($makeUnique){
-                return back()->with(['error' => [ $request->name.' '.'Bank Already Exists!']]);
+                return back()->with(['error' => [__("Bank Already Exists!")]]);
             }
             $admin = Auth::user();
             $validated['admin_id']      = $admin->id;
@@ -249,9 +253,9 @@ class RemitanceController extends Controller
 
             try{
                 $bank->fill($validated)->save();
-                return back()->with(['success' => ['Bank Updated Successfully!']]);
+                return back()->with(['success' => [__("Bank Updated Successfully!")]]);
             }catch(Exception $e) {
-                return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }
 
@@ -269,7 +273,7 @@ class RemitanceController extends Controller
 
             $bank = RemitanceBankDeposit::where('id',$bank_id)->first();
             if(!$bank) {
-                $error = ['error' => ['Bank record not found in our system.']];
+                $error = ['error' => [__("Bank record not found in our system.")]];
                 return Response::error($error,null,404);
             }
 
@@ -278,11 +282,11 @@ class RemitanceController extends Controller
                     'status' => ($validated['status'] == true) ? false : true,
                 ]);
             }catch(Exception $e) {
-                $error = ['error' => ['Something went worng!. Please try again.']];
+                $error = ['error' => [__("Something went wrong! Please try again.")]];
                 return Response::error($error,null,500);
             }
 
-            $success = ['success' => ['Bank status updated successfully!']];
+            $success = ['success' => [__("Bank status updated successfully!")]];
             return Response::success($success,null,200);
         }
         public function bankDepositDelete(Request $request) {
@@ -295,10 +299,10 @@ class RemitanceController extends Controller
             try{
                 $bank->delete();
             }catch(Exception $e) {
-                return back()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
 
-            return back()->with(['success' => ['Bank deleted successfully!']]);
+            return back()->with(['success' => [__("Bank deleted successfully!")]]);
         }
         public function bankDepositSearch(Request $request) {
             $validator = Validator::make($request->all(),[
@@ -320,7 +324,7 @@ class RemitanceController extends Controller
     ///========================Bank Deposits end===============================================
     ///========================Cash Pickup end===============================================
         public function cashPickup(){
-            $page_title = "Cash Pickup";
+            $page_title = __("Cash Pickup");
             $cashPickups = RemitanceCashPickup::latest()->paginate(20);
             return view('admin.sections.remitance.cash-pickup.index', compact(
                 'page_title','cashPickups'
@@ -338,7 +342,7 @@ class RemitanceController extends Controller
             $slugData = Str::slug($request->name);
             $makeUnique = RemitanceCashPickup::where('alias',  $slugData)->first();
             if($makeUnique){
-                return back()->with(['error' => [ $request->name.' '.'Cash Pickup Already Exists!']]);
+                return back()->with(['error' => [__("Cash Pickup Already Exists!")]]);
             }
             $admin = Auth::user();
 
@@ -347,9 +351,9 @@ class RemitanceController extends Controller
             $validated['alias']          = $slugData;
             try{
                 RemitanceCashPickup::create($validated);
-                return back()->with(['success' => ['Cash Pickup Saved Successfully!']]);
+                return back()->with(['success' => [__("Cash Pickup Saved Successfully!")]]);
             }catch(Exception $e) {
-                return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }
         public function cashPickupUpdate(Request $request){
@@ -366,7 +370,7 @@ class RemitanceController extends Controller
             $slugData = Str::slug($request->name);
             $makeUnique = RemitanceCashPickup::where('id',"!=",$cashPickup->id)->where('alias',  $slugData)->first();
             if($makeUnique){
-                return back()->with(['error' => [ $request->name.' '.'Cash Pickup Already Exists!']]);
+                return back()->with(['error' => [__("Cash Pickup Already Exists!")]]);
             }
             $admin = Auth::user();
             $validated['admin_id']      = $admin->id;
@@ -375,9 +379,9 @@ class RemitanceController extends Controller
 
             try{
                 $cashPickup->fill($validated)->save();
-                return back()->with(['success' => ['Cash Pickup Updated Successfully!']]);
+                return back()->with(['success' => [__("Cash Pickup Updated Successfully!")]]);
             }catch(Exception $e) {
-                return back()->withErrors($validator)->withInput()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->withErrors($validator)->withInput()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
         }
 
@@ -395,7 +399,7 @@ class RemitanceController extends Controller
 
             $pickup = RemitanceCashPickup::where('id',$pickup_id)->first();
             if(!$pickup) {
-                $error = ['error' => ['Cash Pickup record not found in our system.']];
+                $error = ['error' => [__("Cash Pickup record not found in our system.")]];
                 return Response::error($error,null,404);
             }
 
@@ -404,11 +408,11 @@ class RemitanceController extends Controller
                     'status' => ($validated['status'] == true) ? false : true,
                 ]);
             }catch(Exception $e) {
-                $error = ['error' => ['Something went worng!. Please try again.']];
+                $error = ['error' => [__("Something went wrong! Please try again.")]];
                 return Response::error($error,null,500);
             }
 
-            $success = ['success' => ['Status updated successfully!']];
+            $success = ['success' => [__("Status updated successfully!")]];
             return Response::success($success,null,200);
         }
         public function cashPickuptDelete(Request $request) {
@@ -421,10 +425,10 @@ class RemitanceController extends Controller
             try{
                 $cashPickup->delete();
             }catch(Exception $e) {
-                return back()->with(['error' => ['Something went worng! Please try again.']]);
+                return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
             }
 
-            return back()->with(['success' => ['Cash Pickup deleted successfully!']]);
+            return back()->with(['success' => [__("Cash Pickup deleted successfully!")]]);
         }
         public function cashPickupSearch(Request $request) {
             $validator = Validator::make($request->all(),[
@@ -452,7 +456,7 @@ class RemitanceController extends Controller
      */
     public function index()
     {
-        $page_title = "All Logs";
+        $page_title = __("All Logs");
         $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name',
@@ -463,15 +467,13 @@ class RemitanceController extends Controller
             'transactions'
         ));
     }
-
-
     /**
      * Pending Add Money Logs View.
      * @return view $pending-remitance-logs
      */
     public function pending()
     {
-        $page_title = "Pending Logs";
+        $page_title =__("Pending Logs");
         $transactions = Transaction::with(
          'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name',
@@ -481,15 +483,13 @@ class RemitanceController extends Controller
             'transactions'
         ));
     }
-
-
     /**
      * Complete Add Money Logs View.
      * @return view $complete-remitance-logs
      */
     public function complete()
     {
-        $page_title = "Complete Logs";
+        $page_title = __("Complete Logs");
         $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name',
@@ -499,14 +499,13 @@ class RemitanceController extends Controller
             'transactions'
         ));
     }
-
     /**
      * Canceled Add Money Logs View.
      * @return view $canceled-remitance-logs
      */
     public function canceled()
     {
-        $page_title = "Canceled Logs";
+        $page_title = __("Canceled Logs");
         $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name',
@@ -522,7 +521,8 @@ class RemitanceController extends Controller
           'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name,alias,payment_gateway_id,currency_code,rate',
         )->where('type', 'REMITTANCE')->where('attribute',"SEND")->first();
-        $page_title = "Remittance  details for".'  '.$data->trx_id;
+        $pre_title = __("Remittance details for");
+        $page_title = $pre_title.'  '.$data->trx_id;
         return view('admin.sections.remitance.details', compact(
             'page_title',
             'data'
@@ -540,30 +540,76 @@ class RemitanceController extends Controller
         $data = Transaction::where('id',$request->id)->where('status',2)->where('type', 'REMITTANCE')->first();
 
         try{
-            $receipient = $data->details->receiver;
-            $notifyData = [
-                'trx_id'  => $data->trx_id,
-                'title'  => "Send Remittance to @" . $receipient->firstname.' '.@$receipient->lastname." (".@$receipient->mobile_code.@$receipient->mobile.")",
-                'request_amount'  => getAmount($data->request_amount,4).' '.get_default_currency_code(),
-                'exchange_rate'  => "1 " .get_default_currency_code().' = '.get_amount($data->details->to_country->rate,$data->details->to_country->code),
-                'charges'   => getAmount( $data->charge->total_charge, 2).' ' .get_default_currency_code(),
-                'payable'   =>  getAmount($data->payable,4).' ' .get_default_currency_code(),
-                'sending_country'   => @$data->details->form_country,
-                'receiving_country'   => @$data->details->to_country->country,
-                'receiver_name'  =>  @$receipient->firstname.' '.@$receipient->lastname,
-                'alias'  =>  ucwords(str_replace('-', ' ', @$receipient->alias)),
-                'transaction_type'  =>  @$data->details->remitance_type,
-                'receiver_get'   =>  getAmount($data->details->recipient_amount,4).' ' .$data->details->to_country->code,
-                'status'  => "Success",
-              ];
-            //sender notifications
-            $user = $data->user;
-            if( $this->basic_settings->email_notification == true){
-            $user->notify(new Approved($user,(object)$notifyData));
-            }
-            $data->status = 1;
-            $data->save();
-            return redirect()->back()->with(['success' => ['Remittance request approved successfully']]);
+            $notification_content = [
+                'title'         => __("Remittance"),
+                'message'       => "Your Remittance request approved by admin " .getAmount($data->request_amount,2).' '.get_default_currency_code(),
+                'image'         => files_asset_path('profile-default'),
+            ];
+            if($data->user_id != null) {
+                $receipient = $data->details->receiver;
+                $notifyData = [
+                    'trx_id'  => $data->trx_id,
+                    'title'  => "Send Remittance to @" . $receipient->firstname.' '.@$receipient->lastname." (".@$receipient->mobile_code.@$receipient->mobile.")",
+                    'request_amount'  => getAmount($data->request_amount,4).' '.get_default_currency_code(),
+                    'exchange_rate'  => "1 " .get_default_currency_code().' = '.get_amount($data->details->to_country->rate,$data->details->to_country->code),
+                    'charges'   => getAmount( $data->charge->total_charge, 2).' ' .get_default_currency_code(),
+                    'payable'   =>  getAmount($data->payable,4).' ' .get_default_currency_code(),
+                    'sending_country'   => @$data->details->form_country,
+                    'receiving_country'   => @$data->details->to_country->country,
+                    'receiver_name'  =>  @$receipient->firstname.' '.@$receipient->lastname,
+                    'alias'  =>  ucwords(str_replace('-', ' ', @$receipient->alias)),
+                    'transaction_type'  =>  @$data->details->remitance_type,
+                    'receiver_get'   =>  getAmount($data->details->recipient_amount,4).' ' .$data->details->to_country->code,
+                    'status'  => "Success",
+                ];
+                //update transaction
+                UserNotification::create([
+                    'type'      => NotificationConst::SEND_REMITTANCE,
+                    'user_id'  =>  $data->user_id,
+                    'message'   => $notification_content,
+                ]);
+                $data->status = 1;
+                $data->save();
+
+                if( $this->basic_settings->email_notification == true){
+                    $data->user->notify(new Approved($data->user,(object)$notifyData));
+                }
+            }elseif($data->agent_id != null){
+                $receipient = $data->details->receiver_recipient;
+                $notifyData = [
+                    'trx_id'  => $data->trx_id,
+                    'title'  => "Send Remittance to @" . $receipient->firstname.' '.@$receipient->lastname." (".@$receipient->mobile_code.@$receipient->mobile.")",
+                    'request_amount'  => getAmount($data->request_amount,4).' '.get_default_currency_code(),
+                    'exchange_rate'  => "1 " .get_default_currency_code().' = '.get_amount($data->details->to_country->rate,$data->details->to_country->code),
+                    'charges'   => getAmount( $data->charge->total_charge, 2).' ' .get_default_currency_code(),
+                    'payable'   =>  getAmount($data->payable,4).' ' .get_default_currency_code(),
+                    'sending_country'   => @$data->details->form_country,
+                    'receiving_country'   => @$data->details->to_country->country,
+                    'receiver_name'  =>  @$receipient->firstname.' '.@$receipient->lastname,
+                    'alias'  =>  ucwords(str_replace('-', ' ', @$receipient->alias)),
+                    'transaction_type'  =>  @$data->details->remitance_type,
+                    'receiver_get'   =>  getAmount($data->details->recipient_amount,4).' ' .$data->details->to_country->code,
+                    'status'  => "Success",
+                ];
+                $user = $data->agent;
+                $returnWithProfit = ($user->wallet->balance +  $data->details->charges->agent_total_commission);
+                $this->updateSenderWalletBalance($user->wallet,$returnWithProfit,$data);
+                $this->agentProfitInsert($data->id,$user->wallet,(array)$data->details->charges);
+                //update transaction
+                AgentNotification::create([
+                    'type'      => NotificationConst::SEND_REMITTANCE,
+                    'agent_id'  =>  $data->agent_id,
+                    'message'   => $notification_content,
+                ]);
+                $data->status = 1;
+                $data->save();
+
+                if( $this->basic_settings->email_notification == true){
+                    $data->agent->notify(new Approved($data->agent,(object)$notifyData));
+                }
+
+                }
+            return redirect()->back()->with(['success' => [__("Remittance request approved successfully")]]);
         }catch(Exception $e){
             return back()->with(['error' => [$e->getMessage()]]);
         }
@@ -579,48 +625,123 @@ class RemitanceController extends Controller
         }
         $data = Transaction::where('id',$request->id)->where('status',2)->where('type', 'REMITTANCE')->first();
 
-        try{
-            $receipient = $data->details->receiver;
-            $notifyData = [
-                'trx_id'  => $data->trx_id,
-                'title'  => "Send Remittance to @" . $receipient->firstname.' '.@$receipient->lastname." (".@$receipient->mobile_code.@$receipient->mobile.")",
-                'request_amount'  => getAmount($data->request_amount,4).' '.get_default_currency_code(),
-                'exchange_rate'  => "1 " .get_default_currency_code().' = '.get_amount($data->details->to_country->rate,$data->details->to_country->code),
-                'charges'   => getAmount( $data->charge->total_charge, 2).' ' .get_default_currency_code(),
-                'payable'   =>  getAmount($data->payable,4).' ' .get_default_currency_code(),
-                'sending_country'   => @$data->details->form_country,
-                'receiving_country'   => @$data->details->to_country->country,
-                'receiver_name'  =>  @$receipient->firstname.' '.@$receipient->lastname,
-                'alias'  =>  ucwords(str_replace('-', ' ', @$receipient->alias)),
-                'transaction_type'  =>  @$data->details->remitance_type,
-                'receiver_get'   =>  getAmount($data->details->recipient_amount,4).' ' .$data->details->to_country->code,
-                'status'  => "Rejected",
-                'reason'  => $request->reject_reason,
-              ];
-            //sender notifications
-            $user = $data->user;
-            if( $this->basic_settings->email_notification == true){
-            $user->notify(new Rejected($user,(object)$notifyData));
-            }
-            $userWallet = UserWallet::where('user_id',$data->user_id)->first();
-            $userWallet->balance += $data->payable;
-            $userWallet->save();
-            $up['status'] = 4;
-            $up['reject_reason'] = $request->reject_reason;
-            $up['available_balance'] = $userWallet->balance;
-            $data->fill($up)->save();
 
-            return redirect()->back()->with(['success' => ['Remittance request rejected successfully']]);
+        try{
+             $notification_content = [
+                'title'         => __("Remittance"),
+                'message'       => "Your Remittance request rejected by admin " .getAmount($data->request_amount,2).' '.get_default_currency_code(),
+                'image'         => files_asset_path('profile-default'),
+            ];
+
+            if($data->user_id != null) {
+                $receipient = $data->details->receiver;
+                $notifyData = [
+                    'trx_id'  => $data->trx_id,
+                    'title'  => "Send Remittance to @" . $receipient->firstname.' '.@$receipient->lastname." (".@$receipient->mobile_code.@$receipient->mobile.")",
+                    'request_amount'  => getAmount($data->request_amount,4).' '.get_default_currency_code(),
+                    'exchange_rate'  => "1 " .get_default_currency_code().' = '.get_amount($data->details->to_country->rate,$data->details->to_country->code),
+                    'charges'   => getAmount( $data->charge->total_charge, 2).' ' .get_default_currency_code(),
+                    'payable'   =>  getAmount($data->payable,4).' ' .get_default_currency_code(),
+                    'sending_country'   => @$data->details->form_country,
+                    'receiving_country'   => @$data->details->to_country->country,
+                    'receiver_name'  =>  @$receipient->firstname.' '.@$receipient->lastname,
+                    'alias'  =>  ucwords(str_replace('-', ' ', @$receipient->alias)),
+                    'transaction_type'  =>  @$data->details->remitance_type,
+                    'receiver_get'   =>  getAmount($data->details->recipient_amount,4).' ' .$data->details->to_country->code,
+                    'status'  => "Rejected",
+                    'reason'  => $request->reject_reason,
+                ];
+                $userWallet = UserWallet::where('user_id',$data->user_id)->first();
+                $userWallet->balance +=  $data->payable;
+                $userWallet->save();
+
+                $up['status'] = 4;
+                $up['reject_reason'] = $request->reject_reason;
+                $up['available_balance'] = $userWallet->balance;
+                $data->fill($up)->save();
+
+                $user =$data->user;
+                if( $this->basic_settings->email_notification == true){
+                $user->notify(new Rejected($user,(object)$notifyData));
+                }
+                UserNotification::create([
+                    'type'      => NotificationConst::SEND_REMITTANCE,
+                    'user_id'  =>  $data->user_id,
+                    'message'   => $notification_content,
+                ]);
+                DB::commit();
+            }else if($data->agent_id != null) {
+                $receipient = $data->details->receiver_recipient;
+                $notifyData = [
+                    'trx_id'  => $data->trx_id,
+                    'title'  => "Send Remittance to @" . $receipient->firstname.' '.@$receipient->lastname." (".@$receipient->mobile_code.@$receipient->mobile.")",
+                    'request_amount'  => getAmount($data->request_amount,4).' '.get_default_currency_code(),
+                    'exchange_rate'  => "1 " .get_default_currency_code().' = '.get_amount($data->details->to_country->rate,$data->details->to_country->code),
+                    'charges'   => getAmount( $data->charge->total_charge, 2).' ' .get_default_currency_code(),
+                    'payable'   =>  getAmount($data->payable,4).' ' .get_default_currency_code(),
+                    'sending_country'   => @$data->details->form_country,
+                    'receiving_country'   => @$data->details->to_country->country,
+                    'receiver_name'  =>  @$receipient->firstname.' '.@$receipient->lastname,
+                    'alias'  =>  ucwords(str_replace('-', ' ', @$receipient->alias)),
+                    'transaction_type'  =>  @$data->details->remitance_type,
+                    'receiver_get'   =>  getAmount($data->details->recipient_amount,4).' ' .$data->details->to_country->code,
+                    'status'  => "Rejected",
+                    'reason'  => $request->reject_reason,
+                ];
+                $userWallet = AgentWallet::where('agent_id',$data->agent_id)->first();
+                $userWallet->balance +=  $data->payable;
+                $userWallet->save();
+
+                $up['status'] = 4;
+                $up['reject_reason'] = $request->reject_reason;
+                $up['available_balance'] = $userWallet->balance;
+                $data->fill($up)->save();
+
+                $user =$data->agent;
+                if( $this->basic_settings->agent_email_notification == true){
+                $user->notify(new Rejected($user,(object)$notifyData));
+                }
+                AgentNotification::create([
+                    'type'      => NotificationConst::SEND_REMITTANCE,
+                    'agent_id'  =>  $data->agent_id,
+                    'message'   => $notification_content,
+                ]);
+                DB::commit();
+            }
+            return redirect()->back()->with(['success' => [__("Remittance request rejected successfully")]]);
         }catch(Exception $e){
             return back()->with(['error' => [$e->getMessage()]]);
         }
+    }
+    public function agentProfitInsert($id,$authWallet,$charges) {
+        DB::beginTransaction();
+        try{
+            DB::table('agent_profits')->insert([
+                'agent_id'          => $authWallet->agent->id,
+                'transaction_id'    => $id,
+                'percent_charge'    => $charges['agent_percent_commission'],
+                'fixed_charge'      => $charges['agent_fixed_commission'],
+                'total_charge'      => $charges['agent_total_commission'],
+                'created_at'        => now(),
+            ]);
+            DB::commit();
+        }catch(Exception $e) {
+            DB::rollBack();
+            return back()->with(['error' => [$e->getMessage()]]);
+        }
+    }
+    public function updateSenderWalletBalance($senderWallet,$afterCharge,$transaction) {
+        $transaction->update([
+            'available_balance'   => $afterCharge,
+        ]);
+        $senderWallet->update([
+            'balance'   => $afterCharge,
+        ]);
     }
     public function exportData(){
         $file_name = now()->format('Y-M-d_H:i:s') . "_Remittance_Logs".'.xlsx';
         return Excel::download(new RemittanceTransactionExport, $file_name);
     }
-
-
     ///========================Remittance logs end===============================================
 
 

@@ -10,20 +10,11 @@ class BlogCategory extends Model
     use HasFactory;
     protected $table = "blog_categories";
     protected $guarded = ['id'];
-    protected $appends = [
-        'editData',
+   
+    protected $casts = [
+        'data'    => "object",
     ];
-    public function getEditDataAttribute() {
 
-        $data = [
-            'id'      => $this->id,
-            'name'      => $this->name,
-            'slug'      => $this->slug,
-            'status'      => $this->status,
-        ];
-
-        return json_encode($data);
-    }
     public function scopeActive($query)
     {
         return $query->where('status', true);

@@ -39,6 +39,7 @@ class ProfileController extends Controller
         $validated = Validator::make($request->all(),[
             'firstname'     => "required|string|max:60",
             'lastname'      => "required|string|max:60",
+            'business_name'      => "required|string|max:60",
             'country'       => "required|string|max:50",
             'phone_code'    => "required|string|max:20",
             'phone'         => "required|string|max:20",
@@ -81,7 +82,7 @@ class ProfileController extends Controller
     public function passwordUpdate(Request $request) {
         $basic_settings = BasicSettingsProvider::get();
         $passowrd_rule = "required|string|min:6|confirmed";
-        if($basic_settings->secure_password) {
+        if($basic_settings->merchant_secure_password) {
             $passowrd_rule = ["required",Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised(),"confirmed"];
         }
         $request->validate([
@@ -115,7 +116,6 @@ class ProfileController extends Controller
         $user = auth()->user();
         $user->status = false;
         $user->email_verified = false;
-        $user->sms_verified = false;
         $user->kyc_verified = false;
         $user->deleted_at = now();
         $user->save();

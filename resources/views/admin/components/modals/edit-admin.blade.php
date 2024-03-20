@@ -26,46 +26,46 @@
 
                             <div class="col-xl-6 col-lg-6 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "First Name*",
+                                    'label'         => __("first Name")."*",
                                     'name'          => "edit_firstname",
-                                    'placeholder'   => "First Name",
+                                  'placeholder'   => __("first Name"),
                                     'value'         => old("edit_firstname"),
                                 ])
                             </div>
                             <div class="col-xl-6 col-lg-6 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Last Name*",
+                                    'label'         =>__("last Name")."*",
                                     'name'          => "edit_lastname",
-                                    'placeholder'   => "Last Name",
+                                    'placeholder'   => __("last Name"),
                                     'value'         => old("edit_lastname"),
                                 ])
                             </div>
                             <div class="col-xl-6 col-lg-6 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Username*",
+                                    'label'         => __("Username")."*",
                                     'name'          => "edit_username",
-                                    'placeholder'   => "Username",
+                                    'placeholder'   =>__("Username"),
                                     'value'         => old("edit_username"),
                                 ])
                             </div>
                             <div class="col-xl-6 col-lg-6 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Email*",
+                                    'label'         =>__("Email")."*",
                                     'name'          => "edit_email",
-                                    'placeholder'   => "Email",
+                                    'placeholder'   =>__("Email"),
                                     'value'         => old("edit_email"),
                                 ])
                             </div>
                             <div class="col-xl-6 col-lg-6 form-group">
                                 @include('admin.components.form.input',[
-                                    'label'         => "Phone*",
+                                    'label'         => __("Phone")."*",
                                     'name'          => "edit_phone",
                                     'placeholder'   => "Phone",
                                     'value'         => old("edit_phone"),
                                 ])
                             </div>
                             <div class="col-xl-6 col-lg-6 form-group role-select-wrp" data-admin-roles="{{ json_encode($admin_roles) }}">
-                                <label>{{ __("Role*") }}</label>
+                                <label>{{ __("Role") }}*</label>
                                 <select class="form--control select2-auto-tokenize" name="edit_role[]" data-old="{{ old("edit_role") }}" multiple data-placeholder="Select Role">
                                     @foreach ($admin_roles as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -75,7 +75,7 @@
 
                             <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                                 <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                                <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                                <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                             </div>
                         </div>
                     </form>

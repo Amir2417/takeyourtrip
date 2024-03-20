@@ -2,11 +2,11 @@
     <thead>
         <tr>
             <th></th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th>{{ __("Username") }}</th>
+            <th>{{ __("Email") }}</th>
+            <th>{{ __("Phone") }}</th>
+            <th>{{__("Status") }}</th>
+            <th>{{__("action")}}</th>
         </tr>
     </thead>
     <tbody>
@@ -22,9 +22,9 @@
                 <td>{{ $item->full_mobile }}</td>
                 <td>
                     @if (Route::currentRouteName() == "admin.agents.kyc.unverified")
-                        <span class="{{ $item->kycStringStatus->class }}">{{ $item->kycStringStatus->value }}</span>
+                        <span class="{{ $item->kycStringStatus->class }}">{{ __($item->kycStringStatus->value ) }}</span>
                     @else
-                        <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span>
+                        <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                     @endif
                 </td>
                 <td>

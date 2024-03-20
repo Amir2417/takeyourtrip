@@ -56,7 +56,7 @@ class SetupFirebaseController extends Controller
                 'firebase_config'       => $data,
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
         return back()->with(['success' => ['Information updated successfully!']]);
     }

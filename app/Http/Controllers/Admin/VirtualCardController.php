@@ -13,7 +13,7 @@ class VirtualCardController extends Controller
 {
     public function cardApi()
     {
-        $page_title = "Setup Virtual Card Api";
+        $page_title = __("Setup Virtual Card Api");
         $api = VirtualCardApi::first();
         return view('admin.sections.virtual-card.api',compact(
             'page_title',
@@ -60,11 +60,11 @@ class VirtualCardController extends Controller
                 $upload_file = upload_files_from_path_dynamic($image, "card-api");
                 $api->image = $upload_file;
             } catch (Exception $e) {
-                return back()->with(['error' => ['Ops! Failed To Upload Image.']]);
+                return back()->with(['error' => [__("Ops! Failed To Upload Image.")]]);
             }
         }
         $api->save();
 
-        return back()->with(['success' => ['Card API Has Been Updated.']]);
+        return back()->with(['success' => [__("Card API Has Been Updated.")]]);
     }
 }

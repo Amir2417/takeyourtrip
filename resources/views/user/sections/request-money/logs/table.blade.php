@@ -1,14 +1,14 @@
 <table class="custom-table">
     <thead>
         <tr>
-            <th>Transaction ID</th>
-            <th>Request Type</th>
-            <th>Request Amount</th>
-            <th>Fees & Charge</th>
-            <th>Payable</th>
-            <th>Status</th>
-            <th>Time</th>
-            <th>Action</th>
+            <th>{{ __("web_trx_id") }}</th>
+            <th>{{ __("request Type") }}</th>
+            <th>{{ __("request Amount") }}</th>
+            <th>{{ __("Fees & Charges") }}</th>
+            <th>{{ __("Payable") }}</th>
+            <th>{{ __("Status") }}</th>
+            <th>{{ __("Time") }}</th>
+            <th>{{ __("Action") }}</th>
         </tr>
     </thead>
     <tbody>
@@ -33,7 +33,7 @@
                 <td>{{ get_transaction_numeric_attribute_request_money($item->attribute) }} {{ get_amount($item->payable,$item->creator_wallet->currency->code) }}</td>
                 @endif
                 <td>
-                    <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span>
+                    <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                 </td>
                 <td>{{ $item->created_at->format("Y-m-d H:i A") }}</td>
 
@@ -48,7 +48,7 @@
 
             </tr>
         @empty
-        @include('admin.components.alerts.empty',['colspan' => 8])
+        @include('admin.components.alerts.empty2',['colspan' => 8])
         @endforelse
     </tbody>
 </table>

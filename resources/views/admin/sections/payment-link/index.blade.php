@@ -35,14 +35,14 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>{{ __("TRX") }}</th>
-                            <th>{{ __("Type") }}</th>
+                            <th>{{ __("web_trx_id") }}</th>
+                            <th>{{__("type")}}</th>
                             <th>{{ __("User Type") }}</th>
                             <th>{{ __("Email") }}</th>
                             <th>{{ __("Amount") }}</th>
                             <th>{{ __("Payable") }}</th>
                             <th>{{ __("Conversion Payable") }}</th>
-                            <th>{{ __("Status") }}</th>
+                            <th>{{__("Status") }}</th>
                             <th>{{ __("Time") }}</th>
                             <th></th>
                         </tr>
@@ -72,7 +72,7 @@
                                 <td>{{ get_amount(@$item->payable, @$item->details->charge_calculation->sender_cur_code) }}</td>
                                 <td>{{ get_amount(@$item->details->charge_calculation->conversion_payable, @$item->details->charge_calculation->receiver_currency_code) }}</td>
                                 <td>
-                                    <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span>
+                                    <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                                 </td>
                                 <td>{{ dateFormat('d M y h:i:s A', $item->created_at) }}</td>
                                 <td>
@@ -100,7 +100,7 @@
                                 </td>
                             </tr>
                         @empty
-                            @include('admin.components.alerts.empty',['colspan' => 8])
+                            @include('admin.components.alerts.empty',['colspan' => 9])
                         @endforelse
                     </tbody>
                 </table>

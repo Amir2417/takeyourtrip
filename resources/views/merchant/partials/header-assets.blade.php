@@ -1,5 +1,5 @@
 <!-- favicon -->
-<link rel="shortcut icon" href="{{ get_fav($basic_settings) }}" type="image/x-icon">
+<link rel="shortcut icon" href="{{ get_fav_merchant($basic_settings) }}" type="image/x-icon">
 <!-- fontawesome css link -->
 <link rel="stylesheet" href="{{ asset('public/frontend/') }}/css/fontawesome-all.min.css">
 <!-- line-awesome-icon css -->
@@ -23,7 +23,7 @@
 <!-- main style css link -->
 <link rel="stylesheet" href="{{ asset('public/frontend/') }}/css/style.css">
 @php
-    $color = @$basic_settings->base_color ?? '#000000';
+    $color = @$basic_settings->merchant_base_color ?? '#000000';
 
 @endphp
 

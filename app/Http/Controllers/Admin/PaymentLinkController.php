@@ -87,7 +87,7 @@ class PaymentLinkController extends Controller
             'currency:id,name,alias,payment_gateway_id,currency_code,rate',
         )->where('type', 'pay-link')->first();
 
-        $page_title = "Payment Link details";
+        $page_title = __("Payment Link details");
         return view('admin.sections.payment-link.details', compact(
             'page_title',
             'data'

@@ -10,7 +10,7 @@
                     <div class="row mb-10-none mt-3">
                         <div class="col-xl-12 col-lg-12 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => "Email*",
+                                'label'         =>__("Email")."*",
                                 'name'          => "email",
                                 'type'          => "email",
                                 'value'         => old("email"),
@@ -19,7 +19,7 @@
 
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Send") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("send") }}</button>
                         </div>
                     </div>
                 </form>

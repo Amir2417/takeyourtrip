@@ -8,13 +8,13 @@
 <div class="developer-body-wrapper">
     <div class="developer-main-wrapper">
         <h1 class="heading-title mb-20">{{ __("Base URL") }}</h1>
-        <p>{{ __("The base URL for API requests is:") }}</p>
+        <p>{{ __("The base URL for API requests is") }}:</p>
         <div class="mb-10">
-            <span>{{ __("For PRODUCTION Mode:") }} </span>
+            <span>{{ __("For PRODUCTION Mode") }}: </span>
             <code  class="highlight">{{ url('/') }}/pay/api/v1</code>
         </div>
         <div>
-            <span>For SANDBOX Mode: </span>
+            <span>{{ __("For SANDBOX Mode") }}: </span>
             <code class="highlight">{{ url('/') }}/pay/sandbox/api/v1</code>
         </div>
     </div>

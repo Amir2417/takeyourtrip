@@ -13,12 +13,17 @@ class BasicSettings extends Model
 
     protected $casts = [
         'mail_config'               => 'object',
-        'firebase_config'               => 'object',
         'push_notification_config'  => 'object',
         'broadcast_config'          => 'object',
         'email_verification'          => 'boolean',
         'email_notification'          => 'boolean',
         'kyc_verification'          => 'boolean',
+        'agent_email_verification'          => 'boolean',
+        'agent_email_notification'          => 'boolean',
+        'agent_kyc_verification'          => 'boolean',
+        'merchant_email_verification'          => 'boolean',
+        'merchant_email_notification'          => 'boolean',
+        'merchant_kyc_verification'          => 'boolean',
     ];
 
 

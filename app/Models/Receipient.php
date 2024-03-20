@@ -18,6 +18,7 @@ class Receipient extends Model
         'lastname' => 'string',
         'mobile_code' => 'string',
         'mobile' => 'string',
+        'account_number' => 'string',
         'city' => 'string',
         'state' => 'string',
         'address' => 'string',
@@ -38,6 +39,6 @@ class Receipient extends Model
     public function receiver_country() {
         return $this->belongsTo(ReceiverCounty::class,'country');
     }
-   
+
 
 }

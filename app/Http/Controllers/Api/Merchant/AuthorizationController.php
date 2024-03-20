@@ -64,7 +64,6 @@ class AuthorizationController extends Controller
     }
     public function mailVerify(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'code' => 'required|numeric',
         ]);
@@ -74,7 +73,7 @@ class AuthorizationController extends Controller
         }
         $user = auth()->user();
         $code = $request->code;
-        $otp_exp_sec = BasicSettingsProvider::get()->otp_exp_seconds ?? GlobalConst::DEFAULT_TOKEN_EXP_SEC;
+        $otp_exp_sec = BasicSettingsProvider::get()->merchant_otp_exp_seconds ?? GlobalConst::DEFAULT_TOKEN_EXP_SEC;
         $auth_column = MerchantAuthorization::where("merchant_id",$user->id)->first();
 
         if(!$auth_column){
@@ -186,7 +185,7 @@ class AuthorizationController extends Controller
     }
     public function sendEmailOtp(Request $request){
         $basic_settings = $this->basic_settings;
-        if($basic_settings->agree_policy){
+        if($basic_settings->merchant_agree_policy){
             $agree = 'required';
         }else{
             $agree = '';
@@ -231,7 +230,7 @@ class AuthorizationController extends Controller
                 }
             }
             DB::table("merchant_authorizations")->insert($data);
-            if($basic_settings->email_notification == true && $basic_settings->email_verification == true){
+            if($basic_settings->merchant_email_notification == true && $basic_settings->merchant_email_verification == true){
                 Notification::route("mail",$validated['email'])->notify(new SendVerifyCode($validated['email'], $code));
             }
             DB::commit();
@@ -253,7 +252,7 @@ class AuthorizationController extends Controller
             return Helpers::validation($error);
         }
         $code = $request->code;
-        $otp_exp_sec = BasicSettingsProvider::get()->otp_exp_seconds ?? GlobalConst::DEFAULT_TOKEN_EXP_SEC;
+        $otp_exp_sec = BasicSettingsProvider::get()->merchant_otp_exp_seconds ?? GlobalConst::DEFAULT_TOKEN_EXP_SEC;
         $auth_column = MerchantAuthorization::where("email",$request->email)->first();
         if(!$auth_column){
             $message = ['error'=>[__('Invalied request')]];

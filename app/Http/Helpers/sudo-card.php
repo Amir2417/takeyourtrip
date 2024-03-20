@@ -2,9 +2,49 @@
 
 //sudo virtual card system
 
+use App\Models\SudoVirtualCard;
 use App\Models\VirtualCardApi;
 
 
+function funding_source_create($api_key,$base_url){
+    $url = $base_url.'/fundingsources';
+    $data = ['type' => 'default', 'status' => 'active'];
+
+    $headers = [
+        "Authorization: Bearer ".$api_key,
+        "accept: application/json",
+        'Content-Type: application/json',
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $result = json_decode($response,true);
+
+    if(isset($result['statusCode'])){
+        if($result['statusCode'] == 200){
+            $data =[
+                'status' => true,
+                'message' =>" Successfully Create Founding Source",
+                'data' => $result['data'],
+           ];
+
+        }else{
+            $data =[
+                'status' => false,
+                'message' =>$result['message']??'',
+                'data' => [],
+           ];
+        }
+
+    }
+    return  $data;
+}
 function get_funding_source($api_key,$base_url){
     $curl = curl_init();
     curl_setopt_array($curl, [
@@ -31,7 +71,8 @@ function get_funding_source($api_key,$base_url){
         return  $result;
     }
 }
-function create_sudo_account($api_key,$base_url,$currency){
+function create_sudo_account($api_key,$base_url, $currency){
+
     $curl = curl_init();
     curl_setopt_array($curl, [
     CURLOPT_URL => $base_url."/accounts",
@@ -58,32 +99,19 @@ function create_sudo_account($api_key,$base_url,$currency){
     $err = curl_error($curl);
 
     curl_close($curl);
-    $result = json_decode( $response,true);
-    if(isset($result['statusCode'])){
-        if($result['statusCode'] == 200){
-            $data =[
-                'status' => true,
-                'data' => $result['data'],
-                'message' =>"Sudo Customer Created Successfully",
-           ];
 
-        }else{
-            $data =[
-                'status' => false,
-                'data' => [],
-                'message' =>"Something Is Wrong,Please Contact With Administration",
-           ];
-
-        }
-
+    if ($err) {
+        $result = json_decode( $response,true);
+        return  $result;
+    } else {
+        $result = json_decode( $response,true);
+        return  $result['data']??[];
     }
-    return $data;
 }
 function get_sudo_accounts($api_key,$base_url){
-
     $curl = curl_init();
     curl_setopt_array($curl, [
-    CURLOPT_URL => $base_url."/accounts",
+    CURLOPT_URL => $base_url."/accounts?type=account",
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => "",
     CURLOPT_MAXREDIRS => 10,
@@ -341,14 +369,15 @@ function getSudoBalance(){
             $data =[
                 'amount' => $result['data']['availableBalance'],
                 'status' => true,
-                'message' =>" SuccessFully Fetch Account Balance",
+                'message' =>__("SuccessFully Fetch Account Balance"),
            ];
             return  $data;
         }else{
+
             $data =[
                 'amount' => 0,
                 'status' => false,
-                'message' =>"Something Is Wrong,Please Contact With Administration",
+                'message' =>__("Something went wrong! Please try again."),
            ];
             return $data;
         }
@@ -358,3 +387,107 @@ function getSudoBalance(){
 
 }
 
+function getSudoCard($card_id){
+    $method = VirtualCardApi::first();
+    $apiUrl = $method->config->sudo_url.'/'.'cards/'.$card_id;
+    $apiKey = $method->config->sudo_api_key;
+    $ch = curl_init($apiUrl);
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $apiKey,
+        'Accept: application/json',
+    ]);
+    // Execute cURL session and get the response
+    $response = curl_exec($ch);
+    // Close cURL session
+    curl_close($ch);
+    $result = json_decode( $response,true);
+    if(isset($result['statusCode'])){
+        if($result['statusCode'] == 200){
+            $data =[
+                'data' => $result['data'],
+                'status' => true,
+                'message' =>"Card fetched successfully.",
+           ];
+        }else{
+            $data =[
+                'data' => [],
+                'status' => false,
+                'message' =>__("Something went wrong! Please try again."),
+           ];
+        }
+
+    }
+    return $data;
+
+}
+
+function sudoFundCard($card_account_number,$amount){
+    $method = VirtualCardApi::first();
+    $currency = get_default_currency_code();
+    $apiUrl = $method->config->sudo_url.'/accounts/transfer';
+    $apiKey = $method->config->sudo_api_key;
+    $sudo_accounts = get_sudo_accounts( $method->config->sudo_api_key,$method->config->sudo_url);
+    $filteredArray = array_filter($sudo_accounts, function($item) use ($currency) {
+        return $item['currency'] === $currency;
+    });
+    $matchingElements = array_values($filteredArray);
+    if( $matchingElements == [] || $matchingElements == null || $matchingElements == ""){
+        $data =[
+            'data' => [],
+            'status' => false,
+            'message' =>__("Something went wrong! Please try again."),
+        ];
+        return $data;
+     }
+
+    $data = [
+        'debitAccountId' => $matchingElements[0]['_id'],
+        'creditAccountId' => $card_account_number,
+        'beneficiaryBankCode' => '',
+        'amount' => $amount,
+        'paymentReference' => getTrxNum(),
+    ];
+
+    $ch = curl_init($apiUrl);
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $apiKey,
+        'Accept: application/json',
+        'Content-Type: application/json',
+    ]);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $result = json_decode( $response,true);
+
+    if(isset($result['statusCode'])){
+        if($result['statusCode'] == 200){
+            $data =[
+                'data' => $result['data'],
+                'status' => true,
+                'message' =>"Approved or completed successfully",
+           ];
+        }else{
+            $data =[
+                'data' => [],
+                'status' => false,
+                'message' =>__("Something went wrong! Please try again."),
+           ];
+        }
+
+    }
+    return $data;
+}
+
+function updateSudoCardBalance($user,$card_id,$response){
+    $card = SudoVirtualCard::where('user_id',$user->id)->where('card_id',$card_id)->first();
+    $card->amount =$response['data']['balance'];
+    $card->save();
+    return  $card->amount??0;
+}

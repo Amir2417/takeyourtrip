@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\User\SendMoneyController;
 use App\Http\Controllers\GlobalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
@@ -23,10 +22,7 @@ Route::get("file/download/{path_source}/{name}",function($path_source,$file_name
     return back()->with(['error' => ['File doesn\'t exists']]);
 })->name('file.download');
 
-
-Route::get('api/send-money',[GlobalController::class,'sendMoney']);
-Route::post('api/send-money/confirmed',[GlobalController::class,'confirmed']);
-Route::get('api/send-money/redirect-url/{identifier}',[GlobalController::class,'redirectUrl'])->name('api.send.money.redirect.url'); 
-Route::post('api/send-money/stripe-payment-gateway',[GlobalController::class,'stripePaymentGateway'])->name('api.send.money.stripe.payment.gateway');         
-Route::get('api/user/send-money/redirect-url/{identifier}',[SendMoneyController::class,'redirectUrl'])->name('api.user.send.money.redirect.url');          
-Route::post('api/stripe-payment-gateway',[SendMoneyController::class,'stripePaymentGateway'])->name('api.user.send.money.stripe.payment.gateway');
+//Flutterwave withdraw callback url
+Route::controller(GlobalController::class)->group(function(){
+    Route::post('flutterwave/withdraw_webhooks','webHookResponse')->name('webhook.response')->withoutMiddleware(['web']);
+});

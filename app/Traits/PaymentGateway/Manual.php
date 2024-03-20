@@ -22,6 +22,7 @@ use App\Notifications\User\AddMoney\ManualMail;
 use App\Traits\ControlDynamicInputFields;
 use Illuminate\Support\Facades\Validator;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
+use App\Models\AgentNotification;
 use Illuminate\Support\Facades\Auth;
 
 trait Manual
@@ -29,19 +30,19 @@ trait Manual
 use ControlDynamicInputFields;
     public function manualInit($output = null) {
         if(!$output) $output = $this->output;
-        $gatewayAlias = $output['gateway']['alias'];
         $identifier = generate_unique_string("transactions","trx_id",16);
         $this->manualJunkInsert($identifier);
         Session::put('identifier',$identifier);
         Session::put('output',$output);
-       return redirect()->route('user.add.money.manual.payment');
+        if(userGuard()['guard']  === 'web'){
+            return redirect()->route('user.add.money.manual.payment');
+        }elseif(userGuard()['guard']  === 'agent'){
+            return redirect()->route('agent.add.money.manual.payment');
+        }
+
     }
-
     public function manualJunkInsert($response) {
-
         $output = $this->output;
-
-
         $data = [
             'gateway'   => $output['gateway']->id,
             'currency'  => $output['currency']->id,
@@ -70,27 +71,36 @@ use ControlDynamicInputFields;
 
         try{
             $trx_id = 'AM'.getTrxNum();
-            $user = auth()->user();
-            $inserted_id = $this->insertRecordManual($output,$get_values,$trx_id);
-            $this->insertChargesManual($output,$inserted_id);
+            $user = authGuardApi()['user'];
+            if(userGuard()['type'] == "USER"){
+                $inserted_id = $this->insertRecordManual($output,$get_values,$trx_id);
+                $this->insertChargesManual($output,$inserted_id);
+                if( $basic_setting->email_notification == true){
+                    $user->notify(new ManualMail($user,$output,$trx_id));
+                }
+                $return_url = "user.add.money.index";
+            }elseif(userGuard()['type'] == "AGENT"){
+                $inserted_id = $this->insertRecordManualAgent($output,$get_values,$trx_id);
+                $this->insertChargesManualAgent($output,$inserted_id);
+                if( $basic_setting->agent_email_notification == true){
+                    $user->notify(new ManualMail($user,$output,$trx_id));
+                }
+                $return_url = $return_url = "agent.add.money.index";
+            }
             $this->insertDeviceManual($output,$inserted_id);
             $this->removeTempDataManual($output);
-            if( $basic_setting->email_notification == true){
-                $user->notify(new ManualMail($user,$output,$trx_id));
-            }
-            return redirect()->route("user.add.money.index")->with(['success' => [__('Add Money request send to admin successfully')]]);
+
+            return redirect()->route($return_url)->with(['success' => [__('Add Money request send to admin successfully')]]);
         }catch(Exception $e) {
-            return redirect()->route("user.add.money.index")->with(['error' => [__("Something went wrong! Please try again.")]]);
+            return redirect()->route($return_url)->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
 
 
     }
-
-
+    //user transaction
     public function insertRecordManual($output,$get_values,$trx_id) {
         $trx_id = $trx_id;
-        $token = $this->output['tempData']['identifier'] ?? "";
         DB::beginTransaction();
         try{
             $id = DB::table("transactions")->insertGetId([
@@ -116,8 +126,6 @@ use ControlDynamicInputFields;
         }
         return $id;
     }
-
-
     public function insertChargesManual($output,$id) {
         if(Auth::guard(get_auth_guard())->check()){
             $user = auth()->guard(get_auth_guard())->user();
@@ -168,7 +176,6 @@ use ControlDynamicInputFields;
             throw new Exception(__("Something went wrong! Please try again."));
         }
     }
-
     public function insertDeviceManual($output,$id) {
         $client_ip = request()->ip() ?? false;
         $location = geoip()->getLocation($client_ip);
@@ -192,6 +199,75 @@ use ControlDynamicInputFields;
                 'timezone'      => $location['timezone'] ?? "",
                 'browser'       => $agent->browser() ?? "",
                 'os'            => $agent->platform() ?? "",
+            ]);
+            DB::commit();
+        }catch(Exception $e) {
+            DB::rollBack();
+            throw new Exception(__("Something went wrong! Please try again."));
+        }
+    }
+    //agent transaction
+    public function insertRecordManualAgent($output,$get_values,$trx_id) {
+        $agent = authGuardApi()['user'];
+        $trx_id = $trx_id;
+        DB::beginTransaction();
+        try{
+            $id = DB::table("transactions")->insertGetId([
+                'agent_id'                      => $agent->id,
+                'agent_wallet_id'               => $output['wallet']->id,
+                'payment_gateway_currency_id'   => $output['currency']->id,
+                'type'                          => PaymentGatewayConst::TYPEADDMONEY,
+                'trx_id'                        => $trx_id,
+                'request_amount'                => $output['amount']->requested_amount,
+                'payable'                       => $output['amount']->total_amount,
+                'available_balance'             => $output['wallet']->balance,
+                'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPEADDMONEY," ")) . " With " . $output['gateway']->name,
+                'details'                       => json_encode($get_values),
+                'status'                        => 2,
+                'attribute'                      =>PaymentGatewayConst::SEND,
+                'created_at'                    => now(),
+            ]);
+
+            DB::commit();
+        }catch(Exception $e) {
+            DB::rollBack();
+            throw new Exception(__("Something went wrong! Please try again."));
+        }
+        return $id;
+    }
+    public function insertChargesManualAgent($output,$id) {
+        $user = authGuardApi()['user'];
+        DB::beginTransaction();
+        try{
+            DB::table('transaction_charges')->insert([
+                'transaction_id'    => $id,
+                'percent_charge'    => $output['amount']->percent_charge,
+                'fixed_charge'      => $output['amount']->fixed_charge,
+                'total_charge'      => $output['amount']->total_charge,
+                'created_at'        => now(),
+            ]);
+            DB::commit();
+
+            //notification
+            $notification_content = [
+                'title'         => __("Add Money"),
+                'message'       => __("Your Wallet")." (".$output['wallet']->currency->code.")  ".__("balance  has been added")." ".$output['amount']->requested_amount.' '. $output['wallet']->currency->code,
+                'time'          => Carbon::now()->diffForHumans(),
+                'image'         => get_image($user->image,'agent-profile'),
+            ];
+
+            AgentNotification::create([
+                'type'      => NotificationConst::BALANCE_ADDED,
+                'agent_id'  =>   $user->id,
+                'message'   => $notification_content,
+            ]);
+
+           //admin notification
+            $notification_content['title'] = __('Add Money').' '.$output['amount']->requested_amount.' '.$output['amount']->default_currency.' '.__('By '). $output['currency']->name.' ('.$user->username.')';
+            AdminNotification::create([
+                'type'      => NotificationConst::BALANCE_ADDED,
+                'admin_id'  => 1,
+                'message'   => $notification_content,
             ]);
             DB::commit();
         }catch(Exception $e) {
@@ -229,6 +305,7 @@ use ControlDynamicInputFields;
             $error = ['error'=>["Sorry, your payment information is invalid"]];
             return Helpers::error($error);
         }
+
         $gateway = PaymentGatewayModel::manual()->where('slug',PaymentGatewayConst::add_money_slug())->where('id',$hasData->data->gateway)->first();
         $payment_fields = $gateway->input_fields ?? [];
 
@@ -247,15 +324,24 @@ use ControlDynamicInputFields;
 
         try{
             $trx_id = 'AM'.getTrxNum();
-            $user = auth()->user();
-            $user->notify(new ManualMail($user,$output,$trx_id));
-            $inserted_id = $this->insertRecordManual($output,$get_values,$trx_id);
-            $this->insertChargesManual($output,$inserted_id);
+            $user = authGuardApi()['user'];
+
+            if(authGuardApi()['guard'] == 'agent_api'){
+                $inserted_id = $this->insertRecordManualAgent($output,$get_values,$trx_id);
+                $this->insertChargesManualAgent($output,$inserted_id);
+            }elseif(auth()->guard(get_auth_guard())->check()){
+                $inserted_id = $this->insertRecordManual($output,$get_values,$trx_id);
+                $this->insertChargesManual($output,$inserted_id);
+            }
+
             $this->insertDeviceManual($output,$inserted_id);
             $hasData->delete();
-            $message =  ['success'=>['Add Money request send to admin successfully']];
+            $user->notify(new ManualMail($user,$output,$trx_id));
+
+            $message =  ['success'=>[__('Add Money request send to admin successfully')]];
             return Helpers::onlysuccess( $message);
         }catch(Exception $e) {
+
             $error = ['error'=>[__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
         }

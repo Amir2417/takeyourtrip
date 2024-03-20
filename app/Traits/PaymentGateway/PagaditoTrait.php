@@ -20,10 +20,12 @@ use Jenssegers\Agent\Agent;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Config;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
+use App\Traits\TransactionAgent;
 
 
 trait PagaditoTrait
 {
+    use TransactionAgent;
     public function pagaditoInit($output = null) {
         $basic_settings = BasicSettingsProvider::get();
         if(!$output) $output = $this->output;
@@ -34,11 +36,13 @@ trait PagaditoTrait
         $mode = $credentials->mode;
         $Pagadito = new Pagadito($uid,$wsk,$credentials,$output['amount']->sender_cur_code);
         $Pagadito->config( $credentials,$output['amount']->sender_cur_code);
+        $env = userGuard()['guard'];
 
         if ($mode == "sandbox") {
             $Pagadito->mode_sandbox_on();
         }
         if ($Pagadito->connect()) {
+
             $Pagadito->add_detail(1,"Please Pay For ".$basic_settings->site_name." Wallet Add Balance", $output['amount']->total_amount);
             $Pagadito->set_custom_param("param1", "Valor de param1");
             $Pagadito->set_custom_param("param2", "Valor de param2");
@@ -58,7 +62,7 @@ trait PagaditoTrait
                 } else {
                     $tokenValue = '';
                 }
-                $this->pagaditoJunkInsert($getUrls,$tokenValue,"web");
+                $this->pagaditoJunkInsert($getUrls,$tokenValue, $env);
                 return redirect($getUrls->value);
 
             }
@@ -208,26 +212,33 @@ trait PagaditoTrait
 
     public function pagaditoJunkInsert($response,$tokenValue,$env) {
         $output = $this->output;
-        $user = auth()->guard(get_auth_guard())->user();
         $creator_table = $creator_id = $wallet_table = $wallet_id = null;
 
-        $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
-        $creator_id = auth()->guard(get_auth_guard())->user()->id;
-        $wallet_table = $output['wallet']->getTable();
-        $wallet_id = $output['wallet']->id;
-
-            $data = [
-                'env_type'     => $env??"web",
-                'gateway'      => $output['gateway']->id,
-                'currency'     => $output['currency']->id,
-                'amount'       => json_decode(json_encode($output['amount']),true),
-                'response'     => $response,
-                'wallet_table'  => $wallet_table,
-                'wallet_id'     => $wallet_id,
-                'creator_table' => $creator_table,
-                'creator_id'    => $creator_id,
-                'creator_guard' => get_auth_guard(),
-            ];
+        if(authGuardApi()['type']  == "AGENT"){
+            $creator_table = authGuardApi()['user']->getTable();
+            $creator_id = authGuardApi()['user']->id;
+            $creator_guard = authGuardApi()['guard'];
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }else{
+            $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
+            $creator_id = auth()->guard(get_auth_guard())->user()->id;
+            $creator_guard = get_auth_guard();
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }
+        $data = [
+            'env_type'     => $env??"web",
+            'gateway'      => $output['gateway']->id,
+            'currency'     => $output['currency']->id,
+            'amount'       => json_decode(json_encode($output['amount']),true),
+            'response'     => $response,
+            'wallet_table'  => $wallet_table,
+            'wallet_id'     => $wallet_id,
+            'creator_table' => $creator_table,
+            'creator_id'    => $creator_id,
+            'creator_guard' => $creator_guard,
+        ];
         Session::put('output',$output);
 
         return TemporaryData::create([
@@ -240,7 +251,11 @@ trait PagaditoTrait
         if(!$output) $output = $this->output;
         $token = $this->output['tempData']['identifier'] ?? "";
         if(empty($token)) throw new Exception(__('Transaction Failed. Record didn\'t saved properly. Please try again'));
-        return $this->createTransactionPagadito($output);
+        if(userGuard()['type'] == "USER"){
+            return $this->createTransactionPagadito($output);
+        }else{
+            return $this->createTransactionChildRecords($output,PaymentGatewayConst::STATUSSUCCESS);
+        }
     }
     public function createTransactionPagadito($output) {
         $basic_setting = BasicSettingsProvider::get();
@@ -400,6 +415,7 @@ trait PagaditoTrait
         $mode = $credentials->mode;
         $Pagadito = new Pagadito($uid,$wsk,$credentials,$output['amount']->sender_cur_code);
         $Pagadito->config( $credentials,$output['amount']->sender_cur_code);
+        $env = authGuardApi()['guard'];
 
         if ($mode == "sandbox") {
             $Pagadito->mode_sandbox_on();
@@ -424,7 +440,8 @@ trait PagaditoTrait
                 } else {
                     $tokenValue = '';
                 }
-                $this->pagaditoJunkInsert($getUrls,$tokenValue,"api");
+
+                $this->pagaditoJunkInsert($getUrls,$tokenValue, $env);
                 return $getUrls->value;
 
             }

@@ -11,7 +11,7 @@
 
                         <div class="col-xl-12 col-lg-12 form-group mt-2">
                             @include('admin.components.form.input',[
-                                'label'         => "Category Name*",
+                                'label'         => __("Category Name")."*",
                                 'name'          => "name",
                                 'value'         => old("name"),
                             ])

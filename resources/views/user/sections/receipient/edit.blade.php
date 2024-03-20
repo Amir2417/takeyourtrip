@@ -34,11 +34,11 @@
                                     <label>{{ __("Transaction Type") }}<span>*</span></label>
                                     <select  name="transaction_type" required  class="form--control select2-auto-tokenize method_code trx-type-select" data-minimum-results-for-search="Infinity">
                                             @if($data->type == "wallet-to-wallet-transfer")
-                                            <option value="wallet-to-wallet-transfer" {{ $data->type == "wallet-to-wallet-transfer"?'selected':'' }}>{{@$basic_settings->site_name}} {{__("Wallet")}}</option>
+                                            <option value="wallet-to-wallet-transfer" {{ $data->type == "wallet-to-wallet-transfer"?'selected':'' }}>{{@$basic_settings->site_name}} {{__("rWallet")}}</option>
                                             @elseif($data->type == "bank-transfer")
-                                            <option value="bank-transfer" {{ $data->type == "bank-transfer"?'selected':'' }}>{{__("Bank Transfer")}}</option>
+                                            <option value="bank-transfer" {{ $data->type == "bank-transfer"?'selected':'' }}>{{__("bank-transfer")}}</option>
                                             @else
-                                            <option value="cash-pickup" {{ $data->type == "cash-pickup"?'selected':'' }}>{{__("Cash Pickup")}}</option>
+                                            <option value="cash-pickup" {{ $data->type == "cash-pickup"?'selected':'' }}>{{__("rcash-pickup")}}</option>
                                             @endif
                                         </select>
                                 </div>
@@ -144,7 +144,7 @@
                         // make select box for country
                         var country_select = `
                             <label>Country <span>*</span></label>
-                            <select name="country" class="form--control country-select" data-placeholder="Select Country" data-old="">
+                            <select name="country" class="form--control country-select" data-placeholder="{{ __('select Country') }}" data-old="">
                                 <option selected disabled>Select Country</option>
                             </select>
                         `;

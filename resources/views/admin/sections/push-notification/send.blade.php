@@ -29,24 +29,26 @@
                     <div class="col-xl-12 col-lg-12">
                         <div class="form-group">
                             @include('admin.components.form.input',[
-                                'label'         => "Title*",
+                                'label'         =>__( "titleS"),
                                 'name'          => "title",
                                 'value'         => old("title"),
                                 'data_limit'    => 40,
+                                'placeholder'   => __( "Write Here.."),
                             ])
                         </div>
                         <div class="form-group">
                             @include('admin.components.form.textarea',[
-                                'label'         => "Notification Body*",
+                                'label'         =>__( "Notification Body")."*",
                                 'name'          => "body",
                                 'data_limit'    => 80,
+                                'placeholder'   => __( "Write Here.."),
                             ])
                         </div>
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Send",
+                            'text'          => __("send"),
                             'permission'    => "admin.push.notification.send",
                         ])
                     </div>
@@ -64,9 +66,9 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Title</th>
-                            <th>Body</th>
-                            <th>Time</th>
+                            <th>{{ __("titleS") }}</th>
+                            <th>{{ __("Body") }}</th>
+                            <th>{{ __("Time") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,5 +95,5 @@
 @endsection
 
 @push('script')
-    
+
 @endpush

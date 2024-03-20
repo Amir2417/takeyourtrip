@@ -29,13 +29,13 @@
     <div class="table-area">
         <div class="table-wrapper">
             <div class="table-header">
-                <h5 class="title">{{ __("Cash Pickup ") }}</h5>
+                <h5 class="title">{{ __("cash Pickup") }}</h5>
                 <div class="table-btn-area">
                     @include('admin.components.search-input',[
                         'name'  => 'cashpickup_search',
                     ])
                     @include('admin.components.link.add-default',[
-                        'text'          => "Add New",
+                        'text'          => __("Add New"),
                         'href'          => "#cash-pickup-add",
                         'class'         => "modal-btn",
                         'permission'    => "admin.remitance.cash.pickup.store",

@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'Asia/Dhaka',
+    'timezone' => env('APP_TIMEZONE','Asia/Dhaka'),
 
     /*
     |--------------------------------------------------------------------------
@@ -247,7 +247,7 @@ return [
         'Paystack'  => Unicodeveloper\Paystack\Facades\Paystack::class,
         'Rave' => KingFlamez\Rave\Facades\Rave::class,
 
-        
+
 
 
     ])->toArray(),

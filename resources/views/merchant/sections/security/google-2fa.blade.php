@@ -63,8 +63,7 @@
                         </div>
                         <div class="card-body">
                             <h4 class="mb-3">{{ __("Download Google Authenticator App") }}</h4>
-                            <p>{{ __("Google Authenticator is a product based authenticator by Google that executes two-venture
-                                confirmation administrations for verifying clients of any programming applications.") }}</p>
+                            <p>{{ __("Google Authenticator is a product based authenticator by Google that executes two-venture confirmation administrations for verifying clients of any programming applications") }}</p>
                             <div class="play-store-thumb text-center mb-20">
                                 <img class="mx-auto" src="{{ asset('public/frontend/') }}/images/element/play-store.png">
                             </div>
@@ -83,7 +82,10 @@
             var actionRoute =  "{{ setRoute('merchant.security.google.2fa.status.update') }}";
             var target      = 1;
             var btnText = $(this).text();
-            var message     = `Are you sure to <strong>${btnText}</strong> 2 factor authentication (Powered by google)?`;
+
+            var sureText = '{{ __("Are you sure to") }}';
+            var lastText = '{{ __("2 factor authentication (Powered by google)") }}';
+            var message     = `${sureText} <strong>${btnText}</strong> ${lastText}?`;
             openAlertModal(actionRoute,target,message,btnText,"POST");
         });
         $('.copytext').on('click',function(){

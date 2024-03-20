@@ -38,9 +38,8 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
 
                                 </div>
                                 <div class="col-xl-6 col-lg-6 form-group">
-                                    <label>{{ __("To Country ") }}<span class="text--base">*</span></label>
+                                    <label>{{ __("To Country") }}<span class="text--base">*</span></label>
                                     <select name="to_country" class="form--control select2-basic" required data-placeholder="Select To Country" >
-                                        {{-- <option disabled selected value="">Select To Country</option> --}}
                                         @foreach ($receiverCountries as $country)
                                             <option value="{{ $country->id }}" {{ @$token->receiver_country ==  $country->id ? 'selected':''}}
                                                 data-code="{{ $country->code }}"
@@ -54,7 +53,6 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                                 <div class="col-xl-12 col-lg-12 form-group">
                                     <label>{{ __("Transaction Type") }}<span>*</span></label>
                                     <select  name="transaction_type" required  class="form--control select2-auto-tokenize" data-placeholder="Select Transaction Type" data-minimum-results-for-search="Infinity">
-                                        {{-- <option disabled selected value="">{{ __("Select Transaction Type") }}</option> --}}
                                         <option value="bank-transfer" {{ @$token->transacion_type == 'bank-transfer' ? 'selected':''}} data-name="Bank Transfer">{{__("Bank Transfer")}}</option>
                                         <option value="wallet-to-wallet-transfer" {{ @$token->transacion_type == 'wallet-to-wallet-transfer' ? 'selected':''}} data-name="wallet-to-wallet-transfer">{{ @$basic_settings->site_name }} {{__("Wallet")}}</option>
                                         <option value="cash-pickup" {{ @$token->transacion_type ==  'cash-pickup' ? 'selected':''}} data-name="Cash Pickup">{{__("Cash Pickup")}}</option>
@@ -62,12 +60,9 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                                 </select>
                                 </div>
                                 <div class="col-xl-10 col-lg-10 form-group">
-                                    <label>{{__("Receipient")}} <span class="text--base">*</span></label>
-                                    <select name="recipient" class="form--control  select2-basic  recipient" required data-placeholder="Select Receipient" >
+                                    <label>{{__("recipient")}} <span class="text--base">*</span></label>
+                                    <select name="recipient" class="form--control  select2-basic  recipient" required data-placeholder="{{ __("Select Recipient") }}" >
 
-                                        {{-- @foreach ($receipients as $value)
-                                            <option value="{{ $value->id }}">{{ $value->fullname }}</option>
-                                        @endforeach --}}
                                     </select>
                                 </div>
                                 <div class="col-xl-2 col-lg-2 form-group mt-4">
@@ -77,18 +72,18 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                                 </div>
 
                                 <div class="col-xl-6 col-lg-6 form-group">
-                                    <label>{{ __("Sending Amount") }} <span class="text--base">*</span></label>
+                                    <label>{{ __("sending Amount") }} <span class="text--base">*</span></label>
                                     <div class="input-group">
-                                        <input type="number" name="send_amount" class="form--control" placeholder="Enter Amount" value="{{ old('send_amount') }}" >
+                                        <input type="text" name="send_amount" class="form--control number-input" placeholder="{{ __('enter Amount') }}" value="{{ old('send_amount') }}" >
                                         <div class="input-group-append">
                                             <span class="input-group-text copytext">{{ get_default_currency_code() }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 form-group">
-                                    <label>{{ __("Recipient Get") }} <span class="text--base">*</span></label>
+                                    <label>{{ __("recipient Get") }} <span class="text--base">*</span></label>
                                     <div class="input-group">
-                                        <input type="number" name="receive_amount" class="form--control" placeholder="Enter Amount" value="{{ old('receive_amount') }}" >
+                                        <input type="text" name="receive_amount" class="form--control number-input" placeholder="{{ __('enter Amount') }}" value="{{ old('receive_amount') }}" >
                                         <div class="input-group-append">
                                             <span class="input-group-text reciver_curr_code">{{ get_default_currency_code() }}</span>
                                         </div>
@@ -102,11 +97,11 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                                 </div>
                                 <div class="col-xl-12 col-lg-12 form-group">
                                     <div class="note-area">
-                                        <code class="d-block">{{ __("Available Balance ") }}: {{ authWalletBalance() }} {{ get_default_currency_code() }}</code>
+                                        <code class="d-block">{{ __("Available Balance") }}: {{ authWalletBalance() }} {{ get_default_currency_code() }}</code>
                                     </div>
                                 </div>
                                 <div class="withdraw-btn mt-20">
-                                    <button type="submit" class="btn--base w-100 btn-loading confirmed">{{ __("Send Now ") }}<i class="fas fa-paper-plane ms-1"></i></button>
+                                    <button type="submit" class="btn--base w-100 btn-loading confirmed">{{ __("Continue") }} <i class="fas fa-paper-plane ms-1"></i></button>
                                 </div>
                             </div>
                         </form>
@@ -119,7 +114,7 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                 <div class="dash-payment-item active">
                     <div class="dash-payment-title-area">
                         <span class="dash-payment-badge">!</span>
-                        <h5 class="title">Preview</h5>
+                        <h5 class="title">{{ __("Preview") }}</h5>
                     </div>
                     <div class="dash-payment-body">
                         <div class="preview-list-wrapper">
@@ -130,7 +125,7 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                                             <i class="las la-flag"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Sending Country") }}</span>
+                                            <span>{{ __("sending Country") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -160,7 +155,7 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                                             <i class="las la-user-tag"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Receipient") }}</span>
+                                            <span>{{ __("recipient") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -190,7 +185,7 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                                             <i class="las la-paper-plane"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Sending Amount") }}</span>
+                                            <span>{{ __("sending Amount") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -235,7 +230,7 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
                                             <i class="las la-money-check-alt"></i>
                                         </div>
                                         <div class="preview-list-user-content">
-                                            <span>{{ __("Receipient Get") }}</span>
+                                            <span>{{ __("recipient Get") }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -359,7 +354,7 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
             if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
                 var min_limit_calc = parseFloat(min_limit/sender_currency_rate).toFixed(2);
                 var max_limit_clac = parseFloat(max_limit/sender_currency_rate).toFixed(2);
-                $('.limit-show').html("Limit " + min_limit_calc + " " + defualCurrency + " - " + max_limit_clac + " " + defualCurrency);
+                $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + defualCurrency + " - " + max_limit_clac + " " + defualCurrency);
                 return {
                     minLimit:min_limit_calc,
                     maxLimit:max_limit_clac,
@@ -445,7 +440,7 @@ $siteWallet = str_replace(' ','_',$basic_settings->site_name)."_Wallet";
            if (charges == false) {
                return false;
            }
-           $(".fees-show").html("Charge: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
+           $(".fees-show").html("{{ __('charge') }}: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "%  ");
        }
 
 

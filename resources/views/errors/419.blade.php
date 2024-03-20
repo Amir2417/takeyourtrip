@@ -101,7 +101,7 @@
             };
             loop();
         }}
-        
+
         new electricity('svg');
     </script>
 @endpush

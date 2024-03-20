@@ -36,7 +36,7 @@
                         @include('admin.components.link.add-default',[
                             'href'          => "#p-gateway-automatic-add",
                             'class'         => "modal-btn",
-                            'text'          => "Add New",
+                            'text'          =>__( "Add New"),
                             'permission'    => "admin.payment.gateway.store",
                         ])
                     </div>
@@ -47,10 +47,10 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Gateway</th>
-                            <th>Supported Currency</th>
-                            <th>Enabled Currency</th>
-                            <th>Status</th>
+                            <th>{{ __("Gateway") }}</th>
+                            <th>{{ __("Supported Currency") }}</th>
+                            <th>{{ __("Enabled Currency") }}</th>
+                            <th>{{__("Status") }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -70,7 +70,7 @@
                                         'name'          => 'status',
                                         'data_target'   => $item->id,
                                         'value'         => $item->status,
-                                        'options'       => ['Enable' => 1, 'Disabled' => 0],
+                                        'options'       => [__("Enable") => 1, __("Disabled") => 0],
                                         'onload'        => true,
                                         'permission'    => "admin.payment.gateway.status.update",
                                     ])
@@ -116,7 +116,7 @@
 
                                 <div class="col-xl-12 col-lg-12 form-group">
                                     @include('admin.components.form.input',[
-                                        'label'         => "Gateway Name*",
+                                        'label'         => __("Gateway Name*"),
                                         'name'          => "gateway_name",
                                         'data_limit'    => 60,
                                         'value'         => old('gateway_name'),
@@ -125,7 +125,7 @@
 
                                 <div class="col-xl-12 col-lg-12 form-group">
                                     @include('admin.components.form.input',[
-                                        'label'         => "Gateway Title*",
+                                        'label'         => __("Gateway Title*"),
                                         'name'          => "gateway_title",
                                         'data_limit'    => 60,
                                         'value'         => old('gateway_title'),
@@ -134,7 +134,7 @@
 
                                 <div class="col-xl-12 col-lg-12 form-group">
                                     @include('admin.components.form.select',[
-                                        'label'     => "Supported Currencies*",
+                                        'label'     => __("Supported Currencies*"),
                                         'name'      => "supported_currencies[]",
                                         'multiple'  => true,
                                         'attribute' => "required",
@@ -153,20 +153,20 @@
                                                 <div class="row align-items-end">
                                                     <div class="col-xl-3 col-lg-3 form-group">
                                                         @include('admin.components.form.input',[
-                                                            'label'     => "Title*",
+                                                            'label'     => __("titleS")."*",
                                                             'name'      => "title[]",
                                                         ])
                                                     </div>
                                                     <div class="col-xl-3 col-lg-3 form-group">
                                                         @include('admin.components.form.input',[
-                                                            'label'     => "Name*",
+                                                           'label'     =>__( "name")."*",
                                                             'name'      => "name[]",
                                                         ])
                                                     </div>
 
                                                     <div class="col-xl-5 col-lg-5 form-group">
                                                         @include('admin.components.form.input',[
-                                                            'label'     => "Value",
+                                                          'label'     =>__( "value")."*",
                                                             'name'      => "value[]",
                                                         ])
                                                     </div>

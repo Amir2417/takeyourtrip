@@ -35,12 +35,18 @@ trait Tatum {
 
         if($output['type'] == PaymentGatewayConst::TYPEADDMONEY) {
             try{
-                $trx_id = $this->createTatumAddMoneyTransaction($output, $crypto_active_wallet);
+                if(userGuard()['guard'] == 'agent'){
+                    $trx_id = $this->createTatumAddMoneyTransactionAgent($output, $crypto_active_wallet);
+                    $redirect_route = 'agent.add.money.payment.crypto.address';
+                }elseif(auth()->guard(get_auth_guard())->check()){
+                    $trx_id = $this->createTatumAddMoneyTransaction($output, $crypto_active_wallet);
+                    $redirect_route = 'user.add.money.payment.crypto.address';
+                }
 
             }catch(Exception $e) {
                 throw new Exception(__("Something went wrong! Please try again."));
             }
-            return redirect()->route('user.add.money.payment.crypto.address', $trx_id);
+            return redirect()->route($redirect_route, $trx_id);
         }
 
         throw new Exception(__("No Action Executed!"));
@@ -60,7 +66,15 @@ trait Tatum {
 
         if($output['type'] == PaymentGatewayConst::TYPEADDMONEY) {
             try{
-                $trx_id = $this->createTatumAddMoneyTransaction($output, $crypto_active_wallet);
+
+                if(authGuardApi()['guard'] == 'agent_api'){
+                    $trx_id = $this->createTatumAddMoneyTransactionAgent($output, $crypto_active_wallet);
+                    $submit_url = route('api.agent.add.money.payment.crypto.confirm',$trx_id);
+                }elseif(auth()->guard(get_auth_guard())->check()){
+                    $trx_id = $this->createTatumAddMoneyTransaction($output, $crypto_active_wallet);
+                    $submit_url = route('api.user.add.money.payment.crypto.confirm',$trx_id);
+                }
+
             }catch(Exception $e) {
                 throw new Exception(__("Something went wrong! Please try again."));
             }
@@ -78,7 +92,7 @@ trait Tatum {
                         'coin'          => $crypto_asset->coin,
                         'address'       => $crypto_active_wallet->address,
                         'input_fields'  => $this->tatumUserTransactionRequirements(PaymentGatewayConst::TYPEADDMONEY),
-                        'submit_url'    => route('api.user.add.money.payment.crypto.confirm',$trx_id)
+                        'submit_url'    => $submit_url
                     ],
                 ];
             }else{
@@ -98,6 +112,49 @@ trait Tatum {
             $inserted_id =  DB::table("transactions")->insertGetId([
                 'user_id'                       => auth()->user()->id,
                 'user_wallet_id'                => $output['wallet']->id,
+                'payment_gateway_currency_id'   => $output['currency']->id,
+                'type'                          => $output['type'],
+                'trx_id'                        => $trx_id,
+                'request_amount'                => $output['amount']->requested_amount,
+                'payable'                       => $output['amount']->total_amount,
+                'available_balance'             => $output['wallet']->balance,
+                'remark'                        => ucwords(remove_speacial_char($output['type']," ")) . " With " . $output['gateway']->name,
+                'details'                       => json_encode([
+                    'charge'            => $output['amount'],
+                    'payment_info'    => [
+                        'payment_type'      => PaymentGatewayConst::CRYPTO,
+                        'currency'          => $output['currency']->currency_code,
+                        'receiver_address'  => $crypto_active_wallet->address,
+                        'receiver_qr_image' => $qr_image,
+                        'requirements'      => $this->tatumUserTransactionRequirements(PaymentGatewayConst::TYPEADDMONEY),
+
+                    ],
+
+                    'data' =>   json_encode($output)
+                ]),
+                'status'                        => PaymentGatewayConst::STATUSWAITING,
+                'attribute'                     => PaymentGatewayConst::RECEIVED,
+                'created_at'                    => now(),
+            ]);
+            $this->insertTatumCharges($output,$inserted_id);
+            $this->insertTatumDevice($output,$inserted_id);
+            DB::commit();
+        }catch(Exception $e) {
+            DB::rollBack();
+            throw new Exception(__("Something went wrong! Please try again."));
+        }
+
+        return $trx_id;
+    }
+    public function createTatumAddMoneyTransactionAgent($output, $crypto_active_wallet) {
+        DB::beginTransaction();
+        try{
+            $trx_id = 'AM'.getTrxNum();
+            $qr_image = 'https://chart.googleapis.com/chart?cht=qr&chs=350x350&chl='.$crypto_active_wallet->address;
+
+            $inserted_id =  DB::table("transactions")->insertGetId([
+                'agent_id'                       => authGuardApi()['user']->id,
+                'agent_wallet_id'                => $output['wallet']->id,
                 'payment_gateway_currency_id'   => $output['currency']->id,
                 'type'                          => $output['type'],
                 'trx_id'                        => $trx_id,

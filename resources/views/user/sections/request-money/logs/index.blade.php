@@ -10,7 +10,7 @@
             'name'  => __("Dashboard"),
             'url'   => setRoute("user.dashboard"),
         ]
-    ], 'active' => __("Support Tickets")])
+    ], 'active' => __(@$page_title)])
 @endsection
 
 @section('content')

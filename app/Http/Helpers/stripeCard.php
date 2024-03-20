@@ -213,13 +213,13 @@ function getIssueBalance(){
     if(isset($result['error'])){
         $data = [
             'status'  => false,
-            'message'  => "Something Is Wrong,Please Contact With Owner!",
+            'message' =>__("Something went wrong! Please try again."),
             'amount'  => 0.0,
         ];
     }else{
         $data = [
             'status'  => true,
-            'message'  => "SuccessFully Fetch Available Balance",
+            'message'  => __("SuccessFully Fetch Account Balance"),
             'amount'  => $result['available'][0]['amount']/100 ?? 0,
         ];
     }

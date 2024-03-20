@@ -1,13 +1,13 @@
 <table class="custom-table country-search-table">
     <thead>
         <tr>
-            <th>Flag</th>
+            <th>{{ __("Flag") }}</th>
             <th></th>
-            <th>Name | Code</th>
-            <th>Rate</th>
-            <th>Symbol</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th>{{ __("Name | Code") }}</th>
+            <th>{{ __("Rate") }}</th>
+            <th>{{ __("Symbol") }}</th>
+            <th>{{__("Status") }}</th>
+            <th>{{__("action")}}</th>
         </tr>
     </thead>
     <tbody>
@@ -32,7 +32,7 @@
                     @include('admin.components.form.switcher',[
                         'name'          => 'country_status',
                         'value'         => $item->status,
-                        'options'       => ['Enable' => 1,'Disable' => 0],
+                        'options'       => [__("Enable") => 1,__("Disable") => 0],
                         'onload'        => true,
                         'data_target'   => $item->code,
                         'permission'    => "admin.remitance.country.status.update",

@@ -4,6 +4,5 @@
     @endphp
     <label for="{{ $for_id ?? "" }}">{{ $label }}</label>
 @endif
-
-<textarea name="{{ $name ?? "" }}" class="rich-text-editor form--control d-none {{ $class ?? "" }}">{!! $value ?? "" !!}</textarea>
+<textarea name="{{ $name ?? "" }}" class="rich-text-editor form--control d-none {{ $class ?? "" }}">{!! $value != "" ? $value: __("Write Here..") !!}</textarea>
 

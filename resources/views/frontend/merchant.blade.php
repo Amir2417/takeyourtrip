@@ -30,7 +30,7 @@
                     <div class="banner-btn">
                         <a href="{{ setRoute('merchant.register') }}" class="btn--base"><i class="las la-user-plus me-1"></i>{{ __("Register") }}</a>
                         <a href="{{ setRoute('merchant.login') }}" class="btn--base active"><i class="las la-key me-1"></i>{{ __("Login") }}</a>
-                        <a href="{{ setRoute('developer.index') }}" class="btn--base active"><i class="las la-code me-1"></i>{{ __(" Developer API") }}</a>
+                        <a href="{{ setRoute('developer.index') }}" class="btn--base active"><i class="las la-code me-1"></i>{{ __("developer API") }}</a>
                     </div>
                 </div>
             </div>

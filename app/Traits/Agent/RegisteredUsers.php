@@ -26,7 +26,7 @@ trait RegisteredUsers {
             // handle error
             $this->guard()->logout();
             $user->delete();
-            return $this->breakAuthentication("Faild to create wallet! Please try again");
+            return $this->breakAuthentication("Failed to create wallet! Please try again");
         }
     }
 

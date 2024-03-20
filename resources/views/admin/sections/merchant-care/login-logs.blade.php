@@ -35,12 +35,12 @@
                             <table class="custom-table">
                                 <thead>
                                     <tr>
-                                        <th>SL.</th>
-                                        <th>IP</th>
-                                        <th>MAC</th>
-                                        <th>Location</th>
-                                        <th>Browser | OS</th>
-                                        <th>Login at</th>
+                                        <th>{{ __("SL.") }}</th>
+                                        <th>{{ __("IP") }}</th>
+                                        <th>{{ __("MAC") }}</th>
+                                        <th>{{ __("Location") }}</th>
+                                        <th>{{ __("Browser | OS") }}</th>
+                                        <th>{{ __("Login at") }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

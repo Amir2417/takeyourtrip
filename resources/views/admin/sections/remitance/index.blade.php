@@ -32,14 +32,14 @@
             <table class="custom-table">
                 <thead>
                     <tr>
-                        <th>{{ __("TRX") }}</th>
-                        <th>{{ __("Sender") }}</th>
+                        <th>{{ __("web_trx_id") }}</th>
+                        <th>{{ __("sender") }}</th>
                         <th>{{ __("Receiver") }}</th>
                         <th>{{ __("Remittance Type") }}</th>
                         <th>{{ __(("Send Amount")) }}</th>
                         <th>{{ __(("Status")) }}</th>
                         <th>{{ __("Time") }}</th>
-                        <th>{{ __("Action") }}</th>
+                        <th>{{__("action")}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,7 +49,13 @@
                             <td>{{ $item->trx_id }}</td>
                             <td>
                                 @if($item->attribute == "SEND")
-                                <a href="{{ setRoute('admin.users.details',$item->user->username) }}">{{ $item->user->fullname }}</a>
+                                    @if($item->user_id != null)
+                                    <a href="{{ setRoute('admin.users.details',$item->user->username) }}">{{ $item->user->fullname }}</a>
+                                    @elseif($item->agent_id != null)
+                                    <a href="{{ setRoute('admin.agents.details',$item->creator->username) }}">{{ $item->creator->fullname }}</a>
+                                    @elseif($item->merchant_id != null)
+                                    <a href="{{ setRoute('admin.merchants.details',$item->creator->username) }}">{{ $item->creator->fullname }}</a>
+                                    @endif
                                 @else
                                 <span>{{ $item->details->sender->fullname }}</span>
                                 @endif
@@ -57,9 +63,20 @@
                             </td>
                             <td>
                                 @if($item->attribute == "RECEIVED")
-                                <a href="{{ setRoute('admin.users.details',$item->user->username) }}">{{ $item->user->fullname }}</a>
+                                    @if($item->user_id != null)
+                                        <a href="{{ setRoute('admin.users.details',$item->user->username) }}">{{ $item->user->fullname }}</a>
+                                    @elseif($item->agent_id != null)
+                                        <a href="{{ setRoute('admin.agents.details',$item->creator->username) }}">{{ $item->creator->fullname }}</a>
+                                    @elseif($item->merchant_id != null)
+                                        <a href="{{ setRoute('admin.merchants.details',$item->creator->username) }}">{{ $item->creator->fullname }}</a>
+                                    @endif
                                 @else
-                                <span>{{ @$item->details->receiver->firstname }} {{ @$item->details->receiver->lastname }}</span>
+
+                                    @if($item->user_id != null)
+                                        <span>{{ @$item->details->receiver->firstname }} {{ @$item->details->receiver->lastname }}</span>
+                                    @elseif($item->agent_id != null)
+                                    <span>{{ @$item->details->receiver_recipient->firstname }} {{ @$item->details->receiver_recipient->lastname }}</span>
+                                    @endif
                                 @endif
 
                             </td>
@@ -74,7 +91,7 @@
                             {{-- <td ><span class="fw-bold">{{ @$item->details->bill_number }}</span></td> --}}
                             <td>{{ number_format($item->request_amount,2) }} {{ get_default_currency_code() }}</td>
                             <td>
-                                <span class="{{ $item->stringStatus->class }}">{{ $item->stringStatus->value }}</span>
+                                <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                             </td>
                             <td>{{ $item->created_at->format('d-m-y h:i:s A') }}</td>
                             <td>
@@ -86,7 +103,7 @@
                             </td>
                         </tr>
                     @empty
-                        <div class="alert alert-primary">{{ __('No data found!') }}</div>
+                         @include('admin.components.alerts.empty',['colspan' => 8])
                     @endforelse
                 </tbody>
             </table>

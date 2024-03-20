@@ -950,7 +950,7 @@ var storedHtmlMarkup = {
                             <div class="form-group">
                                 <label>Minimum</label>
                                 <div class="input-group">
-                                    <input type="number" class="form--control min-limit" value="0" name="" step="any">
+                                    <input type="text" class="form--control min-limit number-input" value="0" name="" step="any">
                                     <span class="input-group-text currency"></span>
                                 </div>
                             </div>
@@ -959,7 +959,7 @@ var storedHtmlMarkup = {
                             <div class="form-group">
                                 <label>Maximum</label>
                                 <div class="input-group">
-                                    <input type="number" class="form--control max-limit" value="0" name="" step="any">
+                                    <input type="text" class="form--control max-limit number-input" value="0" name="" step="any">
                                     <span class="input-group-text currency"></span>
                                 </div>
                             </div>
@@ -979,7 +979,7 @@ var storedHtmlMarkup = {
                             <div class="form-group">
                                 <label>Fixed*</label>
                                 <div class="input-group">
-                                    <input type="number" class="form--control fixed-charge" value="0" name="" step="any">
+                                    <input type="text" class="form--control fixed-charge number-input" value="0" name="" step="any">
                                     <span class="input-group-text currency"></span>
                                 </div>
                             </div>
@@ -988,7 +988,7 @@ var storedHtmlMarkup = {
                             <div class="form-group">
                                 <label>Percent*</label>
                                 <div class="input-group">
-                                    <input type="number" class="form--control percent-charge" value="0" name="" step="any">
+                                    <input type="text" class="form--control percent-charge number-input" value="0" name="" step="any">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -1009,7 +1009,7 @@ var storedHtmlMarkup = {
                                 <label>Rate*</label>
                                 <div class="input-group">
                                     <span class="input-group-text append ">1 &nbsp; <span class="default-currency"></span> = </span>
-                                    <input type="number" class="form--control rate" value="" name="" step="any">
+                                    <input type="text" class="form--control rate number-input" value="" name="" step="any">
                                     <span class="input-group-text currency"></span>
                                 </div>
                             </div>
@@ -1116,17 +1116,17 @@ var storedHtmlMarkup = {
   manual_gateway_input_text_validation_field:`<div class="row">
   <div class="col-xl-6 col-lg-6 form-group">
       <label>Min Character*</label>
-      <input type="number" class="form--control" placeholder="ex: 6" name="min_char[]" value="0" required>
+      <input type="te" class="form--control" placeholder="ex: 6" name="min_char[]" value="0" required>
   </div>
   <div class="col-xl-6 col-lg-6 form-group">
       <label>Max Character*</label>
-      <input type="number" class="form--control" placeholder="ex: 16" name="max_char[]" value="30" required>
+      <input type="te" class="form--control" placeholder="ex: 16" name="max_char[]" value="30" required>
   </div>
 </div>`,
   manual_gateway_input_file_validation_field: `<div class="row">
   <div class="col-xl-6 col-lg-6 form-group">
     <label>Max File Size (mb)*</label>
-    <input type="number" class="form--control" placeholder="ex: 10" name="file_max_size[]" value="10" required>
+    <input type="te" class="form--control" placeholder="ex: 10" name="file_max_size[]" value="10" required>
   </div>
   <div class="col-xl-6 col-lg-6 form-group">
     <label>File Extension*</label>
@@ -1435,3 +1435,19 @@ function postFormAndSubmit(action,target) {
   $("body").append(postForm);
   $("#post-form-dy").submit();
 }
+$(document).on("keyup",".number-input",function(){
+    var pattern = /^[0-9]*\.?[0-9]*$/;
+    var value = $(this).val();
+    var test = pattern.test(value);
+    if(test == false) {
+      var rightValue = value;
+      if(value.length > 0) {
+        for (let index = 0; index < value.length; index++){
+          if(!$.isNumeric(rightValue)) {
+            rightValue = rightValue.slice(0, -1);
+          }
+        }
+      }
+      $(this).val(rightValue);
+    }
+  });

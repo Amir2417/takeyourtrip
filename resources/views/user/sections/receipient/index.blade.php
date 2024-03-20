@@ -32,11 +32,13 @@
                                 <i class="las la-arrow-up"></i>
                             </div>
                             <div class="dashboard-list-user-content">
-                                <h4 class="title">{{ @$data->fullname }} @if($data->type == "wallet-to-wallet-transfer")
-                                    <span class="text-success">( {{@$basic_settings->site_name}} {{__("Wallet")}} )</span>
-                                    @else
-                                    <span class="text-success">( {{ ucwords(str_replace('-', ' ', @$data->type))}} )</span>
-
+                                <h4 class="title">{{ @$data->fullname }}
+                                @if($data->type == "wallet-to-wallet-transfer")
+                                    <span class="text-success">( {{@$basic_settings->site_name}} {{__("rWallet")}} )</span>
+                                @elseif($data->type == "cash-pickup")
+                                    <span class="text-success">( {{ __("r".@$data->type)}} )</span>
+                                @else
+                                    <span class="text-success">( {{ __(@$data->type)}} )</span>
                                 @endif </h4>
                                 <span class="sub-title text--warning">{{ @$data->email }}</span>
 

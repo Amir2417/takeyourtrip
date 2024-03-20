@@ -41,7 +41,7 @@
                     @include('admin.components.link.add-default',[
                         'href'          => "#admin-add",
                         'class'         => "modal-btn",
-                        'text'          => "Add Admin",
+                        'text'          => __("Add Admin"),
                         'permission'    => "admin.admins.admin.store"
                     ])
                 </div>
@@ -52,7 +52,7 @@
         </div>
         {{ get_paginate($admins) }}
     </div>
-    
+
     {{-- Admin Add Modal --}}
     @include('admin.components.modals.add-admin')
 

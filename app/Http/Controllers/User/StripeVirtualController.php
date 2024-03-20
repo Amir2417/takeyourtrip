@@ -374,7 +374,6 @@ class StripeVirtualController extends Controller
             throw new Exception(__("Something went wrong! Please try again."));
         }
     }
-
     //update user balance
     public function updateSenderWalletBalance($authWallet,$afterCharge) {
         $authWallet->update([

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Constants\NotificationConst;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,6 +15,8 @@ use App\Notifications\User\AddMoney\RejectedByAdminMail;
 use App\Providers\Admin\BasicSettingsProvider;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AddMoneyTransactionExport;
+use App\Models\AgentNotification;
+use App\Models\UserNotification;
 
 class AddMoneyController extends Controller
 {
@@ -30,8 +33,8 @@ class AddMoneyController extends Controller
     }
     public function index()
     {
-        $page_title = "All Logs";
-        $transactions = Transaction::userTrx()->with(
+        $page_title = __( "All Logs");
+        $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name',
         )->where('type', 'ADD-MONEY')->latest()->paginate(20);
@@ -50,8 +53,8 @@ class AddMoneyController extends Controller
      */
     public function pending()
     {
-        $page_title = "Pending Logs";
-        $transactions = Transaction::userTrx()->with(
+        $page_title = __("Pending Logs");
+        $transactions = Transaction::with(
          'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name',
         )->where('type', 'add-money')->where('status', 2)->latest()->paginate(20);
@@ -68,8 +71,8 @@ class AddMoneyController extends Controller
      */
     public function complete()
     {
-        $page_title = "Complete Logs";
-        $transactions = Transaction::userTrx()->with(
+        $page_title = __("Complete Logs");
+        $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name',
         )->where('type', 'add-money')->where('status', 1)->latest()->paginate(20);
@@ -85,8 +88,8 @@ class AddMoneyController extends Controller
      */
     public function canceled()
     {
-        $page_title = "Canceled Logs";
-        $transactions = Transaction::userTrx()->with(
+        $page_title = __("Canceled Logs");
+        $transactions = Transaction::with(
           'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name',
         )->where('type', 'add-money')->where('status',4)->latest()->paginate(20);
@@ -101,7 +104,8 @@ class AddMoneyController extends Controller
           'user:id,firstname,lastname,email,username,full_mobile',
             'currency:id,name,alias,payment_gateway_id,currency_code,rate',
         )->where('type', 'add-money')->first();
-        $page_title = "Add money details for".'  '.$data->trx_id;
+        $pre_title = __("Add money details for");
+        $page_title = $pre_title.'  '.$data->trx_id;
         return view('admin.sections.add-money.details', compact(
             'page_title',
             'data'
@@ -109,7 +113,6 @@ class AddMoneyController extends Controller
     }
 
     public function approved(Request $request){
-
         $validator = Validator::make($request->all(),[
             'id' => 'required|integer',
         ]);
@@ -118,20 +121,49 @@ class AddMoneyController extends Controller
         }
         $data = Transaction::where('id',$request->id)->where('status',2)->where('type', 'add-money')->first();
         try{
-            //update wallet
-            $userWallet = UserWallet::where('user_id',$data->user_id)->first();
-            $userWallet->balance +=  $data->request_amount;
-            $userWallet->save();
-            //update transaction
-            $data->status = 1;
-            $data->available_balance =  $userWallet->balance;
-            $data->save();
-            $user = User::where('id',$data->user_id)->first();
-            if( $this->basic_settings->email_notification == true){
-            $user->notify(new ApprovedByAdminMail($user,$data));
-            }
+            //notification
+            $notification_content = [
+                'title'         => __("Add Money"),
+                'message'       => "Your Add Money request approved by admin " .getAmount($data->request_amount,2).' '.get_default_currency_code()." Successful.",
+                'image'         => files_asset_path('profile-default'),
+            ];
+            if($data->user_id != null) {
+                //update wallet
+                $userWallet = $data->user->wallet;
+                $userWallet->balance +=  $data->request_amount;
+                $userWallet->save();
+                //update transaction
+                $data->status = 1;
+                $data->available_balance =  $userWallet->balance;
+                $data->save();
+                UserNotification::create([
+                    'type'      => NotificationConst::BALANCE_ADDED,
+                    'user_id'  =>  $data->user_id,
+                    'message'   => $notification_content,
+                ]);
+                if( $this->basic_settings->email_notification == true){
+                    $data->user->notify(new ApprovedByAdminMail($data->user,$data));
+                }
+            }elseif($data->agent_id != null){
+                    //update wallet
+                    $userWallet = $data->agent->wallet;
+                    $userWallet->balance +=  $data->request_amount;
+                    $userWallet->save();
+                    //update transaction
+                    $data->status = 1;
+                    $data->available_balance =  $userWallet->balance;
+                    $data->save();
+                    AgentNotification::create([
+                        'type'      => NotificationConst::BALANCE_ADDED,
+                        'agent_id'  =>  $data->agent_id,
+                        'message'   => $notification_content,
+                    ]);
+                    if( $this->basic_settings->email_notification == true){
+                        $data->agent->notify(new ApprovedByAdminMail($data->agent,$data));
+                    }
 
-            return redirect()->back()->with(['success' => ['Add Money request approved successfully']]);
+                }
+            return redirect()->back()->with(['success' => [__("Add Money request approved successfully")]]);
         }catch(Exception $e){
             return back()->with(['error' => [$e->getMessage()]]);
         }
@@ -146,15 +178,42 @@ class AddMoneyController extends Controller
             return back()->withErrors($validator)->withInput();
         }
         $data = Transaction::where('id',$request->id)->where('status',2)->where('type', 'add-money')->first();
-        $up['status'] = 4;
-        $up['reject_reason'] = $request->reject_reason;
         try{
-            $data->fill($up)->save();
-            $user = User::where('id',$data->user_id)->first();
-            if( $this->basic_settings->email_notification == true){
-            $user->notify(new RejectedByAdminMail($user,$data));
-            }
-            return redirect()->back()->with(['success' => ['Add Money request rejected successfully']]);
+             $notification_content = [
+                'title'         => __("Add Money"),
+                'message'       => "Your Add Money request rejected by admin " .getAmount($data->request_amount,2).' '.get_default_currency_code(),
+                'image'         => files_asset_path('profile-default'),
+            ];
+            if($data->user_id != null) {
+
+                //update transaction
+                $data->status = 4;
+                $data->reject_reason = $request->reject_reason;
+                $data->save();
+                UserNotification::create([
+                    'type'      => NotificationConst::BALANCE_ADDED,
+                    'user_id'  =>  $data->user_id,
+                    'message'   => $notification_content,
+                ]);
+                if( $this->basic_settings->email_notification == true){
+                    $data->user->notify(new RejectedByAdminMail($data->user,$data));
+                }
+            }elseif($data->agent_id != null){
+                    //update transaction
+                    $data->status = 4;
+                    $data->reject_reason = $request->reject_reason;
+                    $data->save();
+                    AgentNotification::create([
+                        'type'      => NotificationConst::BALANCE_ADDED,
+                        'agent_id'  =>  $data->agent_id,
+                        'message'   => $notification_content,
+                    ]);
+                    if( $this->basic_settings->email_notification == true){
+                        $data->agent->notify(new RejectedByAdminMail($data->agent,$data));
+                    }
+
+                }
+            return redirect()->back()->with(['success' => [__("Add Money request rejected successfully")]]);
         }catch(Exception $e){
             return back()->with(['error' => [$e->getMessage()]]);
         }

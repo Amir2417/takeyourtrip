@@ -23,7 +23,7 @@
                                             <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
                                         </svg>
                                     </div>
-                                    <h4 class="title">{{ __('Payment Link Created Successfully') }}.</h4>
+                                    <h4 class="title">{{ __('payment Link Created Successfully') }}.</h4>
                                 </div>
                                 <div class="row">
                                     <div class="col-xl-12 col-lg-12 form-group">

@@ -8,10 +8,12 @@ use App\Constants\PaymentGatewayConst;
 use App\Http\Helpers\Api\Helpers;
 use App\Http\Resources\User\AddMoneyLogs;
 use App\Http\Resources\User\AddSubBalanceLogs;
+use App\Http\Resources\User\AgentMoneyOutLogs;
 use App\Http\Resources\User\BillPayLogs;
 use App\Http\Resources\User\MakePaymentLogs;
 use App\Http\Resources\User\MerchantPaymentLogs;
 use App\Http\Resources\User\MobileTopupLogs;
+use App\Http\Resources\User\MoneyInLogs;
 use App\Http\Resources\User\MoneyOutLogs;
 use App\Http\Resources\User\PayLinkResource;
 use App\Http\Resources\User\RemittanceLogs;
@@ -27,13 +29,15 @@ class TransactionController extends Controller
             'add-money'             => PaymentGatewayConst::TYPEADDMONEY,
             'money-out'             => PaymentGatewayConst::TYPEMONEYOUT,
             'transfer-money'        => PaymentGatewayConst::TYPETRANSFERMONEY,
-            'request-money'        => PaymentGatewayConst::REQUESTMONEY,
+            'money-in'              => PaymentGatewayConst::MONEYIN,
+            'request-money'         => PaymentGatewayConst::REQUESTMONEY,
             'bill-pay'              => PaymentGatewayConst::BILLPAY,
-            'mobile-top-up'          => PaymentGatewayConst::MOBILETOPUP,
+            'mobile-top-up'         => PaymentGatewayConst::MOBILETOPUP,
             'virtual-card'          => PaymentGatewayConst::VIRTUALCARD,
             'remittance'            => PaymentGatewayConst::SENDREMITTANCE,
             'merchant-payment'      => PaymentGatewayConst::MERCHANTPAYMENT,
             'make-payment'          => PaymentGatewayConst::TYPEMAKEPAYMENT,
+            'agent-money-out'       => PaymentGatewayConst::AGENTMONEYOUT,
             'add-sub-balance'       => PaymentGatewayConst::TYPEADDSUBTRACTBALANCE,
 
         ];
@@ -51,10 +55,12 @@ class TransactionController extends Controller
 
         // start transaction now
         $bill_pay           = Transaction::auth()->billPay()->orderByDesc("id")->get();
-        $mobileTopUp        = Transaction::auth()->mobileTopup()->orderByDesc("id")->get(); 
+        $mobileTopUp        = Transaction::auth()->mobileTopup()->orderByDesc("id")->get();
         $addMoney           = Transaction::auth()->addMoney()->orderByDesc("id")->latest()->get();
         $moneyOut           = Transaction::auth()->moneyOut()->orderByDesc("id")->get();
         $sendMoney          = Transaction::auth()->senMoney()->orderByDesc("id")->get();
+        $moneyIn            = Transaction::auth()->moneyIn()->orderByDesc("id")->get();
+        $agentMoneyOut      = Transaction::auth()->agentMoneyOut()->orderByDesc("id")->get();
         $requestMoney       = Transaction::auth()->requestMoney()->orderByDesc("id")->get();
         $payLink            = Transaction::auth()->payLink()->orderByDesc('id')->get();
         $virtualCard        = Transaction::auth()->virtualCard()->orderByDesc("id")->get();
@@ -70,6 +76,8 @@ class TransactionController extends Controller
             'add_money'         => AddMoneyLogs::collection($addMoney),
             'money_out'         => MoneyOutLogs::collection($moneyOut),
             'send_money'        => TransferMoneyLogs::collection($sendMoney),
+            'money_in'          => MoneyInLogs::collection($moneyIn),
+            'agent_money_out'   => AgentMoneyOutLogs::collection($agentMoneyOut),
             'request_money'     => RequestMoneyLogs::collection($requestMoney),
             'virtual_card'      => VirtualCardLogs::collection($virtualCard),
             'pay_link'          => PayLinkResource::collection($payLink),
@@ -84,6 +92,8 @@ class TransactionController extends Controller
             'add_money'         => PaymentGatewayConst::TYPEADDMONEY,
             'money_out'         => PaymentGatewayConst::TYPEMONEYOUT,
             'transfer_money'    => PaymentGatewayConst::TYPETRANSFERMONEY,
+            'money_in'          => PaymentGatewayConst::MONEYIN,
+            'agent_money_out'   => PaymentGatewayConst::AGENTMONEYOUT,
             'request_money'     => PaymentGatewayConst::REQUESTMONEY,
             'pay_link'          => PaymentGatewayConst::TYPEPAYLINK,
             'bill_pay'          => PaymentGatewayConst::BILLPAY,

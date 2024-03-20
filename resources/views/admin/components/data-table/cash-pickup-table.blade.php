@@ -2,13 +2,13 @@
     <thead>
         <tr>
 
-            <th>Name</th>
+            <th>{{ __("name") }}</th>
             <th></th>
-            <th>Created Time</th>
+            <th>{{ __("Created Time") }}</th>
             <th></th>
-            <th>status</th>
+            <th>{{__("Status") }}</th>
             <th></th>
-            <th>Action</th>
+            <th>{{__("action")}}</th>
         </tr>
     </thead>
     <tbody>
@@ -24,7 +24,7 @@
                     @include('admin.components.form.switcher',[
                         'name'          => 'cash_status',
                         'value'         => $item->status,
-                        'options'       => ['Enable' => 1,'Disable' => 0],
+                        'options'       => [__("Enable") => 1,__("Disable") => 0],
                         'onload'        => true,
                         'data_target'   => $item->id,
                         'permission'    => "admin.remitance.cash.pickup.status.update",

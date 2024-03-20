@@ -30,19 +30,19 @@
             <div class="row align-items-center mb-10-none">
                 <div class="col-xl-4 col-lg-4 form-group">
                     <ul class="user-profile-list-two">
-                        <li class="one">Date: <span>{{ @$data->created_at->format('d-m-y h:i:s A') }}</span></li>
-                        <li class="two">TRX ID: <span>{{ @$data->trx_id }}</span></li>
-                        <li class="three">Fullname: <span>
+                        <li class="one">{{ __("Date") }}: <span>{{ @$data->created_at->format('d-m-y h:i:s A') }}</span></li>
+                        <li class="two">{{ __("web_trx_id") }}: <span>{{ @$data->trx_id }}</span></li>
+                        <li class="three">{{ __("Fullname") }}: <span>
                             @if($data->user_id != null)
-                            <a href="{{ setRoute('admin.users.details',$data->creator->username) }}">{{ $data->creator->fullname }} ({{ __("USER") }})</a>
+                                <a href="{{ setRoute('admin.users.details',$data->creator->username) }}">{{ $data->creator->fullname }} ({{ __("USER") }})</a>
                             @elseif($data->agent_id != null)
-                            <a href="{{ setRoute('admin.agents.details',$data->creator->username) }}">{{ $data->creator->fullname }} ({{ __("AGENT") }})</a>
+                                <a href="{{ setRoute('admin.agents.details',$data->creator->username) }}">{{ $data->creator->fullname }} ({{ __("AGENT") }})</a>
                             @elseif($data->merchant_id != null)
-                            <a href="{{ setRoute('admin.merchants.details',$data->creator->username) }}">{{ $data->creator->fullname }} ({{ __("MERCHANT") }})</a>
-                    @endif
+                                <a href="{{ setRoute('admin.merchants.details',$data->creator->username) }}">{{ $data->creator->fullname }} ({{ __("MERCHANT") }})</a>
+                            @endif
                             </span></li>
-                        <li class="four">Method: <span>{{ @$data->currency->name }}</span></li>
-                        <li class="five">Request Amount: <span>{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span></li>
+                        <li class="four">{{ __("Method") }}: <span>{{ @$data->currency->name }}</span></li>
+                        <li class="five">{{ __("request Amount") }}: <span>{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span></li>
                     </ul>
                 </div>
 
@@ -53,15 +53,15 @@
                 </div>
                 <div class="col-xl-4 col-lg-4 form-group">
                     <ul class="user-profile-list two">
-                           <li class="one">Rate: <span>1 {{ get_default_currency_code() }} = {{ number_format(@$data->currency->rate,2) }} {{ @$data->currency->currency_code }}</span></li>
+                           <li class="one">{{ __("Rate") }}: <span>1 {{ get_default_currency_code() }} = {{ number_format(@$data->currency->rate,2) }} {{ @$data->currency->currency_code }}</span></li>
                            @php
                                 $conversionAmount = $data->request_amount * $data->currency->rate;
                          @endphp
-                           <li class="two">After Conversion: <span>{{ number_format(@$conversionAmount,2) }} {{ @$data->currency->currency_code }}</span></li>
-                        <li class="three">Charge: <span>{{ number_format(@$data->charge->total_charge,2) }} {{ @$data->currency->currency_code }}</span></li>
+                           <li class="two">{{ __("After Conversion") }}: <span>{{ number_format(@$conversionAmount,2) }} {{ @$data->currency->currency_code }}</span></li>
+                        <li class="three">{{ __("Total Charge") }}: <span>{{ number_format(@$data->charge->total_charge,2) }} {{ @$data->currency->currency_code }}</span></li>
 
-                        <li class="four">Will Get: <span>{{ number_format(@$data->payable,2) }} {{ @$data->currency->currency_code }}</span></li>
-                        <li class="five">Status:  <span class="{{ @$data->stringStatus->class }}">{{ @$data->stringStatus->value }}</span></li>
+                        <li class="four">{{ __("Will Get") }}: <span>{{ number_format(@$data->payable,2) }} {{ @$data->currency->currency_code }}</span></li>
+                        <li class="five">{{__("Status") }}:  <span class="{{ @$data->stringStatus->class }}">{{ __(@$data->stringStatus->value) }}</span></li>
                     </ul>
                 </div>
             </div>
@@ -72,12 +72,18 @@
 @if(@$data->status == 2)
 <div class="custom-card mt-15">
     <div class="card-header">
-        <h6 class="title">Information of Logs</h6>
+        <h6 class="title">{{ __("Information of Logs") }}</h6>
     </div>
     <div class="card-body">
         <ul class="product-sales-info">
-
-            @foreach ($data->details ?? [] as $item)
+            @php
+                if($data->agent_id != null){
+                    $user_data = $data->details->user_data??[];
+                }elseif ($data->user_id != null || $data->merchant_id != null) {
+                    $user_data = $data->details??[];
+                }
+            @endphp
+            @foreach ($user_data  as $item)
             <li>
                 @if ($item->type == "file")
                     @php
@@ -106,8 +112,8 @@
         @endforeach
         </ul>
         <div class="product-sales-btn">
-            <button type="button" class="btn btn--base approvedBtn">Approve</button>
-            <button type="button" class="btn btn--danger rejectBtn" >Reject</button>
+            <button type="button" class="btn btn--base approvedBtn">{{ __("approve") }}</button>
+            <button type="button" class="btn btn--danger rejectBtn" >{{ __("reject") }}</button>
         </div>
     </div>
 </div>
@@ -116,7 +122,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header p-3" id="approvedModalLabel">
-                <h5 class="modal-title">Approved Confirmation ( <span class="fw-bold text-danger">{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span> )</h5>
+                <h5 class="modal-title">{{ __("Approved Confirmation") }} ( <span class="fw-bold text-danger">{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span> )</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -127,14 +133,14 @@
                     <div class="row mb-10-none">
                         <div class="col-xl-12 col-lg-12 form-group">
                             <input type="hidden" name="id" value={{ @$data->id }}>
-                           <p>Are you sure to approved this request?</p>
+                           <p>{{ __("Are you sure to approved this request?") }}</p>
                         </div>
                     </div>
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn--danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn--base btn-loading ">Approved</button>
+                <button type="button" class="btn btn--danger" data-bs-dismiss="modal">{{ __("Cancel") }}</button>
+                <button type="submit" class="btn btn--base btn-loading ">{{ __("Approved") }}</button>
             </div>
         </form>
         </div>
@@ -144,7 +150,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header p-3" id="rejectModalLabel">
-                <h5 class="modal-title">Rejection Confirmation ( <span class="fw-bold text-danger">{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span> )</h5>
+                <h5 class="modal-title">{{ __("Rejection Confirmation") }} ( <span class="fw-bold text-danger">{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span> )</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -155,7 +161,7 @@
                         <div class="col-xl-12 col-lg-12 form-group">
                             <input type="hidden" name="id" value={{ @$data->id }}>
                             @include('admin.components.form.textarea',[
-                                'label'         => 'Explain Rejection Reason*',
+                                'label'         => __("Explain Rejection Reason*"),
                                 'name'          => 'reject_reason',
                                 'value'         => old('reject_reason')
                             ])
@@ -164,8 +170,8 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn--danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn--base">Confirm</button>
+                <button type="button" class="btn btn--danger" data-bs-dismiss="modal">{{ __("Cancel") }}</button>
+                <button type="submit" class="btn btn--base">{{ __("confirm") }}</button>
             </div>
         </form>
         </div>

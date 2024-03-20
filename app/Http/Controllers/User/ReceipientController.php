@@ -71,8 +71,10 @@ class ReceipientController extends Controller
         $user = auth()->user();
         if($request->transaction_type == 'bank-transfer') {
             $bankRules = 'required|string';
+            $account_number = 'required|string|min:10|max:16';
         }else {
             $bankRules = 'nullable|string';
+            $account_number = 'nullable|string';
         }
 
         if($request->transaction_type == 'cash-pickup') {
@@ -80,20 +82,22 @@ class ReceipientController extends Controller
         }else {
             $cashPickupRules = "nullable";
         }
+
         $request->validate([
-            'transaction_type'              =>'required|string',
-            'country'                      =>'required',
-            'firstname'                      =>'required|string',
-            'lastname'                      =>'required|string',
+            'transaction_type'           =>'required|string',
+            'country'                    =>'required',
+            'firstname'                  =>'required|string',
+            'lastname'                   =>'required|string',
             'email'                      =>"required|email",
-            'mobile'                      =>"required",
-            'mobile_code'                      =>'required',
-            'city'                      =>'required|string',
-            'address'                      =>'required|string',
+            'mobile'                     =>"required",
+            'mobile_code'                =>'required',
+            'city'                       =>'required|string',
+            'address'                    =>'required|string',
             'state'                      =>'required|string',
-            'zip'                      =>'required|string',
-            'bank'                      => $bankRules,
-            'cash_pickup'               => $cashPickupRules,
+            'zip'                        =>'required|string',
+            'bank'                       => $bankRules,
+            'cash_pickup'                => $cashPickupRules,
+            'account_number'             => $account_number,
 
         ]);
             $checkMobile = Receipient::where('user_id',$user->id)->where('email',$request->email)->first();
@@ -138,10 +142,11 @@ class ReceipientController extends Controller
         $in['state'] = $request->state;
         $in['email'] = $request->email;
         $in['mobile_code'] = remove_speacial_char($request->mobile_code);
-        $in['mobile'] = remove_speacial_char($request->mobile_code) == "880"?(int)$request->mobile:$request->mobile ;
+      $in['mobile'] = remove_speacial_char($request->mobile_code) == "880"?(int)remove_speacial_char($request->mobile):remove_speacial_char($request->mobile) ;
         $in['city'] = $request->city;
         $in['address'] = $request->address;
         $in['zip_code'] = $request->zip;
+        $in['account_number'] = $request->account_number??null;
         $in['details'] = json_encode($details);
         try{
             Receipient::create($in);
@@ -168,8 +173,10 @@ class ReceipientController extends Controller
         $data =  Receipient::auth()->with('user','receiver_country')->where('id',$request->id)->first();
         if($request->transaction_type == 'bank-transfer') {
             $bankRules = 'required|string';
+            $account_number = 'required|string|min:10|max:16';
         }else {
             $bankRules = 'nullable|string';
+            $account_number = 'nullable|string';
         }
 
         if($request->transaction_type == 'cash-pickup') {
@@ -191,6 +198,7 @@ class ReceipientController extends Controller
         'zip'                      =>'required|string',
         'bank'                      => $bankRules,
         'cash_pickup'               => $cashPickupRules,
+        'account_number'             => $account_number,
 
         ]);
         $checkMobile = Receipient::where('id','!=',$data->id)->where('user_id',$user->id)->where('email',$request->email)->first();
@@ -234,10 +242,11 @@ class ReceipientController extends Controller
         $in['state'] = $request->state;
         $in['email'] = $request->email;
         $in['mobile_code'] = remove_speacial_char($request->mobile_code);
-        $in['mobile'] = remove_speacial_char($request->mobile_code) == "880"?(int)$request->mobile:$request->mobile ;
+      $in['mobile'] = remove_speacial_char($request->mobile_code) == "880"?(int)remove_speacial_char($request->mobile):remove_speacial_char($request->mobile) ;
         $in['city'] = $request->city;
         $in['address'] = $request->address;
         $in['zip_code'] = $request->zip;
+        $in['account_number'] = $request->account_number??null;
         $in['details'] = json_encode($details);
         try{
             $data->fill($in)->save();

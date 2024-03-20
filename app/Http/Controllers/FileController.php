@@ -18,7 +18,6 @@ class FileController extends Controller
             $validator = Validator::make($request->all(),[
                 'fileholder_files' => 'required|mimes:'.$request->mimes,
             ]);
-
             if($validator->fails()) {
                 $data['error']  = $validator->errors()->all();
                 $data['status'] = false;

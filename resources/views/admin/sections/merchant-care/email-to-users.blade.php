@@ -29,37 +29,36 @@
                 @csrf
                 <div class="row mb-10-none">
                     <div class="col-xl-6 col-lg-6 form-group">
-                        <label>{{ __("Agent*") }}</label>
+                        <label>{{ __("Merchant") }}*</label>
                         <select class="form--control nice-select" name="user_type">
-                            <option selected disabled>Select Merchants</option>
-                            <option value="all">All Merchants</option>
-                            <option value="active">Active Merchants</option>
-                            <option value="sma_verified">SMS Unverified</option>
-                            <option value="kyc_verified">Kyc Unverified</option>
-                            <option value="banned">Banned Merchants</option>
+                            <option selected disabled>{{ __("Select Merchants") }}</option>
+                            <option value="all">{{ __("All Merchants") }}</option>
+                            <option value="active">{{ __("Active Merchants") }}</option>
+                            {{-- <option value="sma_verified">{{ __("SMS Unverified") }}</option> --}}
+                            <option value="kyc_verified">{{ __("Kyc Unverified") }}</option>
+                            <option value="banned">{{ __("Banned Merchants") }}</option>
                         </select>
                     </div>
                     <div class="col-xl-6 col-lg-6 form-group">
                         @include('admin.components.form.input',[
-                            'label'         => 'Subject*',
+                            'label'         => __("Subject")."*",
                             'name'          => 'subject',
                             'value'         => old('subject'),
-                            'placeholder'   => "Write Here...",
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-text-rich',[
-                            'label'         => 'Details*',
+                             'label'         => __("Details")."*",
                             'name'          => 'message',
                             'value'         => old('message'),
-                            'placeholder'   => "Write Here...",
+                            'placeholder'   => __( "Write Here..."),
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
                             'permission'    => "admin.agents.email.users.send",
-                            'text'          => "Send Email",
+                            'text'          => __("Send Email"),
                         ])
                     </div>
                 </div>

@@ -6,10 +6,11 @@ use App\Constants\PaymentGatewayConst;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\PaymentGateway\Tatum;
+use App\Traits\PaymentGateway\RazorTrait;
 
 class PaymentGateway extends Model
 {
-    use HasFactory,Tatum;
+    use HasFactory,Tatum,RazorTrait;
 
 
     protected $guarded = ['id'];

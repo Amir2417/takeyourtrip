@@ -19,12 +19,6 @@
                             <span class="menu-title">{{ __("Dashboard") }}</span>
                         </a>
                     </li>
-                    <li class="sidebar-menu-item">
-                        <a href="{{ setRoute('user.bank.account.index') }}">
-                            <i class="menu-icon fas fa-th-large"></i>
-                            <span class="menu-title">{{ __("Bank Account") }}</span>
-                        </a>
-                    </li>
                     @if(module_access('send-money',$module)->status)
                     <li class="sidebar-menu-item">
                         <a href="{{ setRoute('user.send.money.index') }}">
@@ -46,7 +40,7 @@
                     <li class="sidebar-menu-item">
                         <a href="{{ route('user.payment-link.index') }}">
                             <i class="menu-icon fas fa-link"></i>
-                            <span class="menu-title">{{ __('Pay Link') }}</span>
+                            <span class="menu-title">{{ __('pay Link') }}</span>
                         </a>
                     </li>
                     @endif
@@ -54,7 +48,7 @@
                     <li class="sidebar-menu-item">
                         <a href="{{ setRoute('user.request.money.index') }}">
                             <i class="menu-icon fas fa-hand-holding-usd"></i>
-                            <span class="menu-title">{{ __("Request Money") }}</span>
+                            <span class="menu-title">{{ __("request Money") }}</span>
                         </a>
                     </li>
                     @endif
@@ -78,7 +72,7 @@
                     <li class="sidebar-menu-item">
                         <a href="{{ setRoute('user.money.out.index') }}">
                             <i class="menu-icon fas fa-arrow-alt-circle-right"></i>
-                            <span class="menu-title">{{ __("Withdraw") }}</span>
+                            <span class="menu-title">{{ __("withdraw") }}</span>
                         </a>
                     </li>
                     @endif
@@ -87,6 +81,14 @@
                         <a href="{{ setRoute('user.make.payment.index') }}">
                             <i class="menu-icon fas fa-arrow-alt-circle-left"></i>
                             <span class="menu-title">{{ __("Make Payment") }}</span>
+                        </a>
+                    </li>
+                    @endif
+                    @if(module_access('money-out',$module)->status)
+                    <li class="sidebar-menu-item">
+                        <a href="{{ setRoute('user.agent.money.out.index') }}">
+                            <i class="menu-icon fas fa-arrow-alt-circle-left"></i>
+                            <span class="menu-title">{{ __("Money Out") }}</span>
                         </a>
                     </li>
                     @endif
@@ -133,7 +135,7 @@
                     <li class="sidebar-menu-item">
                         <a href="{{ setRoute('user.mobile.topup.index') }}">
                             <i class="menu-icon fas fa-mobile"></i>
-                            <span class="menu-title">{{ __("Mobile TopUp") }}</span>
+                            <span class="menu-title">{{ __("Mobile Topup") }}</span>
                         </a>
                     </li>
                     @endif
@@ -146,7 +148,7 @@
                     <li class="sidebar-menu-item">
                         <a href="{{ setRoute('user.receipient.index') }}">
                             <i class="menu-icon fas fa-user-check"></i>
-                            <span class="menu-title">{{__("Saved Recipient")}}</span>
+                            <span class="menu-title">{{__("Saved Recipients")}}</span>
                         </a>
                     </li>
                     <li class="sidebar-menu-item">
@@ -169,7 +171,7 @@
                 <i class="las la-question-circle"></i>
             </div>
             <div class="sidebar-doc-content">
-                <h4 class="title">{{ __("Help Center?") }}</h4>
+                <h4 class="title">{{ __("help Center") }}?</h4>
                 <p>{{ __("How can we help you?") }}</p>
                 <div class="sidebar-doc-btn">
                     <a href="{{ setRoute('user.support.ticket.index') }}" class="btn--base w-100">{{ __("Get Support") }}</a>
@@ -183,9 +185,10 @@
         $(".logout-btn").click(function(){
             var actionRoute =  "{{ setRoute('user.logout') }}";
             var target      = 1;
-            var message     = `Are you sure to <strong>Logout</strong>?`;
-
-            openAlertModal(actionRoute,target,message,"Logout","POST");
+            var sureText = '{{ __("Are you sure to") }}';
+            var message     = `${sureText} <strong>{{ __("Logout") }}</strong>?`;
+            var logout = `{{ __("Logout") }}`;
+            openAlertModal(actionRoute,target,message,logout,"POST");
         });
     </script>
 @endpush

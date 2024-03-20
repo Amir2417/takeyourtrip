@@ -18,10 +18,10 @@
     <div class="body-wrapper">
         <div class="dashboard-area mt-10">
             <div class="dashboard-header-wrapper">
-                <h3 class="title">{{ $page_title ?? "" }}</h3>
+                <h3>{{ $page_title ?? "" }}</h3>
                 <div class="header-search-wrapper">
                     <div class="position-relative">
-                        <input class="form-control" type="text" name="search" placeholder="Ex: Transaction" aria-label="Search">
+                        <input class="form-control" type="text" name="search" placeholder="{{ __("Ex: Transaction ID, Withdraw Money") }}" aria-label="Search">
                         <span class="las la-search"></span>
                     </div>
                 </div>

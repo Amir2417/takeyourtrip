@@ -14,8 +14,8 @@
         <div class="account-wrapper">
             <div class="account-logo text-center">
                <a class="site-logo" href="{{ setRoute('index') }}">
-                <img src="{{ get_logo($basic_settings) }}"  data-white_img="{{ get_logo($basic_settings,'white') }}"
-                data-dark_img="{{ get_logo($basic_settings,'dark') }}"
+                <img src="{{ get_logo_merchant($basic_settings) }}"  data-white_img="{{ get_logo_merchant($basic_settings,'white') }}"
+                data-dark_img="{{ get_logo_merchant($basic_settings,'dark') }}"
                     alt="site-logo">
                </a>
             </div>
@@ -28,7 +28,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text copytext">{{ __("Email") }}</span>
+                                <span class="input-group-text copytext"><span>{{ __("Email") }}</span></span>
                             </div>
                             <input type="email" name="email" class="form--control  " placeholder="Enter Email Address" required value="{{ old('email') }}">
 
@@ -36,7 +36,7 @@
                         <small class="text-danger exits"></small>
                     </div>
 
-                    @if($basic_settings->agree_policy)
+                    @if($basic_settings->merchant_agree_policy)
                     <div class="col-lg-12 form-group">
                         <div class="custom-check-group">
                             <input type="checkbox" id="agree" name="agree" required>
@@ -45,11 +45,11 @@
                     </div>
                     @endif
                     <div class="col-lg-12 form-group text-center">
-                        <button type="submit"  class="btn--base w-100  btn-loading   ">{{ __("Continue") }}</button>
+                        <button type="submit"  class="btn--base w-100  btn-loading   ">{{ __("Continue") }} </button>
                     </div>
                     <div class="col-lg-12 text-center">
                         <div class="account-item">
-                            <label>{{ __("Already Have An Account?") }} <a href="{{ setRoute('merchant.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
+                            <label>{{ __("already Have An Account") }} <a href="{{ setRoute('merchant.login') }}" class="account-control-btn">{{ __("Login Now") }}</a></label>
                         </div>
                     </div>
                 </div>

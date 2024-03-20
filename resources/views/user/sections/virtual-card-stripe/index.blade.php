@@ -19,7 +19,7 @@
         <div class="dashboard-header-wrapper">
             <h3 class="title">{{__(@$page_title)}}</h3>
             @if ($totalCards  < $card_limit )
-             <button class="btn--base small buyCard" >{{__("Create")}} <i class="las la-plus ms-1"></i></button>
+             <button class="btn--base small buyCard" >{{__("create Card")}} <i class="las la-plus ms-1"></i></button>
             @endif
         </div>
     </div>
@@ -35,10 +35,10 @@
                                     <div class="card-header-btn-wrapper d-flex align-items-center justify-content-between">
                                         <div class="dash-payment-title-area">
                                             <span class="dash-payment-badge">!</span>
-                                            <h5 class="title"> {{ @$myCard != null ?"My Card" :"Virtual Card"}}</h5>
+                                            <h5 class="title"> {{ @$myCard != null ?__("My Card") :__("Virtual Card")}}</h5>
                                         </div>
 
-                                        <a href="javascript:void(0)" class="small--btn">{{ __("Balance") }}:
+                                        <a href="javascript:void(0)" class="small--btn">{{ __("balance") }}:
                                             {{ getAmount(@$myCard->amount,2) }} {{ get_default_currency_code() }}
                                          </a>
                                     </div>
@@ -79,7 +79,7 @@
                                                     <div class="back">
                                                         <div class="strip-black"></div>
                                                         <div class="ccv">
-                                                            <label>{{ __("ccv") }}</label>
+                                                            <label>{{ __("Cvv") }}</label>
                                                             <div>{{ $myCard->cvv??"***" }}</div>
 
                                                         </div>
@@ -97,9 +97,9 @@
                                     <div class="virtual-card-btn-area text-center pt-20">
                                         <a href="{{setRoute('user.stripe.virtual.card.details',$myCard->card_id)}}" class="btn--base"><i class="fas fa-info-circle me-1"></i>{{ __("Details") }}</a>
                                         @if($myCard->is_default == true )
-                                        <a href="javascript:void(0)" class="btn--base active-deactive-btn" data-id="{{ $myCard->id }}"><i class="fas fa-times-circle me-1"></i>{{ __("Remove Default") }}</a>
+                                        <a href="javascript:void(0)" class="btn--base active-deactive-btn" data-id="{{ $myCard->id }}"><i class="fas fa-times-circle me-1"></i>{{ __("remove Default") }}</a>
                                         @else
-                                        <a href="javascript:void(0)" class="btn--base active-deactive-btn" data-id="{{ $myCard->id }}"><i class="fas fa-check-circle me-1"></i>{{ __("Make Default") }}</a>
+                                        <a href="javascript:void(0)" class="btn--base active-deactive-btn" data-id="{{ $myCard->id }}"><i class="fas fa-check-circle me-1"></i>{{ __("make Default") }}</a>
                                         @endif
                                         <a href="{{ setRoute('user.stripe.virtual.card.transaction',$myCard->card_id)  }}" class="btn--base"><i class="fas fa-arrows-alt-h me-1"></i>{{ __("Transactions") }}</a>
                                     </div>
@@ -153,7 +153,7 @@
                                                     <div class="back">
                                                         <div class="strip-black"></div>
                                                         <div class="ccv">
-                                                            <label>{{ __("ccv") }}</label>
+                                                            <label>{{ __("Cvv") }}</label>
                                                             <div>{{ __("***") }}</div>
 
                                                         </div>
@@ -187,7 +187,7 @@
     </div>
     <div class="dashboard-list-area mt-20">
         <div class="dashboard-header-wrapper">
-            <h4 class="title ">{{__("Recent Transaction")}}</h4>
+            <h4 class="title ">{{__("recent Transactions")}}</h4>
             <div class="dashboard-btn-wrapper">
                 <div class="dashboard-btn mb-2">
                     <a href="{{ setRoute('user.transactions.index','virtual-card') }}" class="btn--base">{{__("View More")}}</a>
@@ -251,7 +251,7 @@
                                     <div class="back">
                                         <div class="strip-black"></div>
                                         <div class="ccv">
-                                            <label>{{ __("ccv") }}</label>
+                                            <label>{{ __("Cvv") }}</label>
                                             <div>000</div>
                                         </div>
                                         <div class="terms">
@@ -272,7 +272,7 @@
                             <label>{{ __("Amount") }} <span class="text--danger">*</span></label>
                             <div class="input-group">
                                 <div class="input-group">
-                                    <input type="number" class="form--control" required placeholder="Enter Amount" name="card_amount" value="{{ old("card_amount") }}">
+                                    <input type="text" class="form--control number-input" required placeholder="{{__('enter Amount')}}" name="card_amount" value="{{ old("card_amount") }}">
                                     <select class="form--control nice-select currency" name="currency">
                                         <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
                                     </select>
@@ -288,7 +288,7 @@
                             </div>
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group">
-                            <button type="submit" class="btn--base w-100 btn-loading buyBtn">{{ __("Buy Card") }} <i class="las la-plus-circle ms-1"></i></button>
+                            <button type="submit" class="btn--base w-100 btn-loading buyBtn">{{ __("buy Card") }} <i class="las la-plus-circle ms-1"></i></button>
                         </div>
                         </form>
                     </div>
@@ -320,7 +320,8 @@
         var actionRoute =  "{{ setRoute('user.stripe.virtual.card.make.default.or.remove') }}";
         var target = $(this).data('id');
         var btnText = $(this).text();
-        var message     = `Are you sure to <strong>${btnText}</strong> this card?`;
+        var sureText = '{{ __("Are you sure to") }}';
+        var message     = `${sureText} <strong>${btnText}</strong>?`;
         openAlertModal(actionRoute,target,message,btnText,"POST");
     });
 </script>
@@ -350,7 +351,7 @@
            if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
                var min_limit_calc = parseFloat(min_limit/currencyRate).toFixed(2);
                var max_limit_clac = parseFloat(max_limit/currencyRate).toFixed(2);
-               $('.limit-show').html("Limit " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
+               $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
 
                return {
                    minLimit:min_limit_calc,
@@ -418,7 +419,7 @@
            if (charges == false) {
                return false;
            }
-           $(".fees-show").html("Fees: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "% = " + parseFloat(charges.total).toFixed(2) + " " + currencyCode);
+           $(".fees-show").html("{{ __('Fees') }}: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "% = " + parseFloat(charges.total).toFixed(2) + " " + currencyCode);
        }
        function getPreview() {
                var senderAmount = $("input[name=card_amount]").val();
@@ -492,7 +493,7 @@
         if($.isNumeric(min_limit) || $.isNumeric(max_limit)) {
             var min_limit_calc = parseFloat(min_limit/currencyRate).toFixed(2);
             var max_limit_clac = parseFloat(max_limit/currencyRate).toFixed(2);
-            $('.limit-show').html("Limit " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
+            $('.limit-show').html("{{ __('limit') }} " + min_limit_calc + " " + currencyCode + " - " + max_limit_clac + " " + currencyCode);
 
             return {
                 minLimit:min_limit_calc,
@@ -560,7 +561,7 @@
         if (charges == false) {
             return false;
         }
-        $(".fees-show").html("Fees: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "% = " + parseFloat(charges.total).toFixed(2) + " " + currencyCode);
+        $(".fees-show").html("{{ __('Fees') }}: " + parseFloat(charges.fixed).toFixed(2) + " " + currencyCode + " + " + parseFloat(charges.percent).toFixed(2) + "% = " + parseFloat(charges.total).toFixed(2) + " " + currencyCode);
     }
     function getPreview() {
             var senderAmount = $("input[name=fund_amount]").val();

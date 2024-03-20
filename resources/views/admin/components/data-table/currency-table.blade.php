@@ -1,14 +1,11 @@
 <table class="custom-table currency-search-table">
     <thead>
         <tr>
-            <th>Flag</th>
+            <th>{{ __("Flag") }}</th>
             <th></th>
-            <th>Name | Code</th>
-            <th>Symbol</th>
-            {{-- <th>Type | Rate</th> --}}
-            {{-- <th>Role</th>
-            <th>Status</th> --}}
-            <th>Action</th>
+            <th>{{ __("Name | Code") }}</th>
+            <th>{{ __("Symbol") }}</th>
+            <th>{{__("action")}}</th>
         </tr>
     </thead>
     <tbody>
@@ -26,27 +23,6 @@
                     @endif
                     <br> <span>{{ $item->code }}</span></td>
                 <td>{{ $item->symbol }}</td>
-                {{-- <td><span class="text--info">{{ $item->type }}</span> <br> 1 {{ get_default_currency_code($default_currency) }} = {{ get_amount($item->rate,$item->code) }}</td> --}}
-                {{-- <td>
-                    @if ($item->both)
-                        <span class="badge badge--success">{{ __("Sender") }}</span>
-                        <span class="badge badge--danger">{{ __("Receiver") }}</span>
-                    @elseif ($item->senderCurrency)
-                        <span class="badge badge--success">{{ __("Sender") }}</span>
-                    @elseif ($item->receiverCurrency)
-                        <span class="badge badge--danger">{{ __("Receiver") }}</span>
-                    @endif
-                </td> --}}
-                {{-- <td>
-                    @include('admin.components.form.switcher',[
-                        'name'          => 'currency_status',
-                        'value'         => $item->status,
-                        'options'       => ['Enable' => 1,'Disable' => 0],
-                        'onload'        => true,
-                        'data_target'   => $item->code,
-                        'permission'    => "admin.currency.status.update",
-                    ])
-                </td> --}}
                 <td>
                     @include('admin.components.link.edit-default',[
                         'href'          => "javascript:void(0)",

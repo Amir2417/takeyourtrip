@@ -19,7 +19,15 @@ class KycApi
     public function handle($request, Closure $next)
     {
         $basic_settings = BasicSettingsProvider::get();
-        if($basic_settings->kyc_verification) {
+        $guard = authGuardApi()['type'];
+        if( $guard === 'USER'){
+            $kyc_verification_status = $basic_settings->kyc_verification;
+        }elseif($guard === 'AGENT'){
+            $kyc_verification_status = $basic_settings->agent_kyc_verification;
+        }elseif($guard === 'MERCHANT'){
+            $kyc_verification_status = $basic_settings->merchant_kyc_verification;
+        }
+        if($kyc_verification_status) {
             $user = auth()->user();
             if($user->kyc_verified === GlobalConst::DEFAULT) {
                 return  Response::error([__('Please submit kyc information!')]);

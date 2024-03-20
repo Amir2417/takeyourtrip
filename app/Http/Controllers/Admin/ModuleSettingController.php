@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 class ModuleSettingController extends Controller
 {
     public function index() {
-        $page_title = "Setup Module Settings";
+        $page_title = __("Setup Module Settings");
         $data = ModuleSetting::all();
         return view('admin.sections.module-setting.index',compact(
             'page_title',
@@ -34,21 +34,20 @@ class ModuleSettingController extends Controller
 
         $page = ModuleSetting::where('slug',$page_slug)->first();
         if(!$page) {
-            $error = ['error' => ['Module not found!']];
+            $error = ['error' => [__("Module not found!")]];
             return Response::error($error,null,404);
         }
-
         try{
             $page->update([
                 'status' => ($validated['status'] == true) ? false : true,
             ]);
         }catch(Exception $e) {
             return $e;
-            $error = ['error' => ['Something went worng!. Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 
-        $success = ['success' => ['Module status updated successfully!']];
+        $success = ['success' => [__("Module status updated successfully!")]];
         return Response::success($success,null,200);
     }
 }

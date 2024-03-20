@@ -39,7 +39,7 @@
                 <div class="row justify-content-center mb-10-none">
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-file',[
-                            'label'             => "Map Image:",
+                            'label'             => __( "Map Image:*"),
                             'name'              => "map_image",
                             'class'             => "file-holder",
                             'old_files_path'    => files_asset_path("site-section"),
@@ -62,45 +62,45 @@
                                 <div class="tab-pane @if (get_default_language_code() == language_const()::NOT_REMOVABLE) fade show active @endif" id="english" role="tabpanel" aria-labelledby="english-tab">
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Title*",
+                                            'label'     => __( "titleS")."*",
                                             'name'      => $default_lang_code . "_title",
                                             'value'     => old($default_lang_code . "_title",$data->value->language->$default_lang_code->title ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Heading*",
+                                            'label'     => __( "Heading*"),
                                             'name'      => $default_lang_code . "_heading",
                                             'value'     => old($default_lang_code . "_heading",$data->value->language->$default_lang_code->heading ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Sub Heading*",
+                                            'label'     =>__( "Sub Heading*"),
                                             'name'      => $default_lang_code . "_sub_heading",
                                             'value'     => old($default_lang_code . "_sub_heading",$data->value->language->$default_lang_code->sub_heading ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.textarea',[
-                                            'label'     => "Bottom Text*",
+                                            'label'     => __( "Bottom Text*"),
                                             'name'      => $default_lang_code . "_botton_text",
                                             'value'     => old($default_lang_code . "_botton_text",$data->value->language->$default_lang_code->botton_text ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Button Name *",
+                                            'label'     => __( "Button Name*"),
                                             'name'      => $default_lang_code . "_button_name",
                                             'value'     => old($default_lang_code . "_button_name",$data->value->language->$default_lang_code->button_name ?? "")
                                         ])
                                     </div>
                                     <div class="form-group">
-                                        <label for="">{{ __("Button Link*") }}</label>
+                                        <label for="">{{ __("Button Link") }}*</label>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="basic-addon1">{{ url('/') }}/</span>
                                             <input type="text" class="form--control" placeholder="Button link" name="{{ $default_lang_code}}_button_link" value="{{ old($default_lang_code . "_button_link",$data->value->language->$default_lang_code->button_link ?? "") }}">
-                                          </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -111,42 +111,42 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="{{ $item->name }}" role="tabpanel" aria-labelledby="english-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Title*",
+                                                'label'     => __( "titleS")."*",
                                                 'name'      => $item->code . "_title",
                                                 'value'     => old($item->code . "_title",$data->value->language->$lang_code->title ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Heading*",
+                                                'label'     => __( "Heading*"),
                                                 'name'      =>$item->code . "_heading",
                                                 'value'     => old($item->code . "_heading",$data->value->language->$lang_code->heading ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.textarea',[
-                                                'label'     => "Sub Heading*",
+                                                'label'     =>__( "Sub Heading*"),
                                                 'name'      => $item->code . "_sub_heading",
                                                 'value'     => old($item->code . "_sub_heading",$data->value->language->$lang_code->sub_heading ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.textarea',[
-                                                'label'     => "Bottom Text*",
+                                                'label'     => __( "Bottom Text*"),
                                                 'name'      =>  $item->code . "_botton_text",
                                                 'value'     => old( $item->code . "_botton_text",$data->value->language->$lang_code->botton_text ?? "")
                                             ])
                                         </div>
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Button Name *",
+                                                'label'     => __( "Button Name *"),
                                                 'name'      => $item->code . "_button_name",
                                                 'value'     => old($item->code . "_button_name",$data->value->language->$lang_code->button_name ?? "")
                                             ])
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="">Button Link*</label>
+                                            <label for="">{{ __("Button Link") }} *</label>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text" id="basic-addon1">{{ url('/') }}/</span>
                                                 <input type="text" class="form--control" placeholder="Button link" name="{{$item->code}}_button_link" value="{{ old($item->code . "_button_link",$data->value->language->$lang_code->button_link ?? "") }}">
@@ -161,7 +161,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Submit",
+                            'text'          => __("Submit"),
                             'permission'    => "admin.setup.sections.section.update"
                         ])
                     </div>

@@ -36,11 +36,11 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Agent</th>
-                                        <th>SEND</th>
-                                        <th>Mail Sender(Method)</th>
-                                        <th>Subject</th>
-                                        <th>Message</th>
+                                        <th>{{ __("Agent") }}</th>
+                                        <th>{{ __("send") }}</th>
+                                        <th>{{ __("Mail Sender(Method)") }}</th>
+                                        <th>{{ __("Subject") }}</th>
+                                        <th>{{ __("Message") }}</th>
                                         <th></th>
                                     </tr>
                                 </thead>

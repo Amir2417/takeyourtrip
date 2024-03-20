@@ -35,7 +35,7 @@
                         'name'  => 'category_search',
                     ])
                     @include('admin.components.link.add-default',[
-                        'text'          => "Add Category",
+                        'text'          => __("Add Category"),
                         'href'          => "#category-add",
                         'class'         => "modal-btn",
                         'permission'    => "admin.setup-sections.section.item.store",

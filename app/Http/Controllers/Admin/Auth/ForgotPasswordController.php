@@ -73,7 +73,7 @@ class ForgotPasswordController extends Controller
      */
     protected function sendResetLinkResponse(Request $request, $response)
     {
-        return back()->with(['success' => [__(__('Password Reset Link sended to your email address.'))]]);
+        return back()->with(['success' => [__("Password Reset Link sended to your email address.")]]);
     }
 
 

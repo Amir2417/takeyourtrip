@@ -12,21 +12,21 @@
                     <div class="row mb-10-none mt-2">
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Language Name*',
+                                'label'         => __("Language Name*"),
                                 'name'          => 'edit_name',
                                 'value'         => old('edit_name')
                             ])
                         </div>
                         <div class="col-xl-6 col-lg-6 form-group">
                             @include('admin.components.form.input',[
-                                'label'         => 'Language Code*',
+                                'label'         => __("Language Code*"),
                                 'name'          => 'edit_code',
                                 'value'         => old('edit_code')
                             ])
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group">
                             @include('admin.components.form.switcher',[
-                                'label'         => 'Direction*',
+                                'label'         => __("Direction"),
                                 'name'          => 'edit_dir',
                                 'value'         => old('edit_dir'),
                                 'options'       => ['LTR' => 'ltr','RTL' => 'rtl'],
@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

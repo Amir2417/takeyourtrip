@@ -46,8 +46,8 @@
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th>Page</th>
-                            <th>Status</th>
+                            <th>{{ __("Page") }}</th>
+                            <th>{{__("Status") }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -61,7 +61,7 @@
                                     @include('admin.components.form.switcher',[
                                         'name'          => 'campaign_status',
                                         'value'         => $item->status,
-                                        'options'       => ['Enable' => 1,'Disable' => 0],
+                                        'options'       => [__("Enable") => 1,__("Disable") => 0],
                                         'onload'        => true,
                                         'data_target'   => $item->id,
                                         'permission'    => "admin.campaigns.items.status.update",
@@ -114,7 +114,7 @@
                                     @endphp
                                     <div class="form-group">
                                         @include('admin.components.form.input',[
-                                            'label'     => "Page Name*",
+                                           'label'     =>__( "Page Name")."*",
                                             'name'      => $default_lang_code . "_title",
                                             'value'     => old($default_lang_code . "_title")
                                         ])
@@ -133,7 +133,7 @@
                                     <div class="tab-pane @if (get_default_language_code() == $item->code) fade show active @endif" id="edit-modal-{{ $item->name }}" role="tabpanel" aria-labelledby="edit-modal-{{$item->name}}-tab">
                                         <div class="form-group">
                                             @include('admin.components.form.input',[
-                                                'label'     => "Page Name*",
+                                               'label'     =>__( "Page Name")."*",
                                                 'name'      => $lang_code . "_title",
                                                 'value'     => old($lang_code . "_title")
                                             ])
@@ -149,7 +149,7 @@
 
                         <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                             <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>
-                            <button type="submit" class="btn btn--base">{{ __("Update") }}</button>
+                            <button type="submit" class="btn btn--base">{{ __("update") }}</button>
                         </div>
                     </div>
                 </form>

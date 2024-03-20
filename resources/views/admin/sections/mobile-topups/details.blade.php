@@ -30,9 +30,9 @@
             <div class="row align-items-center mb-10-none">
                 <div class="col-xl-4 col-lg-4 form-group">
                     <ul class="user-profile-list-two">
-                        <li class="one">Date: <span>{{ @$data->created_at->format('d-m-y h:i:s A') }}</span></li>
-                        <li class="two">TRX ID: <span>{{ @$data->trx_id }}</span></li>
-                        <li class="three">Fullname: <span>
+                        <li class="one">{{ __("Date") }}: <span>{{ @$data->created_at->format('d-m-y h:i:s A') }}</span></li>
+                        <li class="two">{{ __("web_trx_id") }}: <span>{{ @$data->trx_id }}</span></li>
+                        <li class="three">{{ __("Fullname") }}: <span>
                             @if($data->user_id != null)
                             <a href="{{ setRoute('admin.users.details',$data->creator->username) }}">{{ $data->creator->fullname }} ({{ __("USER") }})</a>
                             @elseif($data->agent_id != null)
@@ -40,8 +40,8 @@
                             @endif
                             </span>
                         </li>
-                        <li class="four">Topup Type: <span class="fw-bold">{{ @$data->details->topup_type_name }}</span></li>
-                        <li class="five">Mobile Number: <span class="fw-bold">{{ @$data->details->mobile_number }}</span></li>
+                        <li class="four">{{ __("TopUp Type") }}: <span class="fw-bold">{{ @$data->details->topup_type_name }}</span></li>
+                        <li class="five">{{ __("Mobile Number") }}: <span class="fw-bold">{{ @$data->details->mobile_number }}</span></li>
 
                     </ul>
                 </div>
@@ -53,11 +53,11 @@
                 </div>
                 <div class="col-xl-4 col-lg-4 form-group">
                     <ul class="user-profile-list two">
-                        <li class="one">Topup Amount: <span>{{ get_amount($data->request_amount,get_default_currency_code()) }}</span></li>
-                        <li class="two">Charge: <span>{{ get_amount($data->charge->total_charge,get_default_currency_code()) }}</span></li>
-                        <li class="three">Payable Amount: <span>{{ get_amount($data->payable,get_default_currency_code()) }}</span></li>
-                        <li class="three">Remaining Balance: <span>{{ get_amount($data->available_balance,get_default_currency_code()) }}</span></li>
-                        <li class="four">Status:  <span class="{{ @$data->stringStatus->class }}">{{ @$data->stringStatus->value }}</span></li>
+                        <li class="one">{{ __("Topup Amount") }}: <span>{{ get_amount($data->request_amount,get_default_currency_code()) }}</span></li>
+                        <li class="two">{{ __("Total Charge") }}: <span>{{ get_amount($data->charge->total_charge,get_default_currency_code()) }}</span></li>
+                        <li class="three">{{ __("Payable Amount") }}: <span>{{ get_amount($data->payable,get_default_currency_code()) }}</span></li>
+                        <li class="three">{{ __("Remaining Balance") }}: <span>{{ get_amount($data->available_balance,get_default_currency_code()) }}</span></li>
+                        <li class="four">{{__("Status") }}:  <span class="{{ @$data->stringStatus->class }}">{{ __(@$data->stringStatus->value) }}</span></li>
                     </ul>
                 </div>
             </div>
@@ -69,8 +69,8 @@
 <div class="custom-card mt-15">
     <div class="card-body">
         <div class="product-sales-btn">
-            <button type="button" class="btn btn--base approvedBtn">Approve</button>
-            <button type="button" class="btn btn--danger rejectBtn" >Reject</button>
+            <button type="button" class="btn btn--base approvedBtn">{{ __("approve") }}</button>
+            <button type="button" class="btn btn--danger rejectBtn" >{{ __("reject") }}</button>
         </div>
     </div>
 </div>
@@ -79,7 +79,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header p-3" id="approvedModalLabel">
-                <h5 class="modal-title">Approved Confirmation ( <span class="fw-bold text-danger">{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span> )</h5>
+                <h5 class="modal-title">{{ __("Approved Confirmation") }} ( <span class="fw-bold text-danger">{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span> )</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -90,14 +90,14 @@
                     <div class="row mb-10-none">
                         <div class="col-xl-12 col-lg-12 form-group">
                             <input type="hidden" name="id" value={{ @$data->id }}>
-                           <p>Are you sure to approved this request?</p>
+                           <p>{{ __("Are you sure to approved this request?") }}</p>
                         </div>
                     </div>
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn--danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn--base btn-loading ">Approved</button>
+                <button type="button" class="btn btn--danger" data-bs-dismiss="modal">{{ __("Cancel") }}</button>
+                <button type="submit" class="btn btn--base btn-loading ">{{ __("Approved") }}</button>
             </div>
         </form>
         </div>
@@ -107,7 +107,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header p-3" id="rejectModalLabel">
-                <h5 class="modal-title">Rejection Confirmation ( <span class="fw-bold text-danger">{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span> )</h5>
+                <h5 class="modal-title">{{ __("Rejection Confirmation") }} ( <span class="fw-bold text-danger">{{ number_format(@$data->request_amount,2) }} {{ get_default_currency_code() }}</span> )</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -118,7 +118,7 @@
                         <div class="col-xl-12 col-lg-12 form-group">
                             <input type="hidden" name="id" value={{ @$data->id }}>
                             @include('admin.components.form.textarea',[
-                                'label'         => 'Explain Rejection Reason*',
+                                'label'         => __("Explain Rejection Reason*"),
                                 'name'          => 'reject_reason',
                                 'value'         => old('reject_reason')
                             ])
@@ -127,8 +127,8 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn--danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn--base">Confirm</button>
+                <button type="button" class="btn btn--danger" data-bs-dismiss="modal">{{ __("Cancel") }}</button>
+                <button type="submit" class="btn btn--base">{{ __("confirm") }}</button>
             </div>
         </form>
         </div>

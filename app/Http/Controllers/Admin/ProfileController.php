@@ -24,7 +24,7 @@ class ProfileController extends Controller
         $profile = Auth::user();
         $countries = get_all_countries();
 
-        $page_title = "Admin Profile";
+        $page_title =__( "Admin Profile");
         return view('admin.sections.profile.index',compact(
             'page_title','profile','countries',
         ));
@@ -71,7 +71,7 @@ class ProfileController extends Controller
             return back()->with(['error' => [$e]]);
         }
 
-        return back()->with(['success' => ['Profile Information Updated Successfully!']]);
+        return back()->with(['success' => [__("Profile Information Updated Successfully!")]]);
     }
 
     /**
@@ -91,7 +91,7 @@ class ProfileController extends Controller
      * @return view $change-password
      */
     public function changePassword() {
-        $page_title = "Password Change";
+        $page_title = __("Password Change");
         return view('admin.sections.profile.change-password',compact(
             'page_title',
         ));
@@ -109,7 +109,7 @@ class ProfileController extends Controller
         $validated = $validator->validate();
         if(!Hash::check($validated['current_password'],Auth::user()->password)) {
             throw ValidationException::withMessages([
-                'current_password'    => "Current password didn't match",
+                'current_password'    => __("Current password didn't match"),
             ]);
         }
 
@@ -118,9 +118,9 @@ class ProfileController extends Controller
                 'password' => Hash::make($validated['password']),
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ["Password updated successfully!"]]);
+        return back()->with(['success' => [__("Password updated successfully!")]]);
     }
 }

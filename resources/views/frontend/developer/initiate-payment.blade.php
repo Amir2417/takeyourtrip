@@ -8,45 +8,45 @@
     <div class="developer-main-wrapper">
         <div class="row mb-30-none">
             <div class="col-lg-6 mb-30">
-                <h1 class="heading-title mb-20">Initiate Payment</h1>
-                <p>Initiates a new payment transaction.</p>
+                <h1 class="heading-title mb-20">{{ __("Initiate Payment") }}</h1>
+                <p>{{ __("Initiates a new payment transaction.") }}</p>
                 <div class="mb-10">
-                    <strong>Endpoint:</strong> <span class="badge rounded-pill bg-primary">POST</span> <code class="fw-bold fs-6" style="color: #EE8D1D;"><code>&#123;&#123;base_url&#125;&#125;</code>/payment/create</code>
+                    <strong>{{ __("Endpoint") }}:</strong> <span class="badge rounded-pill bg-primary">POST</span> <code class="fw-bold fs-6" style="color: #EE8D1D;"><code>&#123;&#123;base_url&#125;&#125;</code>/payment/create</code>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                            <th scope="col">Parameter</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Details</th>
+                            <th scope="col">{{ __("Parameter") }}</th>
+                            <th scope="col">{{ __("type") }}</th>
+                            <th scope="col">{{ __("Details") }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                             <th scope="row">amount</th>
                             <td>decimal</td>
-                            <td>Your Amount , Must be rounded at 2 precision.</td>
+                            <td>{{ __("Your Amount , Must be rounded at 2 precision.") }}</td>
                             </tr>
                             <tr>
                             <th scope="row">currency</th>
                             <td>string</td>
-                            <td>Currency Code, Must be in Upper Case (Alpha-3 code)</td>
+                            <td>{{ __("Currency Code, Must be in Upper Case (Alpha-3 code)") }}</td>
                             </tr>
                             <tr>
                             <th scope="row">return_url:</th>
                             <td>string</td>
-                            <td>Enter your return or success URL</td>
+                            <td>{{ __("Enter your return or success URL") }}</td>
                             </tr>
                             <tr>
                             <th scope="row">cancel_url:</th>
                             <td>string (optional)</td>
-                            <td>Enter your cancel or failed URL</td>
+                            <td>{{ __("Enter your cancel or failed URL") }}</td>
                             </tr>
                             <tr>
                             <th scope="row">custom:</th>
                             <td>string (optional)</td>
-                            <td>Transaction id which can be used your project transaction</td>
+                            <td>{{ __("Transaction id which can be used your project transaction") }}</td>
                             </tr>
                         </tbody>
                         </table>
@@ -119,8 +119,8 @@
     <div class="page-change-area">
 
         <div class="navigation-wrapper">
-            <a href="{{ setRoute('developer.access.token') }}" class="left"><i class="las la-arrow-left me-1"></i> Access Token</a>
-            <a href="{{ setRoute('developer.check.status.payment') }}" class="right">Check Payment Status <i class="las la-arrow-right ms-1"></i></a>
+            <a href="{{ setRoute('developer.access.token') }}" class="left"><i class="las la-arrow-left me-1"></i> {{ __("Access Token") }}</a>
+            <a href="{{ setRoute('developer.check.status.payment') }}" class="right">{{ __("Check Payment Status") }} <i class="las la-arrow-right ms-1"></i></a>
         </div>
 
     </div>

@@ -6,7 +6,7 @@
                 <input type="checkbox" {{ $support_ticket->status == 1 ? 'disabled':'' }} class="solve-checkbox" id="action" @if ($support_ticket->status == support_ticket_const()::SOLVED) @checked(true) @endif>
                 <label for="action">{{ __("Mark as Solved") }}</label>
             @else
-                <span class="{{ $support_ticket->stringStatus->class }}">{{ $support_ticket->stringStatus->value }}</span>
+                <span class="{{ $support_ticket->stringStatus->class }}">{{ __($support_ticket->stringStatus->value) }}</span>
             @endif
             </div>
             <div class="chat-cross-btn">

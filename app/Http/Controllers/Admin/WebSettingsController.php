@@ -23,7 +23,7 @@ class WebSettingsController extends Controller
      */
     public function basicSettings()
     {
-        $page_title = "Basic Settings";
+        $page_title = __("Basic Settings");
         $basic_settings   = BasicSettings::first();
         return view('admin.sections.web-settings.basic-settings', compact(
             'page_title',
@@ -36,7 +36,6 @@ class WebSettingsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'base_color'        => 'required|string',
-            // 'secondary_color'   => 'required|string',
             'web_version'       => 'required|string',
             'site_name'         => 'required|string',
             'site_title'        => 'required|string',
@@ -47,7 +46,7 @@ class WebSettingsController extends Controller
         $validated = $validator->validate();
 
         $basic_settings = BasicSettings::first();
-        if (!$basic_settings) return back()->with(['error' => ['Basic settings not found!']]);
+        if (!$basic_settings) return back()->with(['error' => [__("Basic settings not found!")]]);
 
         try {
             $basic_settings->update($validated);
@@ -56,10 +55,52 @@ class WebSettingsController extends Controller
                 "APP_TIMEZONE"  => $validated['timezone'],
             ]);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Basic settings updated successfully!']]);
+        return back()->with(['success' => [__("Basic settings updated successfully!")]]);
+    }
+    public function basicSettingsUpdateMerchant(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'merchant_base_color'        => 'required|string',
+            'merchant_site_name'         => 'required|string',
+            'merchant_site_title'        => 'required|string',
+            'merchant_otp_exp_seconds'   => 'required|string',
+        ]);
+        $validated = $validator->validate();
+
+        $basic_settings = BasicSettings::first();
+        if (!$basic_settings) return back()->with(['error' => [__("Basic settings not found!")]]);
+
+        try {
+            $basic_settings->update($validated);
+        } catch (Exception $e) {
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
+        }
+
+        return back()->with(['success' => [__("Basic settings updated successfully!")]]);
+    }
+    public function basicSettingsUpdateAgent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'agent_base_color'        => 'required|string',
+            'agent_site_name'         => 'required|string',
+            'agent_site_title'        => 'required|string',
+            'agent_otp_exp_seconds'   => 'required|string',
+        ]);
+        $validated = $validator->validate();
+
+        $basic_settings = BasicSettings::first();
+        if (!$basic_settings) return back()->with(['error' => [__("Basic settings not found!")]]);
+
+        try {
+            $basic_settings->update($validated);
+        } catch (Exception $e) {
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
+        }
+
+        return back()->with(['success' => [__("Basic settings updated successfully!")]]);
     }
 
     public function basicSettingsActivationUpdate(Request $request)
@@ -79,7 +120,7 @@ class WebSettingsController extends Controller
         // Check Email configure
         if ($validated['input_name'] == "email_verification") {
             if (!$basic_settings->mail_config) {
-                $warning = ['warning' => ['You have to configure your system mail first.']];
+                $warning = ['warning' => [__("You have to configure your system mail first.")]];
                 return Response::warning($warning, null, 400);
             }
         }
@@ -87,7 +128,7 @@ class WebSettingsController extends Controller
         if($validated['input_name'] == "kyc_verification") {
             $data = SetupKyc::first()->fields ?? null;
             if($data == null) {
-                $warning = ['warning' => ['Please setup KYC field first. Go to [Setup KYC] page from sidebar']];
+                $warning = ['warning' => [__("Please setup KYC field first. Go to [Setup KYC] page from sidebar")]];
                 return Response::warning($warning, null, 400);
             }
         }
@@ -95,7 +136,7 @@ class WebSettingsController extends Controller
         $validated['status'] = ($validated['status'] == true) ? false : true;
 
         if (!$basic_settings) {
-            $error = ['error' => ['Basic settings not found!']];
+            $error = ['error' => [__("Basic settings not found!")]];
             return Response::error($error, null, 404);
         }
 
@@ -105,11 +146,11 @@ class WebSettingsController extends Controller
                 $validated['input_name'] => $validated['status'],
             ]);
         } catch (Exception $e) {
-            $error = ['error' => ['Something went worng!. Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error, null, 500);
         }
 
-        $success = ['success' => ['Basic settings status updated successfully!']];
+        $success = ['success' => [__("Basic settings status updated successfully!")]];
         return Response::success($success, null, 200);
     }
 
@@ -120,7 +161,7 @@ class WebSettingsController extends Controller
      */
     public function imageAssets()
     {
-        $page_title = "Image Assets";
+        $page_title = __("Image Assets");
         $basic_settings = BasicSettingsProvider::get();
         return view('admin.sections.web-settings.image-assets', compact(
             'page_title',
@@ -132,38 +173,53 @@ class WebSettingsController extends Controller
     public function imageAssetsUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'site_logo'         => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
-            'site_logo_dark'    => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
-            'site_fav'          => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
-            'site_fav_dark'     => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'site_logo'                     => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'site_logo_dark'                => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'site_fav'                      => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'site_fav_dark'                 => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'agent_site_logo'               => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'agent_site_logo_dark'          => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'agent_site_fav'                => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'agent_site_fav_dark'           => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'merchant_site_logo'            => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'merchant_site_logo_dark'       => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'merchant_site_fav'             => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
+            'merchant_site_fav_dark'        => 'nullable|image|mimes:png,jpeg,jpg,webp,svg',
         ]);
         $validated = $validator->validate();
         $basic_settings = BasicSettingsProvider::get();
         if (!$basic_settings) {
-            return back()->with(['error' => ['Basic setting not found! Please run database seeder']]);
+            return back()->with(['error' => [__("Basic setting not found! Please run database seeder")]]);
         }
+
 
         $images = [];
         foreach ($validated as $input_name => $item) {
+            $input_value = explode('/',$basic_settings->$input_name);
+            if(isset($input_value) && isset($input_value[0]) && $input_value[0] ==  'seeder'){
+                $oldImage = null;
+            }else{
+                $oldImage = $basic_settings->$input_name;
+            }
             if ($request->hasFile($input_name)) {
                 $image = get_files_from_fileholder($request, $input_name);
-                $upload_image = upload_files_from_path_dynamic($image, 'image-assets', $basic_settings->$input_name);
+                $upload_image = upload_files_from_path_dynamic($image, 'image-assets',$oldImage);
                 $images[$input_name] = $upload_image;
             }
         }
 
         if (count($images) == 0) {
-            return back()->with(['warning' => ['No changes to update.']]);
+            return back()->with(['warning' => [__("No changes to update.")]]);
         }
 
         // update images to database
         try {
             $basic_settings->update($images);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Image assets updated successfully!.']]);
+        return back()->with(['success' => [__("Image assets updated successfully!.")]]);
     }
 
     /**
@@ -173,7 +229,7 @@ class WebSettingsController extends Controller
      */
     public function setupSeo()
     {
-        $page_title = "Setup SEO";
+        $page_title = __("Setup SEO");
         $setup_seo = SetupSeo::first();
         return view('admin.sections.web-settings.setup-seo', compact(
             'page_title',
@@ -205,10 +261,10 @@ class WebSettingsController extends Controller
         try {
             $setup_seo->update($validated);
         } catch (Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['SEO information updated successfully!']]);
+        return back()->with(['success' => [__("SEO information updated successfully!")]]);
     }
 
 }

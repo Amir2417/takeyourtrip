@@ -35,7 +35,7 @@
                         'name'  => 'country_search',
                     ])
                     @include('admin.components.link.add-default',[
-                        'text'          => "Add Country",
+                        'text'          => __("Add Country"),
                         'href'          => "#country-add",
                         'class'         => "modal-btn",
                         'permission'    => "admin.remitance.country.store",

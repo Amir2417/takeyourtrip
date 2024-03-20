@@ -17,9 +17,11 @@ use Illuminate\Support\Str;
 use Jenssegers\Agent\Agent;
 use App\Events\User\NotificationEvent as UserNotificationEvent;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\TransactionAgent;
 
 trait Paypal
 {
+    use TransactionAgent;
     public function paypalInit($output = null) {
         if(!$output) $output = $this->output;
         $credentials = $this->getPaypalCredentials($output);
@@ -29,11 +31,19 @@ trait Paypal
         $paypalProvider->setApiCredentials($config);
         $paypalProvider->getAccessToken();
 
+        if(userGuard()['guard'] == 'web'){
+            $return_url = route('user.add.money.payment.success',PaymentGatewayConst::PAYPAL);
+            $cancel_url = route('user.add.money.payment.cancel',PaymentGatewayConst::PAYPAL);
+        }elseif(userGuard()['guard'] == 'agent'){
+            $return_url = route('agent.add.money.payment.success',PaymentGatewayConst::PAYPAL);
+            $cancel_url = route('agent.add.money.payment.cancel',PaymentGatewayConst::PAYPAL);
+        }
+
         $response = $paypalProvider->createOrder([
             "intent" => "CAPTURE",
             "application_context" => [
-                "return_url" => route('user.add.money.payment.success',PaymentGatewayConst::PAYPAL),
-                "cancel_url" => route('user.add.money.payment.cancel',PaymentGatewayConst::PAYPAL),
+                "return_url" =>  $return_url,
+                "cancel_url" =>  $cancel_url,
             ],
             "purchase_units" => [
                 0 => [
@@ -70,11 +80,19 @@ trait Paypal
         $paypalProvider->setApiCredentials($config);
         $paypalProvider->getAccessToken();
 
+        if(authGuardApi()['guard'] == 'agent_api'){
+            $return_url = route('agent.api.payment.success',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP);
+            $cancel_url = route('agent.api.payment.cancel',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP);
+        }elseif(auth()->guard(get_auth_guard())->check()){
+            $return_url = route('api.payment.success',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP);
+            $cancel_url = route('api.payment.cancel',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP);
+        }
+
         $response = $paypalProvider->createOrder([
             "intent" => "CAPTURE",
             "application_context" => [
-                "return_url" =>route('api.payment.success',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP),
-                "cancel_url" => route('api.payment.cancel',PaymentGatewayConst::PAYPAL."?r-source=".PaymentGatewayConst::APP),
+                "return_url" =>  $return_url,
+                "cancel_url" =>  $cancel_url,
             ],
             "purchase_units" => [
                 0 => [
@@ -192,19 +210,32 @@ trait Paypal
     public function paypalJunkInsert($response) {
 
         $output = $this->output;
+        if(authGuardApi()['type']  == "AGENT"){
+            $creator_table = authGuardApi()['user']->getTable();
+            $creator_id = authGuardApi()['user']->id;
+            $creator_guard = authGuardApi()['guard'];
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }else{
+            $creator_table = auth()->guard(get_auth_guard())->user()->getTable();
+            $creator_id = auth()->guard(get_auth_guard())->user()->id;
+            $creator_guard = get_auth_guard();
+            $wallet_table = $output['wallet']->getTable();
+            $wallet_id = $output['wallet']->id;
+        }
 
         $data = [
             'gateway'   => $output['gateway']->id,
             'currency'  => $output['currency']->id,
             'amount'    => json_decode(json_encode($output['amount']),true),
             'response'  => $response,
-            'wallet_table'  => $output['wallet']->getTable(),
-            'wallet_id'     => $output['wallet']->id,
-            'creator_table' => auth()->guard(get_auth_guard())->user()->getTable(),
-            'creator_id'    => auth()->guard(get_auth_guard())->user()->id,
-            'creator_guard' => get_auth_guard(),
+            'wallet_table'  => $wallet_table,
+            'wallet_id'     => $wallet_id,
+            'creator_table' => $creator_table,
+            'creator_id'    => $creator_id,
+            'creator_guard' => $creator_guard,
         ];
-       
+
         return TemporaryData::create([
             'type'          => PaymentGatewayConst::PAYPAL,
             'identifier'    => $response['id'],
@@ -213,17 +244,16 @@ trait Paypal
     }
 
     public function paypalSuccess($output = null) {
+
         if(!$output) $output = $this->output;
         $token = $this->output['tempData']['identifier'] ?? "";
-        
+
         $credentials = $this->getPaypalCredentials($output);
         $config = $this->paypalConfig($credentials,$output['amount']);
         $paypalProvider = new PayPalClient;
         $paypalProvider->setApiCredentials($config);
         $paypalProvider->getAccessToken();
         $response = $paypalProvider->capturePaymentOrder($token);
-        
-        
         if(isset($response['status']) && $response['status'] == 'COMPLETED') {
             return $this->paypalPaymentCaptured($response,$output);
         }else {
@@ -235,14 +265,17 @@ trait Paypal
 
     public function paypalPaymentCaptured($response,$output) {
         // payment successfully captured record saved to database
-        
         $output['capture'] = $response;
         $basic_setting = BasicSettings::first();
         try{
             $trx_id = 'AM'.getTrxNum();
 
             $user = auth()->user();
-            $this->createTransaction($output, $trx_id);
+            if(userGuard()['type'] == "USER"){
+                return $this->createTransaction($output, $trx_id);
+            }else{
+                return $this->createTransactionChildRecords($output,PaymentGatewayConst::STATUSSUCCESS);
+            }
             if($this->requestIsApiUser()) {
                 $api_user_login_guard = $this->output['api_login_guard'] ?? null;
                 if( $api_user_login_guard != null ){
@@ -253,7 +286,6 @@ trait Paypal
                 }
             }else{
                 if( $basic_setting->email_notification == true){
-                   
                     $user->notify(new ApprovedMail($user,$output, $trx_id));
                 }
             }
@@ -269,11 +301,9 @@ trait Paypal
     public function createTransaction($output, $trx_id) {
         $trx_id =  $trx_id;
         $inserted_id = $this->insertRecord($output, $trx_id);
-        
         $this->insertCharges($output,$inserted_id);
         $this->insertDevice($output,$inserted_id);
         $this->removeTempData($output);
-       
         if($this->requestIsApiUser()) {
             // logout user
             $api_user_login_guard = $this->output['api_login_guard'] ?? null;

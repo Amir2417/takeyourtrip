@@ -341,7 +341,7 @@ trait Paypal
     function updateWalletBalance($data){
         $receiver_wallet = UserWallet::where('user_id',$data->data->receiver_wallet->id)->first();
         if(!$receiver_wallet) return back()->with(['error' => ['Wallet not found.']]);
-        
+
         $balance = floatval($receiver_wallet->balance) + floatval($data->data->amount);
         $receiver_wallet->update([
             'balance'   => $balance,
@@ -390,4 +390,5 @@ trait Paypal
         $token = $output['capture']['id'];
         TemporaryData::where("identifier",$token)->delete();
     }
+
 }

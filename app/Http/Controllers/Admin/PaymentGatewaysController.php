@@ -114,7 +114,7 @@ class PaymentGatewaysController extends Controller
      * @return view
      */
     public function automaticAddMoneyView() {
-        $page_title = "Automatic Add Money";
+        $page_title = __("Automatic Add Money");
         $payment_gateways = PaymentGateway::addMoney()->automatic()->get();
         return view('admin.sections.payment-gateways.add-money.automatic.index',compact(
             'page_title',
@@ -128,7 +128,7 @@ class PaymentGatewaysController extends Controller
      * @return view
      */
     public function manualAddMoneyView() {
-        $page_title = "Manual Add Money";
+        $page_title = __("Manual Add Money");
         $payment_gateways = PaymentGateway::addMoney()->manual()->get();
 
         return view('admin.sections.payment-gateways.add-money.manual.index',compact(
@@ -143,7 +143,7 @@ class PaymentGatewaysController extends Controller
      * @return view
      */
     public function automaticMoneyOutView() {
-        $page_title = "Automatic Money Out";
+        $page_title = __("Automatic Money Out");
         $payment_gateways = PaymentGateway::moneyOut()->automatic()->get();
         return view('admin.sections.payment-gateways.money-out.automatic.index',compact(
             'page_title',
@@ -157,7 +157,7 @@ class PaymentGatewaysController extends Controller
      * @return view
      */
     public function manualMoneyOutView() {
-        $page_title = "Money Out";
+        $page_title = __("Money Out");
         $payment_gateways = PaymentGateway::moneyOut()->manual()->get();
         return view('admin.sections.payment-gateways.money-out.manual.index',compact(
             'page_title',
@@ -190,7 +190,7 @@ class PaymentGatewaysController extends Controller
      *
      */
     public function automaticAddMoneyEdit($alias) {
-        $page_title = "Automatic Add Money Edit";
+        $page_title =__( "Automatic Add Money Edit");
         $gateway = PaymentGateway::addMoney()->automatic()->gateway($alias)->firstOrFail();
         return view('admin.sections.payment-gateways.add-money.automatic.edit',compact(
             'page_title',
@@ -204,7 +204,7 @@ class PaymentGatewaysController extends Controller
      * @return view
      */
     public function manualAddMoneyEdit($alias) {
-        $page_title = "Manual Add Money Edit";
+        $page_title = __("Manual Add Money Edit");
         $payment_gateway = PaymentGateway::addMoney()->manual()->gateway($alias)->firstOrFail();
         return view('admin.sections.payment-gateways.add-money.manual.edit',compact(
             'page_title',
@@ -218,7 +218,7 @@ class PaymentGatewaysController extends Controller
      * @return view
      */
     public function manualMoneyOutEdit($alias) {
-        $page_title = "Money Out Edit";
+        $page_title = __("Money Out Edit");
         $payment_gateway = PaymentGateway::moneyOut()->manual()->gateway($alias)->firstOrFail();
         return view('admin.sections.payment-gateways.money-out.manual.edit',compact(
             'page_title',
@@ -315,10 +315,10 @@ class PaymentGatewaysController extends Controller
         try{
             PaymentGateway::create($validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Payment gateway added successfully!']]);
+        return back()->with(['success' => [__("Payment gateway added successfully!")]]);
     }
 
     /**
@@ -350,11 +350,11 @@ class PaymentGatewaysController extends Controller
                 'status' => ($validated['status'] == true) ? false : true,
             ]);
         }catch(Exception $e) {
-            $error = ['error' => ['Something went worng!. Please try again.']];
+            $error = ['error' => [__("Something went wrong! Please try again.")]];
             return Response::error($error,null,500);
         }
 
-        $success = ['success' => ['Payment gateway status updated successfully!']];
+        $success = ['success' => [__("Payment gateway status updated successfully!")]];
         return Response::success($success,null,200);
     }
 
@@ -388,7 +388,7 @@ class PaymentGatewaysController extends Controller
             'alias'     => 'exists:payment_gateways',
             'mode'      => "required|string|in:".PaymentGatewayConst::ENV_SANDBOX.",".PaymentGatewayConst::ENV_PRODUCTION,
         ],[
-           'alias.exists'   => "Selected payment gateway is invalid!",
+           'alias.exists'   => __("Selected payment gateway is invalid!"),
         ])->validate();
 
         $gateway = PaymentGateway::addMoney()->automatic()->gateway($alias)->first();
@@ -397,10 +397,8 @@ class PaymentGatewaysController extends Controller
 
         $credentials_validation_rules = [];
         $credentials = $gateway->credentials;
-        dd($credentials);
         foreach($credentials as $values) {
             $values = (array) $values;
-            dd($values);
             $credentials_validation_rules[$values['name']] = "nullable|string";
         }
 
@@ -430,7 +428,7 @@ class PaymentGatewaysController extends Controller
                 'env'           => $validated_gateway['mode'],
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         $gateway_supported_currency = json_decode(json_encode($gateway->supported_currencies),true);
@@ -498,10 +496,10 @@ class PaymentGatewaysController extends Controller
         try{
             PaymentGatewayCurrency::where('payment_gateway_id',$gateway->id)->upsert($data_ready_to_work,['alias']);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Information updated successfully!']]);
+        return back()->with(['success' => [__("Information updated successfully!")]]);
 
     }
 
@@ -526,7 +524,7 @@ class PaymentGatewaysController extends Controller
      * Function for create new Manual Add Money Gateway
      */
     public function manualAddMoneyCreate() {
-        $page_title = "Manual Add Money";
+        $page_title = __("Manual Add Money");
         return view('admin.sections.payment-gateways.add-money.manual.create',compact(
             'page_title',
         ));
@@ -612,7 +610,7 @@ class PaymentGatewaysController extends Controller
                 $upload_image = upload_files_from_path_dynamic($image,'payment-gateways');
                 $validated['image'] = $upload_image;
             }catch(Exception $e) {
-                return back()->with(['error' => ['Image upload faild! Please try again.']]);
+                return back()->with(['error' => [__("Image upload failed! Please try again.")]]);
             }
         }
 
@@ -623,7 +621,7 @@ class PaymentGatewaysController extends Controller
             $payment_gateway_id = PaymentGateway::insertGetId($validated);
             $currency_validated['payment_gateway_id'] = $payment_gateway_id;
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         // insert gateway currency
@@ -638,10 +636,10 @@ class PaymentGatewaysController extends Controller
                 $image_link = get_files_path('payment-gateways') . "/" . $validated['image'];
                 delete_file($image_link);
             }
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Payment gateway added successfully!']]);
+        return back()->with(['success' => [__("Payment gateway added successfully!")]]);
 
     }
 
@@ -655,7 +653,7 @@ class PaymentGatewaysController extends Controller
         // Find gateway is available or not
         $gateway = PaymentGateway::addMoney()->manual()->gateway($alias)->first();
         if(!$gateway) {
-            return back()->with(['error' => ['Opps! Payment gateway not found!']]);
+            return back()->with(['error' => [__("Oops! Payment gateway not found!")]]);
         }
 
         // Validate Data
@@ -734,7 +732,7 @@ class PaymentGatewaysController extends Controller
                 $upload_image = upload_files_from_path_dynamic($image,'payment-gateways',$gateway->image);
                 $validated['image'] = $upload_image;
             }catch(Exception $e) {
-                return back()->with(['error' => ['Image upload faild! Please try again.']]);
+                return back()->with(['error' => [__("Image upload failed! Please try again.")]]);
             }
         }
 
@@ -742,17 +740,16 @@ class PaymentGatewaysController extends Controller
         try{
             $gateway->update($validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         // Update Gateway Currency Information
         try{
             $gateway->currencies->first()->update($currency_validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-
-        return back()->with(['success' => ['Payment gateway added successfully!']]);
+        return redirect()->route('admin.payment.gateway.view',['add-money','manual'])->with(['success' => [__("Payment gateway added successfully!")]]);
 
     }
 
@@ -828,10 +825,10 @@ class PaymentGatewaysController extends Controller
         try{
             PaymentGateway::create($validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Payment gateway added successfully!']]);
+        return back()->with(['success' => [__("Payment gateway added successfully!")]]);
 
     }
      /**
@@ -859,7 +856,7 @@ class PaymentGatewaysController extends Controller
             'alias'     => 'exists:payment_gateways',
             'mode'      => "required|string|in:".PaymentGatewayConst::ENV_SANDBOX.",".PaymentGatewayConst::ENV_PRODUCTION,
         ],[
-           'alias.exists'   => "Selected payment gateway is invalid!",
+           'alias.exists'   => __("Selected payment gateway is invalid!"),
         ])->validate();
 
         $gateway = PaymentGateway::moneyout()->automatic()->gateway($alias)->first();
@@ -899,7 +896,7 @@ class PaymentGatewaysController extends Controller
                 'env'           => $validator_gateway['mode'],
             ]);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         $gateway_supported_currency = json_decode(json_encode($gateway->supported_currencies),true);
@@ -967,10 +964,10 @@ class PaymentGatewaysController extends Controller
         try{
             PaymentGatewayCurrency::where('payment_gateway_id',$gateway->id)->upsert($data_ready_to_work,['alias']);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Information updated successfully!']]);
+        return back()->with(['success' => [__("Information updated successfully!")]]);
 
     }
 
@@ -980,7 +977,7 @@ class PaymentGatewaysController extends Controller
      * @return view
      */
     public function manualMoneyOutCreate() {
-        $page_title = "Money Out Add";
+        $page_title = __("Money Out Add");
         return view('admin.sections.payment-gateways.money-out.manual.create',compact(
             'page_title',
         ));
@@ -1021,7 +1018,7 @@ class PaymentGatewaysController extends Controller
             // Search Gateway is unique or not
             if(PaymentGateway::moneyOut()->manual()->gateway(Str::slug($gateway_name))->exists()) {
                 $validator->errors()->add(
-                    'gateway_name', 'The gateway name has already been taken.'
+                    'gateway_name', __("The gateway name has already been taken.")
                 );
             }
         });
@@ -1066,7 +1063,7 @@ class PaymentGatewaysController extends Controller
                 $upload_image = upload_files_from_path_dynamic($image,'payment-gateways');
                 $validated['image'] = $upload_image;
             }catch(Exception $e) {
-                return back()->with(['error' => ['Image upload faild! Please try again.']]);
+                return back()->with(['error' => [__("Image upload failed! Please try again.")]]);
             }
         }
 
@@ -1078,7 +1075,7 @@ class PaymentGatewaysController extends Controller
             $currency_validated['payment_gateway_id'] = $payment_gateway_id;
         }catch(Exception $e) {
 
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         // insert gateway currency
@@ -1094,10 +1091,10 @@ class PaymentGatewaysController extends Controller
                 delete_file($image_link);
             }
 
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Payment gateway added successfully!']]);
+        return back()->with(['success' => [__("Payment gateway added successfully!")]]);
     }
 
 
@@ -1110,7 +1107,7 @@ class PaymentGatewaysController extends Controller
         // Find gateway is available or not
         $gateway = PaymentGateway::moneyOut()->manual()->gateway($alias)->first();
         if(!$gateway) {
-            return back()->with(['error' => ['Opps! Payment gateway not found!']]);
+            return back()->with(['error' => [__("Oops! Payment gateway not found!")]]);
         }
         // Validate Data
         $gateway_name = $request->gateway_name;
@@ -1149,7 +1146,7 @@ class PaymentGatewaysController extends Controller
                 ->where('alias',$alias);
             })->exists()) {
                 $validator->errors()->add(
-                    'gateway_name', 'The gateway name has already been taken.'
+                    'gateway_name', __("The gateway name has already been taken.")
                 );
             }
         });
@@ -1188,7 +1185,7 @@ class PaymentGatewaysController extends Controller
                 $upload_image = upload_files_from_path_dynamic($image,'payment-gateways',$gateway->image);
                 $validated['image'] = $upload_image;
             }catch(Exception $e) {
-                return back()->with(['error' => ['Image upload faild! Please try again.']]);
+                return back()->with(['error' => [__("Image upload failed! Please try again.")]]);
             }
         }
 
@@ -1196,17 +1193,16 @@ class PaymentGatewaysController extends Controller
         try{
             $gateway->update($validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
         // Update Gateway Currency Information
         try{
             $gateway->currencies->first()->update($currency_validated);
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
-
-        return back()->with(['success' => ['Payment gateway added successfully!']]);
+        return redirect()->route('admin.payment.gateway.view',['money-out','manual'])->with(['success' => [__("Payment gateway added successfully!")]]);
     }
 
 
@@ -1214,7 +1210,7 @@ class PaymentGatewaysController extends Controller
         $validated = Validator::make($request->all(),[
             'target'        => 'required|integer|exists:payment_gateways,id',
         ],[
-            'target.exists'     => 'Selected payment gateway is invalid!',
+            'target.exists'     => __("Selected payment gateway is invalid!"),
         ])->validate();
 
         // Delete payment gateway currency
@@ -1229,9 +1225,9 @@ class PaymentGatewaysController extends Controller
                 delete_file($image_link);
             }
         }catch(Exception $e) {
-            return back()->with(['error' => ['Something went worng! Please try again.']]);
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
         }
 
-        return back()->with(['success' => ['Payment gateway deleted successfully!']]);
+        return back()->with(['success' => [__("Payment gateway deleted successfully!")]]);
     }
 }

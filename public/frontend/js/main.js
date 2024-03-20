@@ -623,7 +623,7 @@ function getAllCountries(hitUrl,targetElement = $(".country-select"),errorElemen
         errorElement.after(faildElement);
       }
     });
-  }
+}
   // getAllCountries();
   // select-2 init
   $('.select2-basic').select2();
@@ -632,14 +632,14 @@ function getAllCountries(hitUrl,targetElement = $(".country-select"),errorElemen
   tags: true,
   tokenSeparators: [',']
   });
-  function placePhoneCode(code) {
+function placePhoneCode(code) {
       if(code != undefined) {
           code = code.replace("+","");
           code = "+" + code;
           $("input.phone-code").val(code);
           $("div.phone-code").html(code);
       }
-    }
+}
 // switch-toggles
 $(document).ready(function(){
     $.each($(".switch-toggles"),function(index,item) {
@@ -769,3 +769,19 @@ function formAjaxRequest(formData,URL,formElement) {
       });
     });
   });
+$(document).on("keyup",".number-input",function(){
+  var pattern = /^[0-9]*\.?[0-9]*$/;
+  var value = $(this).val();
+  var test = pattern.test(value);
+  if(test == false) {
+    var rightValue = value;
+    if(value.length > 0) {
+      for (let index = 0; index < value.length; index++){
+        if(!$.isNumeric(rightValue)) {
+          rightValue = rightValue.slice(0, -1);
+        }
+      }
+    }
+    $(this).val(rightValue);
+  }
+});

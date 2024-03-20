@@ -28,7 +28,7 @@
                 @method("PUT")
                 <div class="row mb-10-none">
                     <div class="col-xl-12   col-lg-12 form-group">
-                        <label>{{ __("Name*") }}</label>
+                        <label>{{ __("name") }}*</label>
                         <select class="form--control nice-select" name="api_method">
                             <option disabled>{{ __("Select Platfrom") }}</option>
                             <option value="flutterwave" @if(@$api->config->name == 'flutterwave') selected @endif>@lang('Flutterwave')</option>
@@ -40,7 +40,7 @@
                     <div class="col-xl-12 col-lg-12 form-group configForm" id="flutterwave">
                         <div class="row" >
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 form-group">
-                                <label>{{ __("Secret Key*") }}</label>
+                                <label>{{ __("secret Key") }}*</label>
                                 <div class="input-group append">
                                     <span class="input-group-text"><i class="las la-key"></i></span>
                                     <input type="text" class="form--control" name="flutterwave_secret_key" value="{{ @$api->config->flutterwave_secret_key }}">
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
-                                <label>{{ __("Base Url*") }}</label>
+                                <label>{{ __("Base URL") }}*</label>
                                 <div class="input-group append">
                                     <span class="input-group-text"><i class="las la-link"></i></span>
                                     <input type="text" class="form--control" name="flutterwave_url" value="{{ @$api->config->flutterwave_url }}">
@@ -66,7 +66,7 @@
                     <div class="col-xl-12 col-lg-12 form-group configForm" id="sudo">
                         <div class="row" >
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
-                                <label>{{ __("Api Key*") }}</label>
+                                <label>{{ __("api Key") }}*</label>
                                 <div class="input-group append">
                                     <span class="input-group-text"><i class="las la-key"></i></span>
                                     <input type="text" class="form--control" name="sudo_api_key" value="{{ @$api->config->sudo_api_key }}">
@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 form-group">
-                                <label>{{ __("Base Url*") }}</label>
+                                <label>{{ __("Base URL") }}*</label>
                                 <div class="input-group append">
                                     <span class="input-group-text"><i class="las la-link"></i></span>
                                     <input type="text" class="form--control" name="sudo_url" value="{{ @$api->config->sudo_url }}">
@@ -88,10 +88,10 @@
                             </div>
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 form-group">
                                 @include('admin.components.form.switcher', [
-                                    'label'         => 'Mode',
+                                    'label'         => __('Mode'),
                                     'value'         => old('sudo_mode',@$api->config->sudo_mode),
                                     'name'          => "sudo_mode",
-                                    'options'       => ['Live' => global_const()::LIVE, 'Sandbox' => global_const()::SANDBOX]
+                                    'options'       => [__('Live') => global_const()::LIVE,__('sand Box') => global_const()::SANDBOX]
                                 ])
                             </div>
 
@@ -107,14 +107,14 @@
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 form-group">
-                                <label>{{ __("Secret Key*") }}</label>
+                                <label>{{ __("secret Key") }}*</label>
                                 <div class="input-group append">
                                     <span class="input-group-text"><i class="las la-key"></i></span>
                                     <input type="text" class="form--control" name="stripe_secret_key" value="{{ @$api->config->stripe_secret_key }}">
                                 </div>
                             </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
-                                <label>{{ __("Base Url*") }}</label>
+                                <label>{{ __("Base URL") }}*</label>
                                 <div class="input-group append">
                                     <span class="input-group-text"><i class="las la-link"></i></span>
                                     <input type="text" class="form--control" name="stripe_url" value="{{ @$api->config->stripe_url }}">
@@ -132,14 +132,14 @@
                                 </div>
                             </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
-                                <label>{{ __("Secret Key*") }}</label>
+                                <label>{{ __("secret Key") }}*</label>
                                 <div class="input-group append">
                                     <span class="input-group-text"><i class="las la-key"></i></span>
                                     <input type="text" class="form--control" name="strowallet_secret_key" value="{{ @$api->config->strowallet_secret_key }}">
                                 </div>
                             </div>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 form-group">
-                                <label>{{ __("Base Url*") }}</label>
+                                <label>{{ __("Base URL") }}*</label>
                                 <div class="input-group append">
                                     <span class="input-group-text"><i class="las la-link"></i></span>
                                     <input type="text" class="form--control" name="strowallet_url" value="{{ @$api->config->strowallet_url }}">
@@ -149,18 +149,18 @@
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input',[
-                            'label'         => 'Card Limit*   Within (1 to 3)',
+                            'label'         => __("Card limit admin"),
                             'name'          => 'card_limit',
                             'value'         => old('card_limit',@$api->card_limit),
-                            'placeholder'   => "Enter 1-3 Only."
+                            'placeholder'   => __("Enter 1-3 Only.")
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.form.input-text-rich',[
-                            'label'         => 'Card Details*',
+                            'label'         => __("card Details")."*",
                             'name'          => 'card_details',
                             'value'         => old('card_details',@$api->card_details),
-                            'placeholder'   => "Write Here...",
+                            'placeholder'   => __( "Write Here..."),
                         ])
                     </div>
                     <div class="col-xl-12 col-lg-12 form-group">
@@ -179,7 +179,7 @@
                     <div class="col-xl-12 col-lg-12 form-group">
                         @include('admin.components.button.form-btn',[
                             'class'         => "w-100 btn-loading",
-                            'text'          => "Update",
+                            'text'          => __("update"),
                             'permission'    => "admin.virtual.card.api.update"
                         ])
                     </div>

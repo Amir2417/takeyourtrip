@@ -25,6 +25,7 @@ class TransactionController extends Controller
             'remittance'    => PaymentGatewayConst::SENDREMITTANCE,
             'make-payment'    => PaymentGatewayConst::TYPEMAKEPAYMENT,
             'merchant-payment'    => PaymentGatewayConst::MERCHANTPAYMENT,
+            'money-out'    => PaymentGatewayConst::AGENTMONEYOUT,
         ];
 
         if(!array_key_exists($slug,$values)) return abort(404);
