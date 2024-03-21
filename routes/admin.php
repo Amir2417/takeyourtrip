@@ -1,49 +1,52 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\CurrencyController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\TrxSettingsController;
+use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Admin\BankController;
+use App\Providers\Admin\BasicSettingsProvider;
+use Pusher\PushNotifications\PushNotifications;
+use App\Http\Controllers\Admin\CookieController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\AddMoneyController;
+use App\Http\Controllers\Admin\CurrencyController;
+use App\Http\Controllers\Admin\LanguageController;
+use App\Http\Controllers\Admin\MoneyOutController;
+use App\Http\Controllers\Admin\SetupKycController;
+use App\Http\Controllers\Admin\UserCareController;
 use App\Http\Controllers\Admin\AdminCareController;
 use App\Http\Controllers\Admin\AgentCareController;
-use App\Http\Controllers\Admin\AppOnboardScreensController;
-use App\Http\Controllers\Admin\AppSettingsController;
-use App\Http\Controllers\Admin\BroadcastingController;
-use App\Http\Controllers\Admin\ContactMessageController;
-use App\Http\Controllers\Admin\CookieController;
-use App\Http\Controllers\Admin\CryptoAssetController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\RemitanceController;
 use App\Http\Controllers\Admin\ExtensionsController;
 use App\Http\Controllers\Admin\GatewayApiController;
-use App\Http\Controllers\Admin\LanguageController;
-use App\Http\Controllers\Admin\MerchantCareController;
-use App\Http\Controllers\Admin\ModuleSettingController;
-use App\Http\Controllers\Admin\MoneyOutController;
 use App\Http\Controllers\Admin\NewsletterController;
-use App\Http\Controllers\Admin\PaymentGatewayCurrencyController;
-use App\Http\Controllers\Admin\PaymentGatewaysController;
-use App\Http\Controllers\Admin\PaymentLinkController;
-use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProfitLogsController;
-use App\Http\Controllers\Admin\PushNotificationController;
-use App\Http\Controllers\Admin\RemitanceController;
 use App\Http\Controllers\Admin\ServerInfoController;
-use App\Http\Controllers\Admin\SetupBillPayController;
 use App\Http\Controllers\Admin\SetupEmailController;
-use App\Http\Controllers\Admin\SetupKycController;
-use App\Http\Controllers\Admin\SetupMobileTopupController;
 use App\Http\Controllers\Admin\SetupPagesController;
+use App\Http\Controllers\Admin\UsefulLInkController;
+use App\Http\Controllers\Admin\AppSettingsController;
+use App\Http\Controllers\Admin\CryptoAssetController;
+use App\Http\Controllers\Admin\PaymentLinkController;
+use App\Http\Controllers\Admin\TrxSettingsController;
+use App\Http\Controllers\Admin\VirtualCardController;
+use App\Http\Controllers\Admin\WebSettingsController;
+use App\Http\Controllers\Admin\BroadcastingController;
+use App\Http\Controllers\Admin\MerchantCareController;
+use App\Http\Controllers\Admin\SetupBillPayController;
+use App\Http\Controllers\Admin\ModuleSettingController;
 use App\Http\Controllers\Admin\SetupSectionsController;
 use App\Http\Controllers\Admin\SupportTicketController;
-use App\Http\Controllers\Admin\UsefulLInkController;
-use App\Http\Controllers\Admin\UserCareController;
-use App\Http\Controllers\Admin\WebSettingsController;
-use App\Http\Controllers\Admin\VirtualCardController;
-use Illuminate\Support\Facades\Artisan;
-use Pusher\PushNotifications\PushNotifications;
-use Illuminate\Http\Request;
-use App\Providers\Admin\BasicSettingsProvider;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\Admin\PaymentGatewaysController;
+use App\Http\Controllers\Admin\PushNotificationController;
+use App\Http\Controllers\Admin\SendMoneyGatewayController;
+use App\Http\Controllers\Admin\SetupMobileTopupController;
+use App\Http\Controllers\Admin\AppOnboardScreensController;
+use App\Http\Controllers\Admin\PaymentGatewayCurrencyController;
+use App\Http\Controllers\Admin\BankAccountVerificationController;
 
 // All Admin Route Is Here
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -87,6 +90,35 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::controller(GatewayApiController::class)->prefix('gateway-api')->name('gateway.api.')->group(function () {
         Route::get('', 'index')->name('index');
         Route::put('update', 'update')->name('update');
+    });
+
+    //bank
+    Route::controller(BankController::class)->prefix('bank')->name('bank.')->group(function(){
+        Route::get('/','index')->name('index');
+        Route::get('create','create')->name('create');
+        Route::post('store','store')->name('store');
+        Route::get('edit/{slug}','edit')->name('edit');
+        Route::post('update/{slug}','update')->name('update');
+        Route::put('status/update','statusUpdate')->name('status.update');
+        Route::delete('delete','delete')->name('delete');
+    });
+
+    //bank account verification 
+    Route::controller(BankAccountVerificationController::class)->prefix('bank-account')->name('bank.account.')->group(function(){
+        Route::get('pending','pending')->name('pending');
+        Route::get('details/{id}','details')->name('details');
+        Route::get('approve','approve')->name('approve');
+        Route::get('reject','reject')->name('reject');
+        Route::post('status-approved/{id}','statusApproved')->name('status.approve');
+        Route::post('status-reject/{id}','statusReject')->name('status.reject');
+    });
+
+    //send money gateway
+    Route::controller(SendMoneyGatewayController::class)->prefix('send-money-gateway')->name('send.money.gateway.')->group(function(){
+        Route::get('/','index')->name('index');
+        Route::get('edit/{slug}','edit')->name('edit');
+        Route::put('update/{slug}','update')->name('update');
+        Route::put('status/update', 'statusUpdate')->name('status.update');
     });
 
     // Remittance Logs

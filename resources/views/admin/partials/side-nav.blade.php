@@ -53,10 +53,53 @@
                             'title'     => "PayLink Api",
                             'route'     => "admin.gateway.api.index",
                             'icon'      => "menu-icon las la-code",
-                        ]
+                        ],
+                        [
+                            'title'     => "Bank",
+                            'route'     => "admin.bank.index",
+                            'icon'      => "menu-icon las la-university",
+                        ], 
+                    ]
+                ])
+                @include('admin.components.side-nav.link-group',[
+                    'group_title'       => "User Bank Account",
+                    'group_links'       => [
+                        'dropdown'      => [
+                            [
+                                'title'     => "Bank Account",
+                                'icon'      => "menu-icon las la-user-circle",
+                                'links'     => [
+                                    [
+                                        'title'     => "Pending Account",
+                                        'route'     => "admin.bank.account.pending",
+                                    ],
+                                    [
+                                        'title'     => "Approved Account",
+                                        'route'     => "admin.bank.account.approve",
+                                    ],
+                                    [
+                                        'title'     => "Rejected Account",
+                                        'route'     => "admin.bank.account.reject",
+                                    ],
+                                ],
+                            ]
+                        ],
+
                     ]
                 ])
 
+                @include('admin.components.side-nav.link-group',[
+                    'group_title'       => "Send Money Gateway",
+                    'group_links'       => [
+                        [
+                            'title'     => "Automatic",
+                            'route'     => "admin.send.money.gateway.index",
+                            'icon'      => "menu-icon las la-share-alt",
+                        ],
+                        
+                        
+                    ]
+                ])
                 {{-- Section Transaction & Logs --}}
                 @include('admin.components.side-nav.link-group',[
                     'group_title'       => __("TRANSACTIONS & LOGS"),
