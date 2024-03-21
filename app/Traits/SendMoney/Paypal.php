@@ -281,6 +281,7 @@ trait Paypal
     public function createTransaction($output, $trx_id) {
         $trx_id =  $trx_id;
         $inserted_id = $this->insertRecord($output, $trx_id);
+        $this->insertReceiver($output, $trx_id);
         $this->insertCharges($output,$inserted_id);
        
         // $this->removeTempData($output);
@@ -328,6 +329,48 @@ trait Paypal
                 'attribute'                      =>PaymentGatewayConst::SEND,
                 'created_at'                    => now(),
             ]);
+           
+            DB::commit();
+        }catch(Exception $e) {
+            DB::rollBack();
+            throw new Exception(__("Something went wrong! Please try again."));
+        }
+        return $id;
+    }
+
+    public function insertReceiver($output, $trx_id) {
+        $trx_id =  $trx_id;
+        $token = $this->output['tempData']['identifier'] ?? "";
+        $data  = TemporaryData::where('identifier',$output['form_data']['identifier'])->first();
+        $receiver = UserWallet::where('user_id',$data->data->receiver_wallet->user_id)->first();
+        $details =[
+            'data' => $data->data,
+            'recipient_amount' => $data->data->will_get
+        ];
+        if(auth()->check()){
+            $user  = auth()->user();
+            $fullname   = $user->fullname;
+        }else{
+            $user  = null;
+            $fullname = null;
+        }
+        DB::beginTransaction();
+        try{
+            $id = DB::table("transactions")->insertGetId([
+                'user_id'                       => $receiver->user_id,
+                'user_wallet_id'                => $receiver->id,
+                'payment_gateway_currency_id'   => null,
+                'send_money_gateway_id'         => $output['gateway']->id,
+                'type'                          => PaymentGatewayConst::TYPETRANSFERMONEY,
+                'trx_id'                        => $trx_id,
+                'request_amount'                => $output['amount']->requested_amount,
+                'payable'                       => $output['amount']->total_amount,
+                'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPETRANSFERMONEY," ")) . " From " .$fullname,
+                'details'                       => json_encode($details),
+                'status'                        => true,
+                'attribute'                     => PaymentGatewayConst::RECEIVED,
+                'created_at'                    => now(),
+            ]);
             $this->updateWalletBalance($data);
            
             DB::commit();
@@ -339,7 +382,7 @@ trait Paypal
     }
     // update wallet balance
     function updateWalletBalance($data){
-        $receiver_wallet = UserWallet::where('user_id',$data->data->receiver_wallet->id)->first();
+        $receiver_wallet = UserWallet::where('user_id',$data->data->receiver_wallet->user_id)->first();
         if(!$receiver_wallet) return back()->with(['error' => ['Wallet not found.']]);
 
         $balance = floatval($receiver_wallet->balance) + floatval($data->data->amount);

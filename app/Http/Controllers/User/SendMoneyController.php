@@ -260,6 +260,7 @@ class SendMoneyController extends Controller
                 'receiver_email'     => $receiver_email,
                 'receiver_wallet'    => [
                     'id'             => $receiver_wallet->id,
+                    'user_id'        => $receiver_wallet->user_id,
                     'balance'        => $receiver_wallet->balance,
                 ],
                 'will_get'           => floatval($amount),
@@ -351,7 +352,7 @@ class SendMoneyController extends Controller
             try{
                 $trx_id = $this->trx_id;
                 $sender = $this->insertSender($trx_id,$data);
-
+                $this->insertReceiver( $trx_id,$data);
                 if($sender){
                     
                     $this->insertSenderCharges($data,$sender);
@@ -426,6 +427,39 @@ class SendMoneyController extends Controller
                 'status'                        => true,
                 'created_at'                    => now(),
             ]);
+            DB::commit();
+        }catch(Exception $e) {
+            DB::rollBack();
+            throw new Exception(__("Something went wrong! Please try again."));
+        }
+        return $id;
+    }
+    //sender transaction
+    public function insertReceiver($trx_id,$data) {
+        $trx_id = $trx_id;
+        $receiver   = UserWallet::where('user_id',$data->data->receiver_wallet->user_id)->first();
+        $user   = auth()->user();
+        $details =[
+            'data' => $data->data,
+            'recipient_amount' => $data->data->will_get
+        ];
+        DB::beginTransaction();
+        try{
+            $id = DB::table("transactions")->insertGetId([
+                'user_id'                       => $receiver->user_id,
+                'user_wallet_id'                => $receiver->id,
+                'payment_gateway_currency_id'   => null,
+                'send_money_gateway_id'         => $data->data->payment_gateway,
+                'type'                          => PaymentGatewayConst::TYPETRANSFERMONEY,
+                'trx_id'                        => $trx_id,
+                'request_amount'                => $data->data->amount,
+                'payable'                       => $data->data->payable,
+                'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::TYPETRANSFERMONEY," ")) . " From " .$user->fullname,
+                'details'                       => json_encode($details),
+                'attribute'                      =>PaymentGatewayConst::RECEIVED,
+                'status'                        => true,
+                'created_at'                    => now(),
+            ]);
             $this->updateWalletBalance($data);
             DB::commit();
         }catch(Exception $e) {
@@ -434,9 +468,10 @@ class SendMoneyController extends Controller
         }
         return $id;
     }
+
     //updateWalletBalance
     function updateWalletBalance($data){
-        $receiver_wallet = UserWallet::where('user_id',$data->data->receiver_wallet->id)->first();
+        $receiver_wallet = UserWallet::where('user_id',$data->data->receiver_wallet->user_id)->first();
         if(!$receiver_wallet) return back()->with(['error' => ['Wallet not found.']]);
         
         $balance = floatval($receiver_wallet->balance) + floatval($data->data->amount);
