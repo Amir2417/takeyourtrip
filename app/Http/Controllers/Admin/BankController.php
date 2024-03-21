@@ -21,7 +21,6 @@ class BankController extends Controller
     public function index(){
         $page_title     = "All Banks";
         $banks          = Bank::orderBy('id','desc')->get();
-        
         return view('admin.sections.bank.index',compact(
             'page_title',
             'banks',
