@@ -186,7 +186,178 @@ class GlobalController extends Controller
      * @param \Illuminate\Htpp\Request $request
      */
     public function confirmed(Request $request){
-        dd("test");
+
+       
+        $validator = Validator::make(request()->all(), [
+            'amount'            => 'required|numeric|gt:0',
+            'email'             => 'required|email',
+            'payment_method'    => 'required',
+            'sender_email'      => 'nullable',
+            'currency'          => 'required'
+        ]);
+        if($validator->fails()){
+            $error =  ['error'=>$validator->errors()->all()];
+            return Helpers::validation($error);
+        }
+        $basic_setting = BasicSettings::first();
+        
+        $amount             = $request->amount;
+        $currency           = $request->currency;
+        $receiver_email     = $request->email;
+        $sender_email       = $request->sender_email;
+
+        $sendMoneyCharge = TransactionSetting::where('slug','transfer')->where('status',1)->first();
+        $payment_gateway    = SendMoneyGateway::where('id',$request->payment_method)->first();
+        
+        
+        $receiver_info      = User::where('email',$receiver_email)->first();
+        if(isset($receiver_info)){
+            if(auth()->check()){
+                if($receiver_info->email == $sender_email || $receiver_info->email == auth()->user()->email){
+                    return Response::error([__("Can't send money to your own")],[],404);
+                }
+            }else{
+                if($receiver_info->email == $sender_email){
+                    return Response::error([__("Can't send money to your own")],[],404);
+                }
+            }
+        }else{
+            return Response::error([__("Receiver not found.")],[],404);
+        }
+
+
+        $this_month_start   = date('Y-m-01');
+        $this_month_end     = date('Y-m-t');
+        $this_month_send_money  = Transaction::where('type',PaymentGatewayConst::TYPETRANSFERMONEY)->whereDate('created_at',">=" , $this_month_start)
+                            ->whereDate('created_at',"<=" , $this_month_end)
+                            ->sum('request_amount');
+        if($sendMoneyCharge->monthly_limit < $this_month_send_money){
+            $error = ['error'=>[__('The receiver have exceeded the monthly amount. Please try smaller amount.')]];
+            return Helpers::error($error);
+        }
+        $total_request_amount = $amount + $this_month_send_money;
+        if($sendMoneyCharge->monthly_limit < $total_request_amount){
+            $error = ['error'=>[__('The receiver have exceeded the monthly amount. Please try smaller amount.')]];
+            return Helpers::error($error);
+        }
+
+        $baseCurrency = Currency::default();
+        if(!$baseCurrency){
+            $error = ['error'=>[__('Default currency not found')]];
+            return Helpers::error($error);
+        }
+        $rate = $baseCurrency->rate;
+        $email = $request->email;
+        
+
+        $minLimit =  $sendMoneyCharge->min_limit *  $rate;
+        $maxLimit =  $sendMoneyCharge->max_limit *  $rate;
+        if($amount < $minLimit || $amount > $maxLimit) {
+            $error = ['error'=>[__("Please follow the transaction limit")]];
+            return Helpers::error($error);
+        }
+        //charge calculations
+        $fixedCharge        = $sendMoneyCharge->fixed_charge *  $rate;
+        $percent_charge     = ($request->amount / 100) * $sendMoneyCharge->percent_charge;
+        $total_charge       = $fixedCharge + $percent_charge;
+        $payable            = $total_charge + $amount;
+        
+
+        $validated['identifier']     = Str::uuid();
+        if(auth()->check()){
+            $authenticated  = true;
+            $user           = auth()->user()->id;
+        }else{
+            $authenticated  = false;
+            $user           = null;
+        }
+        $receiver_wallet             = UserWallet::where('user_id',$receiver_info->id)->first();
+
+        if(!$receiver_wallet) return back()->with(['error' => ['Receiver wallet address not found.']]);
+        $data     = [
+            'type'                   => global_const()::SENDMONEY,
+            'identifier'             => $validated['identifier'],
+            'data'                   => [
+                'login_user'         => $user,
+                'payment_gateway'    => $payment_gateway->id,
+                'amount'             => floatval($amount),
+                'total_charge'       => $total_charge,
+                'percent_charge'     => $percent_charge,
+                'fixed_charge'       => $fixedCharge,
+                'payable'            => $payable,
+                'currency'           => $currency,
+                'sender_email'       => $sender_email,
+                'receiver_email'     => $receiver_email,
+                'receiver_wallet'    => [
+                    'id'             => $receiver_wallet->id,
+                    'balance'        => $receiver_wallet->balance,
+                ],
+                'will_get'           => floatval($amount),
+                'authenticated'      => $authenticated,
+            ],  
+        ];
+        try{
+            $temporary_data = TemporaryData::create($data);  
+        }catch(Exception $e){
+            $error = ['error'=>[__("Something went wrong! Please try again.")]];
+            return Helpers::error($error);
+        }
+        $payment_gateway = SendMoneyGateway::where('id',$temporary_data->data->payment_gateway)->first();
+        if($payment_gateway->slug == global_const()::GOOGLE_PAY){
+            $data       = [
+                'temporary_data' => $temporary_data,
+                'redirect_url'   => setRoute('api.send.money.redirect.url',$temporary_data->identifier)
+            ];
+            $message  = ['success' => ['Send Money Data stored successfully.']];
+            return Helpers::success($data,$message,200);
+        }else{
+            $request_data = [
+                'identifier'    => $temporary_data->identifier,
+                'gateway'       => $payment_gateway->slug,
+            ];
+            try{
+
+                $instance  = SendMoneyGatewayHelper::init($request_data)->gateway()->api()->get();
+                
+            }catch(Exception $e){
+                return Response::error([__('Something went wrong! Please try again.')],[],404);
+            }
+        
+            $trx = $instance['response']['id']??$instance['response']['trx']??$instance['response']['reference_id']??$instance['response']['order_id']??$instance['response'];
+            $temData = TemporaryData::where('identifier',$trx)->first();
+           
+            if(!$temData){
+                $error = ['error'=>["Invalid Request"]];
+                return Helpers::error($error);
+            }
+            $payment_informations =[
+                'trx' =>  $temData->identifier,
+                'gateway_name' =>  $payment_gateway->name,
+                'request_amount' => getAmount($temData->data->amount->requested_amount,4),
+                'total_charge' => getAmount($temData->data->amount->total_charge,2).' '.$temData->data->amount->sender_cur_code,
+                'will_get' => getAmount($temData->data->amount->will_get,2).' '.$temData->data->amount->default_currency,
+                'payable_amount' =>  getAmount($temData->data->amount->total_amount,2).' '.$temData->data->amount->sender_cur_code,
+                ];
+                $data =[
+                    'gategay_type' => $payment_gateway->type,
+                    'gateway_name' => $payment_gateway->name,
+                    'slug' => $payment_gateway->slug,
+                    'identify' => $temData->type,
+                    'payment_informations' => $payment_informations,
+                    'url' => @$temData->data->response->links,
+                    'method' => "get",
+                ];
+                $message =  ['success'=>[__('Send Money Inserted Successfully')]];
+                return Helpers::success($data, $message);
+        }
+        
+    }
+    /**
+     * Method for send money confirm
+     * @param \Illuminate\Htpp\Request $request
+     */
+    public function submit(Request $request){
+       dd("tets");
         $validator = Validator::make(request()->all(), [
             'amount'            => 'required|numeric|gt:0',
             'email'             => 'required|email',

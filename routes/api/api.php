@@ -29,6 +29,8 @@ use App\Http\Controllers\Api\User\StripeVirtualController;
 use App\Http\Controllers\Api\User\SudoVirtualCardController;
 use App\Http\Controllers\Api\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\User\StrowalletVirtualCardController;
+use App\Http\Controllers\GlobalController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -69,7 +71,9 @@ Route::controller(AppSettingsController::class)->prefix("app-settings")->group(f
 Route::controller(SendMoneyController::class)->group(function(){
     Route::get('success/response/{gateway}','success')->name('api.send.money.payment.success');
     Route::get("cancel/response/{gateway}",'cancel')->name('api.send.money.payment.cancel');
+   
 });
+
 
 Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
     Route::get('success/response/paypal/{gateway}','success')->name('api.payment.success');
