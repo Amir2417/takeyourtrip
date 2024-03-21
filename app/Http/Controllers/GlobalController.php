@@ -153,7 +153,6 @@ class GlobalController extends Controller
             'default_image'    => files_asset_path_basename("default"),
 
         ];
-        
         $os                         = $request->device;
         if($os == 'android'){
             $data =[
@@ -186,8 +185,6 @@ class GlobalController extends Controller
      * @param \Illuminate\Htpp\Request $request
      */
     public function confirmed(Request $request){
-
-       
         $validator = Validator::make(request()->all(), [
             'amount'            => 'required|numeric|gt:0',
             'email'             => 'required|email',
@@ -296,6 +293,7 @@ class GlobalController extends Controller
                 'authenticated'      => $authenticated,
             ],  
         ];
+ 
         try{
             $temporary_data = TemporaryData::create($data);  
         }catch(Exception $e){
@@ -357,7 +355,6 @@ class GlobalController extends Controller
      * @param \Illuminate\Htpp\Request $request
      */
     public function submit(Request $request){
-       dd("tets");
         $validator = Validator::make(request()->all(), [
             'amount'            => 'required|numeric|gt:0',
             'email'             => 'required|email',

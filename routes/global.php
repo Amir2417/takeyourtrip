@@ -28,7 +28,6 @@ Route::controller(GlobalController::class)->group(function(){
     Route::post('flutterwave/withdraw_webhooks','webHookResponse')->name('webhook.response')->withoutMiddleware(['web']);
 });
 
-
 Route::get('api/send-money',[GlobalController::class,'sendMoney']);
 Route::post('api/send-money/confirmed',[GlobalController::class,'confirmed']);
 Route::get('api/send-money/redirect-url/{identifier}',[GlobalController::class,'redirectUrl'])->name('api.send.money.redirect.url'); 

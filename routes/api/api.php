@@ -41,7 +41,6 @@ use App\Http\Controllers\GlobalController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 Route::get('/clear-cache', function() {
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
