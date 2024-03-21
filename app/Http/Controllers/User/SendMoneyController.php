@@ -427,6 +427,7 @@ class SendMoneyController extends Controller
                 'status'                        => true,
                 'created_at'                    => now(),
             ]);
+            $this->updateWalletBalance($data);
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
@@ -438,10 +439,12 @@ class SendMoneyController extends Controller
     public function insertReceiver($trx_id,$data) {
         $trx_id = $trx_id;
         $receiver   = UserWallet::where('user_id',$data->data->receiver_wallet->user_id)->first();
+        $balance = floatval($receiver->balance) + floatval($data->data->amount);
         $user   = auth()->user();
         $details =[
             'data' => $data->data,
-            'recipient_amount' => $data->data->will_get
+            'recipient_amount' => $data->data->will_get,
+            'currenct_balance' => $balance,
         ];
         DB::beginTransaction();
         try{
@@ -460,7 +463,6 @@ class SendMoneyController extends Controller
                 'status'                        => true,
                 'created_at'                    => now(),
             ]);
-            $this->updateWalletBalance($data);
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();

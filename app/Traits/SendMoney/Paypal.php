@@ -330,6 +330,7 @@ trait Paypal
                 'created_at'                    => now(),
             ]);
            
+            $this->updateWalletBalance($data);
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
@@ -343,9 +344,11 @@ trait Paypal
         $token = $this->output['tempData']['identifier'] ?? "";
         $data  = TemporaryData::where('identifier',$output['form_data']['identifier'])->first();
         $receiver = UserWallet::where('user_id',$data->data->receiver_wallet->user_id)->first();
+        $balance = floatval($receiver->balance) + floatval($output['amount']->requested_amount);
         $details =[
             'data' => $data->data,
-            'recipient_amount' => $data->data->will_get
+            'recipient_amount' => $data->data->will_get,
+            'current_balance'   => $balance
         ];
         if(auth()->check()){
             $user  = auth()->user();
@@ -371,7 +374,6 @@ trait Paypal
                 'attribute'                     => PaymentGatewayConst::RECEIVED,
                 'created_at'                    => now(),
             ]);
-            $this->updateWalletBalance($data);
            
             DB::commit();
         }catch(Exception $e) {

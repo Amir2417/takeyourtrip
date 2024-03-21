@@ -32,7 +32,7 @@
                                     @if ($item->attribute == payment_gateway_const()::SEND)
                                         <h4 class="title">{{ __("Send Money to @" . @$item->details->data->receiver_email) }} </h4>
                                     @elseif ($item->attribute == payment_gateway_const()::RECEIVED)
-                                        <h4 class="title">{{ __("Received Money from @" .@$item->details->sender->username." (".@$item->details->sender->email.")") }} </h4>
+                                        <h4 class="title">{{ __("Received Money from @" .@$item->details->data->sender_email) }} </h4>
                                     @endif
                                 @endif
                             @elseif ($item->type == payment_gateway_const()::TYPEMAKEPAYMENT)
@@ -324,7 +324,24 @@
                         </div>
 
                         @if ($item->type != payment_gateway_const()::TYPETRANSFERMONEY)
-                       <div class="preview-list-item">
+                            <div class="preview-list-item">
+                                <div class="preview-list-left">
+                                    <div class="preview-list-user-wrapper">
+                                        <div class="preview-list-user-icon">
+                                            <i class="las la-balance-scale"></i>
+                                        </div>
+                                        <div class="preview-list-user-content">
+                                            <span>{{ __("Current Balance") }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="preview-list-right">
+                                    <span class="text--base">{{ get_amount($item->available_balance,get_default_currency_code()) }}</span>
+                                </div>
+                            </div>
+                        @endif
+                    @elseif ($item->type == payment_gateway_const()::TYPETRANSFERMONEY && $item->attribute == payment_gateway_const()::RECEIVED)
+                        <div class="preview-list-item">
                             <div class="preview-list-left">
                                 <div class="preview-list-user-wrapper">
                                     <div class="preview-list-user-icon">
@@ -336,10 +353,9 @@
                                 </div>
                             </div>
                             <div class="preview-list-right">
-                                <span class="text--base">{{ get_amount($item->available_balance,get_default_currency_code()) }}</span>
+                                <span class="text--base">{{ get_amount($item->details->current_balance,get_default_currency_code()) }}</span>
                             </div>
                         </div>
-                        @endif
                     @else
                     <div class="preview-list-item">
                         <div class="preview-list-left">

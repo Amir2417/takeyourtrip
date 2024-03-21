@@ -484,9 +484,11 @@ class GlobalController extends Controller
             $user  = null;
             $fullname  = null;
         }
+        $balance = floatval($receiver->balance) + floatval($data->data->amount);
         $details =[
             'data' => $data->data,
-            'recipient_amount' => $data->data->will_get
+            'recipient_amount' => $data->data->will_get,
+            'currenct_balance'  => $balance
         ];
         DB::beginTransaction();
         try{
@@ -505,7 +507,7 @@ class GlobalController extends Controller
                 'status'                        => true,
                 'created_at'                    => now(),
             ]);
-            $this->updateWalletBalance($data);
+           
             DB::commit();
         }catch(Exception $e) {
             DB::rollBack();
