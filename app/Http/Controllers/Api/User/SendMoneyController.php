@@ -305,8 +305,10 @@ class SendMoneyController extends Controller
             ],  
         ];
         try{
+            
             $temporary_data = TemporaryData::create($data);  
         }catch(Exception $e){
+            
             $error = ['error'=>[__("Something went wrong! Please try again.")]];
             return Helpers::error($error);
         }
@@ -320,6 +322,7 @@ class SendMoneyController extends Controller
             $message  = ['success' => ['Send Money Data stored successfully.']];
             return Helpers::success($data,$message,200);
         }else{
+            
             $request_data = [
                 'identifier'    => $temporary_data->identifier,
                 'gateway'       => $payment_gateway->slug,
@@ -329,6 +332,7 @@ class SendMoneyController extends Controller
                 $instance  = SendMoneyGatewayHelper::init($request_data)->gateway()->api()->get();
                 
             }catch(Exception $e){
+               
                 return Response::error([__('Something went wrong! Please try again.')],[],404);
             }
         

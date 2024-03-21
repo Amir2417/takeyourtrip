@@ -95,5 +95,6 @@ class Kernel extends HttpKernel
         'api.kyc'                       => \App\Http\Middleware\KycApi::class,
         'CheckStatusApiAgent' => \App\Http\Middleware\Agent\CheckStatusApi::class,
         'verification.guard.agent'  => \App\Http\Middleware\Agent\VerificationGuard::class,
+        'register.verification.guard'       => \App\Http\Middleware\User\RegisterVerificationGuard::class,
     ];
 }

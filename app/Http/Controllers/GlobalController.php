@@ -186,7 +186,7 @@ class GlobalController extends Controller
      * @param \Illuminate\Htpp\Request $request
      */
     public function confirmed(Request $request){
-        
+        dd("test");
         $validator = Validator::make(request()->all(), [
             'amount'            => 'required|numeric|gt:0',
             'email'             => 'required|email',

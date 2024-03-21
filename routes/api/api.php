@@ -1,33 +1,34 @@
 <?php
 
-use App\Http\Controllers\Api\AppSettingsController;
-use App\Http\Controllers\Api\User\AddMoneyController;
-use App\Http\Controllers\Api\User\AgentMoneyOutController;
-use App\Http\Controllers\Api\User\Auth\ForgotPasswordController;
-use App\Http\Controllers\Api\User\Auth\LoginController;
-use App\Http\Controllers\Api\User\AuthorizationController;
-use App\Http\Controllers\Api\User\BillPayController;
-use App\Http\Controllers\Api\User\MakePaymentController;
-use App\Http\Controllers\Api\User\MobileTopupController;
-use App\Http\Controllers\Api\User\MoneyOutController;
-use App\Http\Controllers\Api\User\PaymentLinkController;
-use App\Http\Controllers\Api\User\ReceiveMoneyController;
-use App\Http\Controllers\Api\User\RecipientController;
-use App\Http\Controllers\Api\User\RemittanceController;
-use App\Http\Controllers\Api\User\SecurityController;
-use App\Http\Controllers\Api\User\SendMoneyController;
-use App\Http\Controllers\Api\User\StripeVirtualController;
-use App\Http\Controllers\Api\User\SudoVirtualCardController;
-use App\Http\Controllers\Api\User\TransactionController;
-use App\Http\Controllers\Api\User\UserController;
-use App\Http\Controllers\Api\User\VirtualCardController;
-use App\Http\Controllers\Api\User\RequestMoneyController;
-use App\Http\Controllers\Api\User\StrowalletVirtualCardController;
-use App\Http\Helpers\Api\Helpers;
 use App\Models\Admin\SetupKyc;
-use App\Providers\Admin\BasicSettingsProvider;
+use App\Http\Helpers\Api\Helpers;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use App\Providers\Admin\BasicSettingsProvider;
+use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\AppSettingsController;
+use App\Http\Controllers\Api\User\BillPayController;
+use App\Http\Controllers\Api\User\AddMoneyController;
+use App\Http\Controllers\Api\User\MoneyOutController;
+use App\Http\Controllers\Api\User\SecurityController;
+use App\Http\Controllers\Api\User\RecipientController;
+use App\Http\Controllers\Api\User\SendMoneyController;
+use App\Http\Controllers\Api\User\Auth\LoginController;
+use App\Http\Controllers\Api\User\RemittanceController;
+use App\Http\Controllers\Api\User\BankAccountController;
+use App\Http\Controllers\Api\User\MakePaymentController;
+use App\Http\Controllers\Api\User\MobileTopupController;
+use App\Http\Controllers\Api\User\PaymentLinkController;
+use App\Http\Controllers\Api\User\TransactionController;
+use App\Http\Controllers\Api\User\VirtualCardController;
+use App\Http\Controllers\Api\User\ReceiveMoneyController;
+use App\Http\Controllers\Api\User\RequestMoneyController;
+use App\Http\Controllers\Api\User\AgentMoneyOutController;
+use App\Http\Controllers\Api\User\AuthorizationController;
+use App\Http\Controllers\Api\User\StripeVirtualController;
+use App\Http\Controllers\Api\User\SudoVirtualCardController;
+use App\Http\Controllers\Api\User\Auth\ForgotPasswordController;
+use App\Http\Controllers\Api\User\StrowalletVirtualCardController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -64,6 +65,12 @@ Route::controller(AppSettingsController::class)->prefix("app-settings")->group(f
     Route::get('/','appSettings');
     Route::get('languages','languages');
 });
+
+Route::controller(SendMoneyController::class)->group(function(){
+    Route::get('success/response/{gateway}','success')->name('api.send.money.payment.success');
+    Route::get("cancel/response/{gateway}",'cancel')->name('api.send.money.payment.cancel');
+});
+
 Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
     Route::get('success/response/paypal/{gateway}','success')->name('api.payment.success');
     Route::get("cancel/response/paypal/{gateway}",'cancel')->name('api.payment.cancel');
@@ -167,6 +174,12 @@ Route::prefix('user')->group(function(){
                     Route::post('unblock','cardUnBlock')->name('block');
                     Route::post('make-remove/default','makeDefaultOrRemove');
                 });
+            });
+            //bank account
+            Route::controller(BankAccountController::class)->prefix('bank-account')->group(function(){
+                Route::get('/','index');
+                Route::post('store','store');
+                Route::post('delete','delete');
             });
              //add money
             Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
