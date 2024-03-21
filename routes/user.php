@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\User\RequestMoneyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -11,23 +10,25 @@ use Pusher\PushNotifications\PushNotifications;
 use App\Http\Controllers\User\BillPayController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\AddMoneyController;
-use App\Http\Controllers\User\AgentMoneyOutController;
 use App\Http\Controllers\User\MoneyOutController;
 use App\Http\Controllers\User\SecurityController;
 use App\Http\Controllers\User\DashboardController;
-use App\Http\Controllers\User\MakePaymentController;
 use App\Http\Controllers\User\RemitanceController;
 use App\Http\Controllers\User\SendMoneyController;
 use App\Http\Controllers\User\ReceipientController;
+use App\Http\Controllers\User\BankAccountController;
+use App\Http\Controllers\User\MakePaymentController;
 use App\Http\Controllers\User\MobileTopupController;
 use App\Http\Controllers\User\PaymentLinkController;
 use App\Http\Controllers\User\TransactionController;
 use App\Http\Controllers\User\VirtualcardController;
 use App\Http\Controllers\User\ReceiveMoneyController;
+use App\Http\Controllers\User\RequestMoneyController;
+use App\Http\Controllers\User\AgentMoneyOutController;
 use App\Http\Controllers\User\StripeVirtualController;
-use App\Http\Controllers\User\StrowalletVirtualController;
-use App\Http\Controllers\User\SudoVirtualCardController;
 use App\Http\Controllers\User\SupportTicketController;
+use App\Http\Controllers\User\SudoVirtualCardController;
+use App\Http\Controllers\User\StrowalletVirtualController;
 
 
 
@@ -59,6 +60,13 @@ Route::prefix("user")->name("user.")->group(function(){
                 Route::post('reject','rejected')->name('reject')->middleware("kyc.verification.guard");
             });
         });
+    });
+    //bank account
+    Route::controller(BankAccountController::class)->prefix('bank-account')->name('bank.account.')->group(function(){
+        Route::get('/','index')->name('index');
+        Route::get('create','create')->name('create');
+        Route::post('store','store')->name('store');
+        Route::post('delete/{id}','delete')->name('delete');
     });
      //Send Money
     Route::middleware('module:send-money')->group(function(){
