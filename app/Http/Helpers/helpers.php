@@ -1,58 +1,59 @@
 <?php
 
+use App\Models\UserWallet;
+use App\Models\Admin\Admin;
+use App\Models\AgentWallet;
+use App\Models\VirtualCard;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Jenssegers\Agent\Agent;
+use App\Constants\GlobalConst;
+use App\Models\Admin\Language;
+use App\Models\VirtualCardApi;
+use Illuminate\Support\Carbon;
+use App\Models\SudoVirtualCard;
+use App\Constants\LanguageConst;
+use App\Models\Admin\GatewayAPi;
+use App\Models\UserNotification;
 use App\Constants\AdminRoleConst;
 use App\Constants\ExtensionConst;
-use App\Constants\GlobalConst;
-use App\Constants\LanguageConst;
-use App\Models\Admin\AdminHasRole;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\File;
-use Illuminate\Validation\ValidationException;
-use Intervention\Image\Facades\Image;
-use Buglinjo\LaravelWebp\Facades\Webp;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Admin\AdminNotification;
-use App\Constants\NotificationConst;
-use App\Constants\PaymentGatewayConst;
-use App\Constants\SupportTicketConst;
 use App\Http\Helpers\Api\Helpers;
-use App\Models\Admin\Admin;
-use App\Models\Admin\GatewayAPi;
-use App\Models\Admin\Language;
-use App\Models\Admin\ModuleSetting;
-use App\Models\Admin\PaymentGateway;
-use App\Models\AgentAuthorization;
 use App\Models\AgentNotification;
-use App\Models\AgentWallet;
-use App\Models\Merchants\MerchantAuthorization;
-use App\Models\Merchants\MerchantNotification;
-use App\Models\Merchants\MerchantWallet;
 use App\Models\StripeVirtualCard;
-use App\Models\StrowalletVirtualCard;
-use App\Models\SudoVirtualCard;
 use App\Models\TransactionCharge;
 use App\Models\UserAuthorization;
-use App\Models\UserNotification;
 use App\Models\UserSupportTicket;
-use App\Models\UserWallet;
-use App\Models\VirtualCard;
-use App\Models\VirtualCardApi;
-use App\Notifications\Agent\Auth\SendAuthorizationCode as AgentAuthSendAuthorizationCode;
-use App\Notifications\Merchant\Auth\SendAuthorizationCode as AuthSendAuthorizationCode;
-use App\Notifications\User\Auth\SendAuthorizationCode;
-use App\Providers\Admin\BasicSettingsProvider;
-use App\Providers\Admin\CurrencyProvider;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
+use Illuminate\Http\UploadedFile;
+use App\Models\Admin\AdminHasRole;
+use App\Models\AgentAuthorization;
 use Illuminate\Support\Facades\DB;
+use App\Constants\BankAccountConst;
+use App\Models\Admin\ModuleSetting;
+use Illuminate\Support\Facades\App;
+use App\Constants\NotificationConst;
+use App\Models\Admin\PaymentGateway;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Jenssegers\Agent\Agent;
-use Pusher\PushNotifications\PushNotifications;
-
+use App\Constants\SupportTicketConst;
+use App\Models\StrowalletVirtualCard;
+use Illuminate\Support\Facades\Route;
+use Intervention\Image\Facades\Image;
+use App\Constants\PaymentGatewayConst;
+use Buglinjo\LaravelWebp\Facades\Webp;
+use App\Models\Admin\AdminNotification;
+use App\Models\Merchants\MerchantWallet;
+use App\Providers\Admin\CurrencyProvider;
 use function PHPUnit\Framework\returnSelf;
+use App\Models\Merchants\MerchantNotification;
+use App\Providers\Admin\BasicSettingsProvider;
+use Illuminate\Validation\ValidationException;
+use App\Models\Merchants\MerchantAuthorization;
+use Pusher\PushNotifications\PushNotifications;
+use App\Notifications\User\Auth\SendAuthorizationCode;
+
+use App\Notifications\Merchant\Auth\SendAuthorizationCode as AuthSendAuthorizationCode;
+use App\Notifications\Agent\Auth\SendAuthorizationCode as AgentAuthSendAuthorizationCode;
 
 function setRoute($route_name, $param = null)
 {
@@ -1716,6 +1717,10 @@ function extension_const() {
 
 function global_const() {
     return GlobalConst::class;
+}
+
+function bank_account_const() {
+    return BankAccountConst::class;
 }
 
 function imageExtenstions() {
