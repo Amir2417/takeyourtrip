@@ -29,7 +29,7 @@ class BankAccountController extends Controller
                 'input_fields'  => $data->input_fields
             ];
         });
-        $bank_account           = BankAccount::auth()->latest()->first();
+        $bank_account           = BankAccount::auth()->with(['bank'])->latest()->first();
         
         $bank_account_image_path            = [
             'base_url'         => url("/"),

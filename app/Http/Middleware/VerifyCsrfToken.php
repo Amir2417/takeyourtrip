@@ -28,7 +28,6 @@ class VerifyCsrfToken extends Middleware
         'agent/add-money/sslcommerz/success',
         'agent/add-money/sslcommerz/fail',
         'agent/add-money/sslcommerz/cancel',
-        'api/send-money/confirmed',
 
         'user/add-money/success/response/' . PaymentGatewayConst::RAZORPAY,
         'user/add-money/cancel/response/' . PaymentGatewayConst::RAZORPAY,
