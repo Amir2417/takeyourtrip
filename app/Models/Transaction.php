@@ -202,6 +202,9 @@ class Transaction extends Model
     public function scopeAgentMoneyOut($query) {
         return $query->where("type",PaymentGatewayConst::AGENTMONEYOUT);
     }
+    public function scopeWalletToBank($query) {
+        return $query->where("type",PaymentGatewayConst::WALLETTOBANK);
+    }
 
     public function scopeSearch($query,$data) {
         $data = Str::slug($data);

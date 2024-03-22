@@ -20,4 +20,6 @@ class NotificationConst {
     const CARD_BUY = "CARD-BUY";
     const CARD_FUND = "CARD-FUND";
     const TYPEADDMONEY      = "ADD-MONEY";
+    const WALLETTOBANK        = "WALLET_TO_BANK";
+
 }

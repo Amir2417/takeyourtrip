@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('merchant_id')->nullable();
             $table->unsignedBigInteger('merchant_wallet_id')->nullable();
             $table->unsignedBigInteger('sandbox_wallet_id')->nullable();
+            $table->unsignedBigInteger("send_money_gateway_id")->nullable();
             $table->unsignedBigInteger("payment_gateway_currency_id")->nullable();
             $table->enum("type",[
                 PaymentGatewayConst::TYPEADDMONEY,
@@ -39,7 +40,8 @@ return new class extends Migration
                 PaymentGatewayConst::CARDFUND,
                 PaymentGatewayConst::SENDREMITTANCE,
                 PaymentGatewayConst::TYPEMAKEPAYMENT,
-                PaymentGatewayConst::MERCHANTPAYMENT
+                PaymentGatewayConst::MERCHANTPAYMENT,
+                PaymentGatewayConst::WALLETTOBANK,
             ]);
             $table->string("trx_id")->comment("Transaction ID");
             $table->decimal('request_amount', 28, 8)->default(0);
@@ -62,6 +64,7 @@ return new class extends Migration
             $table->foreign("merchant_id")->references("id")->on("merchants")->onDelete("cascade")->onUpdate("cascade");
             $table->foreign("merchant_wallet_id")->references("id")->on("merchant_wallets")->onDelete("cascade")->onUpdate("cascade");
             $table->foreign("payment_gateway_currency_id")->references("id")->on("payment_gateway_currencies")->onDelete("cascade")->onUpdate("cascade");
+            $table->foreign("send_money_gateway_id")->references("id")->on("send_money_gateways")->onDelete("cascade")->onUpdate("cascade");
         });
     }
 

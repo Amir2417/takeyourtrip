@@ -74,7 +74,6 @@ class BankAccountVerificationController extends Controller
                 Notification::route('mail',$bank_data->user->email)->notify(new BankAccountApproveNotification($form_data));
             }
         }catch(Exception $e){
-            dd($e->getMessage());
             return back()->with(['error' => ['Something went wrong! Please try again.']]);
         }
         return back()->with(['success' => ['Bank Account Approved Successfully.']]);

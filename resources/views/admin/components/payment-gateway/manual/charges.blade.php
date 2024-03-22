@@ -52,6 +52,7 @@
                             'label'         => __("Percent"),
                             'name'          => "percent_charge",
                             'value'         => old("percent_charge",0),
+                            'demo'          => '%'
                         ])
                     </div>
                 </div>

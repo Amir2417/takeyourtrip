@@ -33,7 +33,7 @@
                             @csrf
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 form-group text-center">
-                                    <div class="exchange-area">
+                                    <div class="exchange-area" data-bank_data="{{ json_encode($bank) }}">
                                         @if(isset($bank))
                                         <label for="">{{ __("Bank Details") }}</label>
                                         <div class="bank-list-area">
@@ -193,7 +193,7 @@
             </div>
         </div>
         <div class="dashboard-list-wrapper">
-            {{-- @include('user.components.transaction-log',compact("transactions")) --}}
+            @include('user.components.transaction-log',compact("transactions"))
         </div>
     </div>
 </div>
@@ -203,22 +203,22 @@
 
 @push('script')
 <script>
-    var bankAccount         = "{{ $bank }}";
-
-    if(bankAccount != null){
-        var minAmount           = "{{ $bank->bank->min_limit }}";
-        var maxAmount           = "{{ $bank->bank->max_limit }}";
-        var fixedCharge         = "{{ $bank->bank->fixed_charge }}";
-        var percentCharge       = "{{ $bank->bank->percent_charge }}";
-        var currency            = "{{ $bank->bank->currency_code }}";
-        var rate                = "{{ $bank->bank->rate }}";
-        var baseCurrency        = "{{ get_default_currency_code() }}";
-        var baseCurrencyRate    = "{{ get_default_currency_rate() }}";
-        $('.amount').keyup(function (e) { 
-            var amount = $(this).val();
-            limitCalc(amount,minAmount,maxAmount,fixedCharge,percentCharge,rate,baseCurrency,baseCurrencyRate,currency);
-        });
-
+    var bankAccount         = "{{ $bank }}"
+    var minAmount           = "{{ $bank->bank->min_limit ?? 0 }}";
+    var maxAmount           = "{{ $bank->bank->max_limit ?? 0 }}";
+    var fixedCharge         = "{{ $bank->bank->fixed_charge ?? 0 }}";
+    var percentCharge       = "{{ $bank->bank->percent_charge ?? 0 }}";
+    var currency            = "{{ $bank->bank->currency_code?? 0  }}";
+    var rate                = "{{ $bank->bank->rate ?? 0 }}";
+    var baseCurrency        = "{{ get_default_currency_code() }}";
+    var baseCurrencyRate    = "{{ get_default_currency_rate() }}";
+    $(document).ready(function () {
+        if(bankAccount == ''){
+            $('.transfer').attr('disabled',true);
+            $('.amount').attr('readonly',true);
+        }
+    });
+    if(bankAccount != ''){
         function limitCalc(amount,minAmount,maxAmount,fixedCharge,percentCharge,rate,baseCurrency,baseCurrencyRate,currency){
             var amount      = parseFloat(amount);
             var exchangeRate = parseFloat(rate) / parseFloat(baseCurrencyRate);
@@ -231,7 +231,7 @@
             var recipientGet    = parseFloat(amount) * parseFloat(exchangeRate);
             var payableAmount   = parseFloat(amount) + parseFloat(totalCharge);
             
-            if(amount < minLimit || amount > maxLimit){
+            if(payableAmount < minLimit || payableAmount > maxLimit){
                 $('.transfer').attr('disabled',true);
             }else{
                 $('.transfer').attr('disabled',false);
@@ -245,10 +245,9 @@
             $('.limit').html("Limit: " + parseFloat(minLimit).toFixed(2) + " " + baseCurrency + "-" + parseFloat(maxLimit).toFixed(2) + " " + baseCurrency);
         }
     }
-    
-    
-    
-    
-
+    $('.amount').keyup(function (e) { 
+        var amount = $(this).val();
+        limitCalc(amount,minAmount,maxAmount,fixedCharge,percentCharge,rate,baseCurrency,baseCurrencyRate,currency);
+    });
 </script>
 @endpush

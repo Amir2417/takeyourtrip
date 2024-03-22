@@ -16,6 +16,8 @@
                                 <h4 class="title">{{ __("Add Balance via") }} <span class="text--warning">{{ @$item->currency->name }}</span></h4>
                             @elseif ($item->type == payment_gateway_const()::TYPEMONEYOUT)
                                 <h4 class="title">{{ __("Withdraw Money") }} <span class="text--warning">{{ @$item->currency->name }}</span></h4>
+                            @elseif ($item->type == payment_gateway_const()::WALLETTOBANK)
+                                <h4 class="title">{{ __("Wallet To Bank Transfer") }}</h4>
                             @elseif ($item->type == payment_gateway_const()::BILLPAY)
                                 <h4 class="title">{{ __("Bill Pay") }} <span class="text--warning">({{ @$item->details->bill_type_name }})</span></h4>
                             @elseif ($item->type == payment_gateway_const()::MOBILETOPUP)
@@ -91,6 +93,9 @@
                         <h4 class="main-money text--warning">{{ get_amount($item->request_amount,get_default_currency_code()) }}</h4>
                         <h6 class="exchange-money fw-bold">{{ get_amount($item->payable,$item->currency->currency_code??get_default_currency_code(),4) }}</h6>
                     @elseif($item->type == payment_gateway_const()::TYPEMONEYOUT)
+                        <h6 class="exchange-money text--warning fw-bold">{{ get_amount($item->request_amount,get_default_currency_code()) }}</h6>
+                        <h4 class="main-money ">{{ get_amount($item->payable,$item->currency->currency_code??get_default_currency_code()) }}</h4>
+                    @elseif($item->type == payment_gateway_const()::WALLETTOBANK)
                         <h6 class="exchange-money text--warning fw-bold">{{ get_amount($item->request_amount,get_default_currency_code()) }}</h6>
                         <h4 class="main-money ">{{ get_amount($item->payable,$item->currency->currency_code??get_default_currency_code()) }}</h4>
                     @elseif($item->type == payment_gateway_const()::BILLPAY)
@@ -211,7 +216,8 @@
                             <span>1 {{ get_default_currency_code() }} = {{ get_amount($item->user_wallet->currency->rate,$item->user_wallet->currency->code) }}</span>
                         @elseif ($item->type == payment_gateway_const()::TYPEPAYLINK)
                             <span>1 {{ @$item->details->charge_calculation->receiver_currency_code }} = {{ get_amount(@$item->details->charge_calculation->exchange_rate, @$item->details->charge_calculation->sender_cur_code) }}</span>
-
+                        @elseif ($item->type == payment_gateway_const()::WALLETTOBANK)
+                            <span>1 {{ @$item->details->data->default_currency }} = {{ get_amount(@$item->details->data->exchange_rate, @$item->details->data->bank_currency) }}</span>
                         @endif
                     </div>
                 </div>
@@ -408,7 +414,9 @@
                             @elseif ($item->type == payment_gateway_const()::TYPEADDSUBTRACTBALANCE)
                                 <span>{{ get_amount($item->charge->total_charge,$item->user_wallet->currency->code) }}</span>
                             @elseif ($item->type == payment_gateway_const()::TYPEPAYLINK)
-                                <span class="text--danger">{{ get_amount(@$item->details->charge_calculation->conversion_charge ?? 0, $item->details->charge_calculation->receiver_currency_code, 4) }}</span>
+                                <span class="text--danger">{{ get_amount(@$item->details->charge_calculation->conversion_charge ?? 0, $item->details->charge_calculation->WALLETTOBANK, 4) }}</span>
+                            @elseif ($item->type == payment_gateway_const()::WALLETTOBANK)
+                                <span class="text--danger">{{ get_amount($item->details->data->total_charge,get_default_currency_code()) }}</span>
                             @endif
                         </div>
                     </div>
@@ -425,6 +433,7 @@
                     @if ($item->type != payment_gateway_const()::TYPEPAYLINK)
                     @if ($item->type != payment_gateway_const()::AGENTMONEYOUT)
                     @if ($item->type != payment_gateway_const()::MONEYIN)
+                    @if ($item->type != payment_gateway_const()::WALLETTOBANK)
                     <div class="preview-list-item">
                         <div class="preview-list-left">
                             <div class="preview-list-user-wrapper">
@@ -480,6 +489,7 @@
                     @endif
                     @endif
                     @endif
+                    @endif
                     @if ($item->type != payment_gateway_const()::TYPEADDMONEY)
                     @if ($item->type != payment_gateway_const()::SENDREMITTANCE)
                     @if ($item->type != payment_gateway_const()::MERCHANTPAYMENT)
@@ -487,6 +497,7 @@
                     @if ($item->type != payment_gateway_const()::TYPEPAYLINK)
                     @if ($item->type != payment_gateway_const()::AGENTMONEYOUT)
                     @if ($item->type != payment_gateway_const()::MONEYIN)
+                    @if ($item->type != payment_gateway_const()::WALLETTOBANK)
                         <div class="preview-list-item">
                             <div class="preview-list-left">
                                 <div class="preview-list-user-wrapper">
@@ -546,6 +557,7 @@
                                 @endif
                             </div>
                         </div>
+                    @endif
                     @endif
                     @endif
                     @endif
@@ -1086,7 +1098,7 @@
                         </div>
                     </div>
                     <div class="preview-list-right">
-                        <span>{{ $item->created_at->format('d-m-y h:i:s A') }}</span>
+                        <span>{{ $item->created_at->format('d F,Y') }}</span>
                     </div>
                 </div>
                 @if (@$item->type == payment_gateway_const()::TYPEADDMONEY)

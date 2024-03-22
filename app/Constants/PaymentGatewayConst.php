@@ -47,6 +47,7 @@ class PaymentGatewayConst {
     const TYPEMAKEPAYMENT   = "MAKE-PAYMENT";
     const AGENTMONEYOUT     = "AGENT-MONEY-OUT";
     const PROFITABLELOGS        = "PROFITABLE-LOGS";
+    const WALLETTOBANK        = "WALLET_TO_BANK";
 
 
     const STATUSSUCCESS     = 1;
