@@ -113,6 +113,16 @@
                                 ],
                             ],
                             [
+                                'title'     => __("Send Money Logs"),
+                                'icon'      => "menu-icon las la-calculator",
+                                'links'     => [
+                                    [
+                                        'title'     => "All Logs",
+                                        'route'     => "admin.send.money.index",
+                                    ]
+                                ],
+                            ],
+                            [
                                 'title'     => __("Add Money Logs"),
                                 'icon'      => "menu-icon las la-calculator",
                                 'links'     => [

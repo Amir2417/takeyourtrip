@@ -15,6 +15,7 @@ class ModuleSetting {
     const REQUEST_MONEY = "request-money";
     const PAY_LINK = "pay-link";
     const AGENTMONEYOUT = "money-out";
+    const WALLETTOBANK = "wallet-to-bank";
 
     const MERCHANT_RECEIVE_MONEY = "merchant-receive-money";
     const MERCHANT_WITHDRAW_MONEY = "merchant-withdraw-money";

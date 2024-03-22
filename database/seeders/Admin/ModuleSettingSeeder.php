@@ -30,6 +30,7 @@ class ModuleSettingSeeder extends Seeder
             ModuleSetting::REQUEST_MONEY            => 'Request Money',
             ModuleSetting::PAY_LINK                 => 'Pay Link',
             ModuleSetting::AGENTMONEYOUT            => 'Money Out',
+            ModuleSetting::WALLETTOBANK             => 'Wallet To Bank',
 
         ];
         $create = [];

@@ -330,6 +330,7 @@ class UserController extends Controller
             'request_money' => module_access_api('request-money'),
             'pay_link' => module_access_api('pay-link'),
             'money_out' => module_access_api('money-out'),
+            'wallet_to_bank' => module_access_api('wallet-to-bank'),
         ];
 
         $cardCreateCharge = TransactionSetting::where('slug','virtual_card')->where('status',1)->get()->map(function($data){

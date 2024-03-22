@@ -48,6 +48,7 @@ use App\Http\Controllers\Admin\AppOnboardScreensController;
 use App\Http\Controllers\Admin\PaymentGatewayCurrencyController;
 use App\Http\Controllers\Admin\BankAccountVerificationController;
 use App\Http\Controllers\Admin\BankTransactionController;
+use App\Http\Controllers\Admin\SendMoneyLogController;
 
 // All Admin Route Is Here
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -169,6 +170,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('details/{trx_id}','details')->name('details');
         Route::post('status/update/{trx_id}','statusUpdate')->name('status.update');
         Route::post('status/update/reject/{trx_id}','rejectStatus')->name('status.update.reject');
+    });
+
+    // send money log
+    Route::controller(SendMoneyLogController::class)->prefix('send-money')->name('send.money')->group(function(){
+        Route::get('/','index')->name('index');
+        Route::get('details/{trx_id}','details')->name('details');
     });
 
     // Add Money Logs
