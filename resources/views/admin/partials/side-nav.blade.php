@@ -118,7 +118,7 @@
                                 'links'     => [
                                     [
                                         'title'     => "All Logs",
-                                        'route'     => "admin.send.money.index",
+                                        'route'     => "admin.send.money.log.index",
                                     ]
                                 ],
                             ],

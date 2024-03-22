@@ -173,7 +173,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
     // send money log
-    Route::controller(SendMoneyLogController::class)->prefix('send-money')->name('send.money')->group(function(){
+    Route::controller(SendMoneyLogController::class)->prefix('send-money')->name('send.money.log.')->group(function(){
         Route::get('/','index')->name('index');
         Route::get('details/{trx_id}','details')->name('details');
     });

@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use App\Constants\PaymentGatewayConst;
-use App\Models\Admin\PaymentGateway;
-use App\Models\Admin\PaymentGatewayCurrency;
-use App\Models\Merchants\Merchant;
-use App\Models\Merchants\MerchantWallet;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Merchants\Merchant;
+use App\Models\Admin\PaymentGateway;
+use App\Constants\PaymentGatewayConst;
+use App\Models\Admin\SendMoneyGateway;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Merchants\MerchantWallet;
+use App\Models\Admin\PaymentGatewayCurrency;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model
 {
@@ -70,6 +71,10 @@ class Transaction extends Model
     public function user_wallet()
     {
         return $this->belongsTo(UserWallet::class, 'user_wallet_id');
+    }
+    public function send_money_gateway()
+    {
+        return $this->belongsTo(SendMoneyGateway::class, 'send_money_gateway_id');
     }
     public function agent_wallet()
     {
