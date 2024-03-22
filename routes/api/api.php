@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\User\StripeVirtualController;
 use App\Http\Controllers\Api\User\SudoVirtualCardController;
 use App\Http\Controllers\Api\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\User\StrowalletVirtualCardController;
+use App\Http\Controllers\Api\User\WalletToBankController;
 use App\Http\Controllers\GlobalController;
 
 /*
@@ -73,6 +74,8 @@ Route::controller(SendMoneyController::class)->group(function(){
     Route::get("cancel/response/{gateway}",'cancel')->name('api.send.money.payment.cancel');
    
 });
+
+
 
 
 Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
@@ -184,6 +187,11 @@ Route::prefix('user')->group(function(){
                 Route::get('/','index');
                 Route::post('store','store');
                 Route::post('delete','delete');
+            });
+            //wallet to bank
+            Route::controller(WalletToBankController::class)->prefix('wallet-to-bank')->group(function(){
+                Route::get('/','index');
+                Route::post('store','store');
             });
              //add money
             Route::controller(AddMoneyController::class)->prefix("add-money")->group(function(){
