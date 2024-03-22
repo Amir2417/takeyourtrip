@@ -35,6 +35,7 @@
                         <th>{{ __("Method") }}</th>
                         <th>{{ __(("Status")) }}</th>
                         <th>{{ __("Time") }}</th>
+                        <th>{{ __("Action") }}</th>
                         
                     </tr>
                 </thead>
@@ -57,7 +58,13 @@
                                 <span class="{{ $item->stringStatus->class }}">{{ __($item->stringStatus->value) }}</span>
                             </td>
                             <td>{{ $item->created_at->format('d-m-y h:i:s A') }}</td>
-                            
+                            <td>
+                                @include('admin.components.link.info-default',[
+                                    'href'          => setRoute('admin.send.money.log.details', $item->trx_id),
+                                    'permission'    => "admin.send.money.logs.details",
+                                ])
+
+                            </td>
                         </tr>
                     @empty
                          @include('admin.components.alerts.empty',['colspan' => 9])

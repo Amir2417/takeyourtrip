@@ -406,6 +406,8 @@ class SendMoneyController extends Controller
     public function insertSender($trx_id,$data) {
         $trx_id = $trx_id;
         $user   = auth()->user();
+        $receiver   = UserWallet::where('user_id',$data->data->receiver_wallet->user_id)->first();
+        $balance = floatval($receiver->balance) + floatval($data->data->amount);
         $details =[
             'data' => $data->data,
             'recipient_amount' => $data->data->will_get

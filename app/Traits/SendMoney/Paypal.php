@@ -303,9 +303,13 @@ trait Paypal
         $trx_id =  $trx_id;
         $token = $this->output['tempData']['identifier'] ?? "";
         $data  = TemporaryData::where('identifier',$output['form_data']['identifier'])->first();
+        $receiver = UserWallet::where('user_id',$data->data->receiver_wallet->user_id)->first();
+        $balance = floatval($receiver->balance) + floatval($output['amount']->requested_amount);
+        
         $details =[
             'data' => $data->data,
-            'recipient_amount' => $data->data->will_get
+            'recipient_amount' => $data->data->will_get,
+            'recipient_balance' => $balance
         ];
         if(auth()->check()){
             $user  = auth()->user()->id;

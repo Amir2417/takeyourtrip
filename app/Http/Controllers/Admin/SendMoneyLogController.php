@@ -21,4 +21,18 @@ class SendMoneyLogController extends Controller
             'transactions'
         ));
     }
+    /**
+     * Method for send money log details
+     * @param $trx_id
+     */
+    public function details($trx_id){
+        $data   = Transaction::where('trx_id',$trx_id)->first();
+        if(!$data) return back()->with(['error' => ['Sorry data not found']]);
+        $page_title     = "Send Money Details";
+
+        return view('admin.sections.send-money-log.details',compact(
+            'page_title',
+            'data'
+        ));
+    }
 }
