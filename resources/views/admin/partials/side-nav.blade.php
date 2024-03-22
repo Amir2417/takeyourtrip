@@ -54,11 +54,7 @@
                             'route'     => "admin.gateway.api.index",
                             'icon'      => "menu-icon las la-code",
                         ],
-                        [
-                            'title'     => "Bank",
-                            'route'     => "admin.bank.index",
-                            'icon'      => "menu-icon las la-university",
-                        ], 
+                         
                     ]
                 ])
                 @include('admin.components.side-nav.link-group',[
@@ -88,18 +84,7 @@
                     ]
                 ])
 
-                @include('admin.components.side-nav.link-group',[
-                    'group_title'       => "Send Money Gateway",
-                    'group_links'       => [
-                        [
-                            'title'     => "Automatic",
-                            'route'     => "admin.send.money.gateway.index",
-                            'icon'      => "menu-icon las la-share-alt",
-                        ],
-                        
-                        
-                    ]
-                ])
+                
                 {{-- Section Transaction & Logs --}}
                 @include('admin.components.side-nav.link-group',[
                     'group_title'       => __("TRANSACTIONS & LOGS"),
@@ -686,6 +671,19 @@
                     </li>
                 @endif
 
+                @include('admin.components.side-nav.link',[
+                    'route'     => 'admin.bank.index',
+                    'title'     => __("Bank Methods"),
+                    'icon'      => "menu-icon las la-university",
+                ])
+
+
+                @include('admin.components.side-nav.link',[
+                    'route'     => 'admin.send.money.gateway.index',
+                    'title'     => __("Send Money Gateway"),
+                    'icon'      => "menu-icon las la-share-alt",
+                ])
+                
                 {{-- Notifications --}}
                 @include('admin.components.side-nav.link-group',[
                     'group_title'       => __("NOTIFICATION-UPPER"),

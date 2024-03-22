@@ -19,7 +19,7 @@ class BankController extends Controller
      * @return view
      */
     public function index(){
-        $page_title     = "All Banks";
+        $page_title     = "All Bank Methods";
         $banks          = Bank::orderBy('id','desc')->get();
         return view('admin.sections.bank.index',compact(
             'page_title',
@@ -31,7 +31,7 @@ class BankController extends Controller
      * @return view
      */
     public function create(){
-        $page_title     = "Bank Create";
+        $page_title     = "Add Bank Method";
         
         return view('admin.sections.bank.create',compact(
             'page_title',
@@ -42,8 +42,17 @@ class BankController extends Controller
      * @param \Illuminate\Http\Request $request 
      */
     public function store(Request $request){
+        
         $validator                  = Validator::make($request->all(),[
             'bank_name'             => 'required',
+            'currency_name'         => 'required',
+            'currency_code'         => 'required|string|max:10',
+            'currency_symbol'       => 'nullable|string|max:10',
+            'min_limit'             => 'required|numeric',
+            'max_limit'             => 'required|numeric',
+            'fixed_charge'          => 'required|numeric',
+            'percent_charge'        => 'required|numeric',
+            'rate'                  => 'required|numeric',
             'desc'                  => 'nullable',
             'label'                 => 'nullable|array',
             'label.*'               => 'nullable|string|max:50',
@@ -65,7 +74,7 @@ class BankController extends Controller
         $validated                  = $validator->validate();
         if(Bank::where('bank_name',$validated['bank_name'])->exists()){
             throw ValidationException::withMessages([
-                'name'  => "Bank Already Exists",
+                'name'  => "Bank method already exists",
             ]);
         }
         
@@ -81,18 +90,19 @@ class BankController extends Controller
         try{
             Bank::create($validated);
         }catch(Exception $e){
+            dd($e->getMessage());
             return back()->with(['error' => ['Something went wrong! Please try again.']]);
         }
-        return redirect()->route('admin.bank.index')->with(['success' => ['Bank created successfully.']]);
+        return redirect()->route('admin.bank.index')->with(['success' => ['Bank method created successfully.']]);
     }
     /**
      * Method for view bank edit page
      * @return view
      */
     public function edit($slug){
-        $page_title     = "Bank Edit";
+        $page_title     = "Edit Bank Method";
         $bank           = Bank::where('slug',$slug)->first();
-        if(!$bank) return back()->with(['error' => ['Sorry! Bank not found.']]);
+        if(!$bank) return back()->with(['error' => ['Sorry! Bank method not found.']]);
 
         return view('admin.sections.bank.edit',compact(
             'page_title',
@@ -106,9 +116,17 @@ class BankController extends Controller
      */
     public function update(Request $request,$slug){
         $data       = Bank::where('slug',$slug)->first();
-        if(!$data) return back()->with(['error' => ['Sorry! Bank not found.']]);
+        if(!$data) return back()->with(['error' => ['Sorry! Bank method not found.']]);
         $validator                  = Validator::make($request->all(),[
-            'bank_name'              => 'required',
+            'bank_name'             => 'required',
+            'currency_name'         => 'required',
+            'currency_code'         => 'required|string|max:10',
+            'currency_symbol'       => 'nullable|string|max:10',
+            'min_limit'             => 'required|numeric',
+            'max_limit'             => 'required|numeric',
+            'fixed_charge'          => 'required|numeric',
+            'percent_charge'        => 'required|numeric',
+            'rate'                  => 'required|numeric',
             'desc'                  => 'nullable',
             'label'                 => 'nullable|array',
             'label.*'               => 'nullable|string|max:50',
@@ -126,13 +144,15 @@ class BankController extends Controller
             'file_max_size.*'       => 'nullable|numeric',
             'image'                 => 'nullable|mimes:png,jpg,webp,jpeg'
         ]);
+        
         if($validator->fails()) return back()->withErrors($validator)->withInput($request->all());
         $validated                      = $validator->validate();
         if(Bank::whereNot('id',$data->id)->where('bank_name',$validated['bank_name'])->exists()){
             throw ValidationException::withMessages([
-                'name'  => "Bank Already Exists",
+                'name'  => "Bank method already exists",
             ]);
         }
+        
         $validated['bank_name']         = $validated['bank_name'];
         $validated['desc']              = $validated['desc'];
         $validated['input_fields']      = decorate_input_fields($validated);
@@ -145,9 +165,10 @@ class BankController extends Controller
         try{
             $data->update($validated);
         }catch(Exception $e){
+            dd($e->getMessage());
             return back()->with(['error' => ['Something went wrong! Please try again.']]);
         }
-        return redirect()->route('admin.bank.index')->with(['success' => ['Bank Updated successfully.']]);
+        return redirect()->route('admin.bank.index')->with(['success' => ['Bank method updated successfully.']]);
     }
     /**
      * Method for delete bank
@@ -165,7 +186,7 @@ class BankController extends Controller
         } catch (Exception $e) {
             return back()->with(['error' => ['Something went wrong! Please try again.']]);
         }
-        return back()->with(['success' => ['Bank Deleted Successfully!']]);
+        return back()->with(['success' => ['Bank method deleted successfully!']]);
     }
     /**
      * Method for status update for Outside wallet
@@ -197,7 +218,7 @@ class BankController extends Controller
             return Response::error($errors,null,500);
         }
 
-        $success = ['success' => ['Bank status updated successfully!']];
+        $success = ['success' => ['Bank method status updated successfully!']];
         return Response::success($success);
     }
     /**

@@ -51,55 +51,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         //demo
-        // $this->call([
-        //     AdminSeeder::class,
-        //     RoleSeeder::class,
-        //     TransactionSettingSeeder::class,
-        //     CurrencySeeder::class,
-        //     BasicSettingsSeeder::class,
-        //     BillPayCategorySeeder::class,
-        //     TopupSeeder::class,
-        //     LanguageSeeder::class,
-        //     PaymentGatewaySeeder::class,
-        //     SetupSeoSeeder::class,
-        //     AppSettingsSeeder::class,
-        //     OnboardScreenSeeder::class,
-        //     SiteSectionsSeeder::class,
-        //     SetupKycSeeder::class,
-        //     ExtensionSeeder::class,
-        //     BlogSeeder::class,
-        //     BankTransfer::class,
-        //     CashPickup::class,
-        //     ReceiverCountry::class,
-        //     AdminHasRoleSeeder::class,
-        //     SetupPageSeeder::class,
-        //     VirtualApiSeeder::class,
-        //     SetupEmailSeeder::class,
-        //     MerchantConfigurationSeeder::class,
-        //     ModuleSettingSeeder::class,
-        //     SendMoneyGatewaySeeder::class,
-        //     GatewayApiSeeder::class,
-        //     //user
-        //     UserSeeder::class,
-        //     UserWalletSeeder::class,
-        //     //merchant
-        //     MerchantSeeder::class,
-        //     MerchantWalletSeeder::class,
-        //     ApiCredentialsSeeder::class,
-        //     //Agent
-        //     AgentSeeder::class,
-        //     AgentWalletSeeder::class,
-
-        // ]);
-
-
-        //fresh
         $this->call([
             AdminSeeder::class,
             RoleSeeder::class,
             TransactionSettingSeeder::class,
             CurrencySeeder::class,
-            FreshBasicSettingsSeeder::class,
+            BasicSettingsSeeder::class,
             BillPayCategorySeeder::class,
             TopupSeeder::class,
             LanguageSeeder::class,
@@ -109,7 +66,7 @@ class DatabaseSeeder extends Seeder
             OnboardScreenSeeder::class,
             SiteSectionsSeeder::class,
             SetupKycSeeder::class,
-            FreshExtensionSeeder::class,
+            ExtensionSeeder::class,
             BlogSeeder::class,
             BankTransfer::class,
             CashPickup::class,
@@ -117,14 +74,57 @@ class DatabaseSeeder extends Seeder
             AdminHasRoleSeeder::class,
             SetupPageSeeder::class,
             VirtualApiSeeder::class,
+            SetupEmailSeeder::class,
             MerchantConfigurationSeeder::class,
             ModuleSettingSeeder::class,
-            GatewayApiSeeder::class,
             SendMoneyGatewaySeeder::class,
+            GatewayApiSeeder::class,
+            //user
+            UserSeeder::class,
+            UserWalletSeeder::class,
             //merchant
             MerchantSeeder::class,
             MerchantWalletSeeder::class,
             ApiCredentialsSeeder::class,
+            //Agent
+            AgentSeeder::class,
+            AgentWalletSeeder::class,
+
         ]);
+
+
+        //fresh
+        // $this->call([
+        //     AdminSeeder::class,
+        //     RoleSeeder::class,
+        //     TransactionSettingSeeder::class,
+        //     CurrencySeeder::class,
+        //     FreshBasicSettingsSeeder::class,
+        //     BillPayCategorySeeder::class,
+        //     TopupSeeder::class,
+        //     LanguageSeeder::class,
+        //     PaymentGatewaySeeder::class,
+        //     SetupSeoSeeder::class,
+        //     AppSettingsSeeder::class,
+        //     OnboardScreenSeeder::class,
+        //     SiteSectionsSeeder::class,
+        //     SetupKycSeeder::class,
+        //     FreshExtensionSeeder::class,
+        //     BlogSeeder::class,
+        //     BankTransfer::class,
+        //     CashPickup::class,
+        //     ReceiverCountry::class,
+        //     AdminHasRoleSeeder::class,
+        //     SetupPageSeeder::class,
+        //     VirtualApiSeeder::class,
+        //     MerchantConfigurationSeeder::class,
+        //     ModuleSettingSeeder::class,
+        //     GatewayApiSeeder::class,
+        //     SendMoneyGatewaySeeder::class,
+        //     //merchant
+        //     MerchantSeeder::class,
+        //     MerchantWalletSeeder::class,
+        //     ApiCredentialsSeeder::class,
+        // ]);
     }
 }

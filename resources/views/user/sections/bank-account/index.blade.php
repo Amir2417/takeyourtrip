@@ -87,7 +87,7 @@
                     <div class="card-body">
                         <div class="row"> 
                             <div class="col-xl-12 col-lg-12 col-md-12 form-group">
-                                <p>{{ __("Your bank account is rejected due to ") }} "{{ $bank_account_reject->reject_reason }}". Create a new Bank Account</p>
+                                <p>{{ __("Your bank account is rejected due to ") }} "{{ $bank_account_reject->reject_reason }}". {{ __("Create a new Bank Account") }}</p>
                             </div>
                         </div>
 

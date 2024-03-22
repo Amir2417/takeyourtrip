@@ -21,9 +21,9 @@
     <div class="table-area">
         <div class="table-wrapper">
             <div class="table-header">
-                <h5 class="title">{{ __("All Banks") }}</h5>
+                <h5 class="title">{{ __($page_title) }}</h5>
                 @include('admin.components.link.custom',[
-                    'text'          => __("Add Bank"),
+                    'text'          => __("Add Bank Method"),
                     'class'         => 'btn btn--base',
                     'href'          => setRoute('admin.bank.create'),
                 ])

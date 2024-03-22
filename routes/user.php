@@ -29,8 +29,7 @@ use App\Http\Controllers\User\StripeVirtualController;
 use App\Http\Controllers\User\SupportTicketController;
 use App\Http\Controllers\User\SudoVirtualCardController;
 use App\Http\Controllers\User\StrowalletVirtualController;
-
-
+use App\Http\Controllers\User\WalletToBankController;
 
 Route::prefix("user")->name("user.")->group(function(){
     Route::post("info",[GlobalController::class,'userInfo'])->name('info');
@@ -67,6 +66,12 @@ Route::prefix("user")->name("user.")->group(function(){
         Route::get('create','create')->name('create');
         Route::post('store','store')->name('store');
         Route::post('delete/{id}','delete')->name('delete');
+    });
+
+    //wallet to bank
+    Route::controller(WalletToBankController::class)->prefix('wallet-to-bank')->name('wallet.to.bank.')->group(function(){
+        Route::get('/','index')->name('index');
+        Route::post('store','store')->name('store');
     });
      //Send Money
     Route::middleware('module:send-money')->group(function(){

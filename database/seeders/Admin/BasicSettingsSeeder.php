@@ -15,11 +15,11 @@ class BasicSettingsSeeder extends Seeder
     public function run()
     {
         $data = [
-            'site_name'                     => "QRPAY",
+            'site_name'                     => "TakeYourTrip",
             'site_title'                    => "Money Transfer with QR Code",
-            'agent_site_name'               => "QRPay Agent",
+            'agent_site_name'               => "TakeYourTrip Agent",
             'agent_site_title'              => "Retailer Business with QR Code",
-            'merchant_site_name'            => "QRPay Merchant",
+            'merchant_site_name'            => "TakeYourTrip Merchant",
             'merchant_site_title'           => "Accept Payment via QR Code",
             'base_color'                    => "#0C56DB",
             'agent_base_color'              => "#007A5A",
@@ -51,7 +51,7 @@ class BasicSettingsSeeder extends Seeder
                 "username" => "system@appdevs.net",
                 "password" => "QP2fsLk?80Ac",
                 "from" => "system@appdevs.net",
-                "app_name" => "QRPAY",
+                "app_name" => "TakeYourTrip",
             ],
             'kyc_verification'                  => true,
             'email_verification'                => true,

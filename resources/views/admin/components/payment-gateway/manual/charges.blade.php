@@ -52,7 +52,6 @@
                             'label'         => __("Percent"),
                             'name'          => "percent_charge",
                             'value'         => old("percent_charge",0),
-                            'currency'      => "-",
                         ])
                     </div>
                 </div>

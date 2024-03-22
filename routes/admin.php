@@ -93,7 +93,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
     //bank
-    Route::controller(BankController::class)->prefix('bank')->name('bank.')->group(function(){
+    Route::controller(BankController::class)->prefix('bank-method')->name('bank.')->group(function(){
         Route::get('/','index')->name('index');
         Route::get('create','create')->name('create');
         Route::post('store','store')->name('store');
