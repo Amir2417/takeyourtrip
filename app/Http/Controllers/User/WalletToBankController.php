@@ -15,10 +15,20 @@ class WalletToBankController extends Controller
     public function index(){
         $page_title   = "Wallet To Bank Transfer";
         $bank         = BankAccount::auth()->with(['bank'])->where('status',bank_account_const()::APPROVED)->first();
+        if(empty($bank)){
+            $bank = null;
+        }
         
         return view('user.sections.wallet-to-bank.index',compact(
             'page_title',
             'bank',
         ));
+    }
+    /**
+     * Method for store wallet to bank transfer info
+     * @param \Illuminate\Http\Request $request
+     */
+    public function store(Request $request){
+        dd($request->all());
     }
 }

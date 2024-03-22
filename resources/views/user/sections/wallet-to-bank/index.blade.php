@@ -80,6 +80,7 @@
                                         </select>
                                     </div>
                                     <code class="d-block mt-10 text-end text--warning balance-show">{{ __("Available Balance") }} {{ authWalletBalance() }} {{ get_default_currency_code() }}</code>
+                                    <code class="d-block mt-10 text-end text--primary limit"></code>
                                 </div>
 
                                 <div class="col-xl-12 col-lg-12">
@@ -129,6 +130,21 @@
                                 </div>
                                 <div class="preview-list-right">
                                     <span class="fees">--</span>
+                                </div>
+                            </div>
+                            <div class="preview-list-item">
+                                <div class="preview-list-left">
+                                    <div class="preview-list-user-wrapper">
+                                        <div class="preview-list-user-icon">
+                                            <i class="las la-exchange-alt"></i>
+                                        </div>
+                                        <div class="preview-list-user-content">
+                                            <span>{{ __("Exchange Rate") }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="preview-list-right">
+                                    <span class="exchange-rate">--</span>
                                 </div>
                             </div>
                             <div class="preview-list-item">
@@ -187,23 +203,51 @@
 
 @push('script')
 <script>
-    var minAmount           = "{{ $bank->bank->min_limit }}";
-    var maxAmount           = "{{ $bank->bank->max_limit }}";
-    var fixedCharge         = "{{ $bank->bank->fixed_charge }}";
-    var percentCharge       = "{{ $bank->bank->percent_charge }}";
-    var rate                = "{{ $bank->bank->rate }}";
-    var baseCurrency        = "{{ get_default_currency_code() }}";
-    var baseCurrencyRate    = "{{ get_default_currency_rate() }}";
+    var bankAccount         = "{{ $bank }}";
 
-    function limitCalc(minAmount,maxAmount,fixedCharge,percentCharge,rate,baseCurrency,baseCurrencyRate){
-        var amount      = $('.amount').val();
-        var exchangeRate = parseFloat(rate) / parseFloat(baseCurrencyRate);
-        var convertRate  = parseFloat(baseCurrencyRate) / parseFloat(rate);
-        var minLimit     = parseFloat(minAmount) * convertRate;
-        var maxLimit     = parseFloat(maxAmount) * convertRate;
-        var fixedCharge  = parseFloat()
-        
+    if(bankAccount != null){
+        var minAmount           = "{{ $bank->bank->min_limit }}";
+        var maxAmount           = "{{ $bank->bank->max_limit }}";
+        var fixedCharge         = "{{ $bank->bank->fixed_charge }}";
+        var percentCharge       = "{{ $bank->bank->percent_charge }}";
+        var currency            = "{{ $bank->bank->currency_code }}";
+        var rate                = "{{ $bank->bank->rate }}";
+        var baseCurrency        = "{{ get_default_currency_code() }}";
+        var baseCurrencyRate    = "{{ get_default_currency_rate() }}";
+        $('.amount').keyup(function (e) { 
+            var amount = $(this).val();
+            limitCalc(amount,minAmount,maxAmount,fixedCharge,percentCharge,rate,baseCurrency,baseCurrencyRate,currency);
+        });
+
+        function limitCalc(amount,minAmount,maxAmount,fixedCharge,percentCharge,rate,baseCurrency,baseCurrencyRate,currency){
+            var amount      = parseFloat(amount);
+            var exchangeRate = parseFloat(rate) / parseFloat(baseCurrencyRate);
+            var convertRate  = parseFloat(baseCurrencyRate) / parseFloat(rate);
+            var minLimit     = parseFloat(minAmount) * parseFloat(convertRate);
+            var maxLimit     = parseFloat(maxAmount) * parseFloat(convertRate);
+            var fixedCharge  = parseFloat(fixedCharge) * parseFloat(convertRate);
+            var percentCharge = (parseFloat(amount) / 100) * parseFloat(percentCharge);
+            var totalCharge     = parseFloat(fixedCharge) + parseFloat(percentCharge);
+            var recipientGet    = parseFloat(amount) * parseFloat(exchangeRate);
+            var payableAmount   = parseFloat(amount) + parseFloat(totalCharge);
+            
+            if(amount < minLimit || amount > maxLimit){
+                $('.transfer').attr('disabled',true);
+            }else{
+                $('.transfer').attr('disabled',false);
+            }
+
+            $('.request-amount').html(parseFloat(amount) + " " + baseCurrency);
+            $('.fees').html(parseFloat(totalCharge).toFixed(2) + " " + baseCurrency);
+            $('.exchange-rate').html(baseCurrencyRate + " " + baseCurrency + " " + "=" + " " + parseFloat(exchangeRate).toFixed(2) + " " + currency);
+            $('.recipient-get').html(parseFloat(recipientGet).toFixed(2) + " " + currency);
+            $('.payable-total').html(parseFloat(payableAmount).toFixed(2) + " " + baseCurrency);
+            $('.limit').html("Limit: " + parseFloat(minLimit).toFixed(2) + " " + baseCurrency + "-" + parseFloat(maxLimit).toFixed(2) + " " + baseCurrency);
+        }
     }
+    
+    
+    
     
 
 </script>
