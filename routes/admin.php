@@ -47,6 +47,7 @@ use App\Http\Controllers\Admin\SetupMobileTopupController;
 use App\Http\Controllers\Admin\AppOnboardScreensController;
 use App\Http\Controllers\Admin\PaymentGatewayCurrencyController;
 use App\Http\Controllers\Admin\BankAccountVerificationController;
+use App\Http\Controllers\Admin\BankTransactionController;
 
 // All Admin Route Is Here
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -159,6 +160,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('export-data', 'exportData')->name('export.data');
 
     });
+    //bank transactions
+    Route::controller(BankTransactionController::class)->name('bank.transaction.')->prefix('bank-transaction')->group(function(){
+        Route::get('','index')->name('index');
+        Route::get('pending','pending')->name('pending');
+        Route::get('complete','complete')->name('complete');
+        Route::get('reject','reject')->name('reject');
+        Route::get('details/{trx_id}','details')->name('details');
+        Route::post('status/update/{trx_id}','statusUpdate')->name('status.update');
+        Route::post('status/update/reject/{trx_id}','rejectStatus')->name('status.update.reject');
+    });
+
     // Add Money Logs
     Route::controller(AddMoneyController::class)->prefix('add-money')->name('add.money.')->group(function () {
         Route::get('index', 'index')->name('index');

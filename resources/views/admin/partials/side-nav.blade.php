@@ -91,6 +91,28 @@
                     'group_links'       => [
                         'dropdown'      => [
                             [
+                                'title'     => __("Bank Transactions"),
+                                'icon'      => "menu-icon las la-calculator",
+                                'links'     => [
+                                    [
+                                        'title'     => "Pending Logs",
+                                        'route'     => "admin.bank.transaction.pending",
+                                    ],
+                                    [
+                                        'title'     => "Completed Logs",
+                                        'route'     => "admin.bank.transaction.complete",
+                                    ],
+                                    [
+                                        'title'     => "Rejected Logs",
+                                        'route'     => "admin.bank.transaction.reject",
+                                    ],
+                                    [
+                                        'title'     => "All Logs",
+                                        'route'     => "admin.bank.transaction.index",
+                                    ]
+                                ],
+                            ],
+                            [
                                 'title'     => __("Add Money Logs"),
                                 'icon'      => "menu-icon las la-calculator",
                                 'links'     => [

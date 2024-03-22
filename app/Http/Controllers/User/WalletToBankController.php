@@ -80,14 +80,21 @@ class WalletToBankController extends Controller
         }
         $trx_id = $this->trx_id;
         $bank_name = $bank_account->bank->bank_name;
+        $credentials = $bank_account->credentials;
+        
         $data = [
             'bank'              => [
                 'id'            => $bank_account->bank->id,
                 'slug'          => $bank_account->bank->slug,
                 'bank_name'     => $bank_account->bank->bank_name,
                 'bank_account'  => $bank_account->id,
+                'credentials'   => $credentials
             ],
-            'user_wallet'       => $user_wallet->id,      
+            'user_wallet'       => $user_wallet->id, 
+            'user_info'         => [
+                'user_name'     => auth()->user()->fullname,
+                'email'         => auth()->user()->email,
+            ],
             'request_amount'    => $amount,      
             'exchange_rate'     => floatval($exchange_rate),
             'convert_rate'      => floatval($convert_rate),
@@ -130,13 +137,12 @@ class WalletToBankController extends Controller
                 'remark'                        => ucwords(remove_speacial_char(PaymentGatewayConst::WALLETTOBANK," ")),
                 'details'                       => json_encode($details),
                 'attribute'                     => PaymentGatewayConst::SEND,
-                'status'                        => true,
+                'status'                        => 2,
                 'created_at'                    => now(),
             ]);
             $this->updateWalletBalance($data);
             DB::commit();
         }catch(Exception $e) {
-            dd($e->getMessage());
             DB::rollBack();
             throw new Exception(__("Something went wrong! Please try again."));
         }
