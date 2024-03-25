@@ -33,6 +33,7 @@ class WalletToBankLogs extends JsonResource{
             'status_info' =>(object)$statusInfo ,
             'default_currency' => get_default_currency_code() ,
             'bank_currency' => $this->details->data->bank_currency ,
+            'rejection_reason' =>$this->reject_reason??"" ,
         ];
     }
 }
