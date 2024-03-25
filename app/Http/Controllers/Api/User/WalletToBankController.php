@@ -13,6 +13,7 @@ use App\Models\Admin\Currency;
 use App\Models\UserNotification;
 use App\Http\Helpers\Api\Helpers;
 use Illuminate\Support\Facades\DB;
+use App\Models\Admin\BasicSettings;
 use App\Constants\NotificationConst;
 use App\Http\Controllers\Controller;
 use App\Constants\PaymentGatewayConst;
