@@ -312,6 +312,19 @@ class UserController extends Controller
                     'date_time' => $item->created_at ,
                 ];
 
+            }elseif($item->type == payment_gateway_const()::WALLETTOBANK){
+                return[
+                    'id' => $item->id,
+                    'type' =>$item->attribute,
+                    'trx' => $item->trx_id,
+                    'transaction_type' => $item->type,
+                    'request_amount' => get_amount($item->request_amount,$item->details->data->default_currency),
+                    'payable' =>get_amount($item->payable,$item->details->data->default_currency),
+                    'remark' => $item->remark??"",
+                    'status' => $item->stringStatus->value ,
+                    'date_time' => $item->created_at ,
+                ];
+
             }
 
 
