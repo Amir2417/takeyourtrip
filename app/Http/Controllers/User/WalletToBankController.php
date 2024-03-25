@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use App\Constants\NotificationConst;
 use App\Http\Controllers\Controller;
 use App\Constants\PaymentGatewayConst;
+use App\Notifications\User\WalletToBank\CreateEmailNotification;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class WalletToBankController extends Controller
@@ -43,7 +45,7 @@ class WalletToBankController extends Controller
      * @param \Illuminate\Http\Request $request
      */
     public function store(Request $request){
-        
+        $basic_setting      = BasicSettings::first();
         $validator          = Validator::make($request->all(),[
             'bank_account'  => 'required',
             'amount'        => 'required',
@@ -70,6 +72,7 @@ class WalletToBankController extends Controller
         $total_charge   = $fixed_charge + $percent_charge;
         $total_payable  = floatval($amount) + floatval($total_charge);
         $receive_money  = floatval($amount) * floatval($exchange_rate);
+        $user           = auth()->user();
 
         if($total_payable < $min_limit || $total_payable > $max_limit){
             return back()->with(['error' => ['Follow the transaction limit.']]);
@@ -111,6 +114,9 @@ class WalletToBankController extends Controller
             
             $sender = $this->insertRecord($trx_id,$data,$user_wallet,$amount,$total_payable);
             $this->insertCharges($bank_name,$data,$sender);
+            if($basic_setting->email_notification == true){
+                Notification::route("mail",auth()->user()->email)->notify(new CreateEmailNotification($user,$data,$trx_id));
+            }
         }catch(Exception $e){
             return back()->with(['error' => ['Something went wrong! Please try again.']]);
         }
