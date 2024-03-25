@@ -31,10 +31,11 @@ class WalletToBankController extends Controller
      */
     public function index(){
         $bank_account      = BankAccount::auth()->with(['bank'])->where('status',bank_account_const()::APPROVED)->first();
-
+        $user_wallet       = UserWallet::where('user_id',auth()->user()->id)->first();
         $data = [
             'base_curr'             => get_default_currency_code(),
             'base_curr_rate'        => get_default_currency_rate(),
+            'user_wallet'           => $user_wallet,
             'bank_account'             => $bank_account,
         ];
         $message =  ['success'=>[__('wallet to bank Information')]];

@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers\Api\User;
 
+use Exception;
 use App\Models\Transaction;
+use App\Http\Helpers\Api\Helpers;
 use App\Http\Controllers\Controller;
 use App\Constants\PaymentGatewayConst;
-use App\Http\Helpers\Api\Helpers;
+use App\Http\Resources\User\BillPayLogs;
+use App\Http\Resources\User\MoneyInLogs;
 use App\Http\Resources\User\AddMoneyLogs;
+use App\Http\Resources\User\MoneyOutLogs;
+use App\Http\Resources\User\RemittanceLogs;
+use App\Http\Resources\User\MakePaymentLogs;
+use App\Http\Resources\User\MobileTopupLogs;
+use App\Http\Resources\User\PayLinkResource;
+use App\Http\Resources\User\VirtualCardLogs;
+use App\Http\Resources\User\RequestMoneyLogs;
+use App\Http\Resources\User\WalletToBankLogs;
 use App\Http\Resources\User\AddSubBalanceLogs;
 use App\Http\Resources\User\AgentMoneyOutLogs;
-use App\Http\Resources\User\BillPayLogs;
-use App\Http\Resources\User\MakePaymentLogs;
-use App\Http\Resources\User\MerchantPaymentLogs;
-use App\Http\Resources\User\MobileTopupLogs;
-use App\Http\Resources\User\MoneyInLogs;
-use App\Http\Resources\User\MoneyOutLogs;
-use App\Http\Resources\User\PayLinkResource;
-use App\Http\Resources\User\RemittanceLogs;
-use App\Http\Resources\User\RequestMoneyLogs;
 use App\Http\Resources\User\TransferMoneyLogs;
-use App\Http\Resources\User\VirtualCardLogs;
-use Exception;
+use App\Http\Resources\User\MerchantPaymentLogs;
 
 class TransactionController extends Controller
 {
@@ -57,6 +58,7 @@ class TransactionController extends Controller
         $bill_pay           = Transaction::auth()->billPay()->orderByDesc("id")->get();
         $mobileTopUp        = Transaction::auth()->mobileTopup()->orderByDesc("id")->get();
         $addMoney           = Transaction::auth()->addMoney()->orderByDesc("id")->latest()->get();
+        $walletToBank       = Transaction::auth()->walletToBank()->orderByDesc("id")->latest()->get();
         $moneyOut           = Transaction::auth()->moneyOut()->orderByDesc("id")->get();
         $sendMoney          = Transaction::auth()->senMoney()->orderByDesc("id")->get();
         $moneyIn            = Transaction::auth()->moneyIn()->orderByDesc("id")->get();
@@ -74,6 +76,7 @@ class TransactionController extends Controller
             'bill_pay'          => BillPayLogs::collection($bill_pay),
             'mobile_top_up'     => MobileTopupLogs::collection($mobileTopUp),
             'add_money'         => AddMoneyLogs::collection($addMoney),
+            'wallet_to_bank'    => WalletToBankLogs::collection($walletToBank),
             'money_out'         => MoneyOutLogs::collection($moneyOut),
             'send_money'        => TransferMoneyLogs::collection($sendMoney),
             'money_in'          => MoneyInLogs::collection($moneyIn),
@@ -90,6 +93,7 @@ class TransactionController extends Controller
 
         $transaction_types = [
             'add_money'         => PaymentGatewayConst::TYPEADDMONEY,
+            'wallet_to_bank'    => PaymentGatewayConst::WALLETTOBANK,
             'money_out'         => PaymentGatewayConst::TYPEMONEYOUT,
             'transfer_money'    => PaymentGatewayConst::TYPETRANSFERMONEY,
             'money_in'          => PaymentGatewayConst::MONEYIN,
