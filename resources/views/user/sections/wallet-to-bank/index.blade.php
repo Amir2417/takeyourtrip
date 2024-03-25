@@ -71,7 +71,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                <div class="col-xxl-6 col-xl-12 col-lg-6 form-group">
+                                <div class="col-xxl-12 col-xl-12 col-lg-12 form-group">
                                     <label>{{ __("Amount") }}<span>*</span></label>
                                     <div class="input-group">
                                         <input type="text" class="form--control number-input amount" required placeholder="{{__('enter Amount')}}" name="amount" value="{{ old("amount") }}">
