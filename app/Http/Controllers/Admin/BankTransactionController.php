@@ -106,9 +106,9 @@ class BankTransactionController extends Controller
                 'data'        => $data,
                 'status'      => 'Complete',
             ];
-            if($basic_settings->email_notification == true){
-                Notification::route("mail",$data->details->data->user_info->email)->notify(new CompleteEmailNotification($form_data));
-            }
+            // if($basic_settings->email_notification == true){
+            //     Notification::route("mail",$data->details->data->user_info->email)->notify(new CompleteEmailNotification($form_data));
+            // }
         }catch(Exception $e){
             return back()->with(['error' => ['Something went wrong! Please try again.']]);
         }
@@ -151,9 +151,9 @@ class BankTransactionController extends Controller
                 'status'      => 'Reject',
                 'reject_reason'=> $validated['reject_reason']
             ]; 
-            if($basic_settings->email_notification == true){
-                Notification::route("mail",$data->details->data->user_info->email)->notify(new RejectEmailNotification($form_data));
-            }
+            // if($basic_settings->email_notification == true){
+            //     Notification::route("mail",$data->details->data->user_info->email)->notify(new RejectEmailNotification($form_data));
+            // }
         }catch(Exception $e){
             return back()->with(['error' => ['Something went wrong! Please try again.']]);
         }
