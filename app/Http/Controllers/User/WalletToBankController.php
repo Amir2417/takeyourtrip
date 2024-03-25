@@ -10,12 +10,13 @@ use Illuminate\Http\Request;
 use App\Models\Admin\Currency;
 use App\Models\UserNotification;
 use Illuminate\Support\Facades\DB;
+use App\Models\Admin\BasicSettings;
 use App\Constants\NotificationConst;
 use App\Http\Controllers\Controller;
 use App\Constants\PaymentGatewayConst;
-use App\Notifications\User\WalletToBank\CreateEmailNotification;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\User\WalletToBank\CreateEmailNotification;
 
 class WalletToBankController extends Controller
 {

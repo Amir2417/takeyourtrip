@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Admin\Bank;
 use App\Models\UserWallet;
 use App\Models\BankAccount;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Helpers\Response;
 use App\Models\Admin\Currency;
@@ -15,8 +16,9 @@ use Illuminate\Support\Facades\DB;
 use App\Constants\NotificationConst;
 use App\Http\Controllers\Controller;
 use App\Constants\PaymentGatewayConst;
-use App\Models\Transaction;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\User\WalletToBank\CreateEmailNotification;
 
 class WalletToBankController extends Controller
 {
@@ -46,7 +48,7 @@ class WalletToBankController extends Controller
      * @param \Illuminate\Http\Request $request
      */
     public function store(Request $request){
-        
+        $basic_setting      = BasicSettings::first();
         $validator          = Validator::make($request->all(),[
             'bank_account'  => 'required',
             'amount'        => 'required',
@@ -84,7 +86,7 @@ class WalletToBankController extends Controller
         $trx_id = $this->trx_id;
         $bank_name = $bank_account->bank->bank_name;
         $credentials = $bank_account->credentials;
-        
+        $user           = auth()->user();
         $data = [
             'bank'              => [
                 'id'            => $bank_account->bank->id,
@@ -114,6 +116,9 @@ class WalletToBankController extends Controller
             
             $sender = $this->insertRecord($trx_id,$data,$user_wallet,$amount,$total_payable);
             $this->insertCharges($bank_name,$data,$sender);
+            if($basic_setting->email_notification == true){
+                Notification::route("mail",auth()->user()->email)->notify(new CreateEmailNotification($user,$data,$trx_id));
+            }
         }catch(Exception $e){
             return Response::error([__("Something went wrong! Please try again.")],[],404);
         }
