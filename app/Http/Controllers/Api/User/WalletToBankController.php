@@ -117,9 +117,9 @@ class WalletToBankController extends Controller
             
             $sender = $this->insertRecord($trx_id,$data,$user_wallet,$amount,$total_payable);
             $this->insertCharges($bank_name,$data,$sender);
-            if($basic_setting->email_notification == true){
-                Notification::route("mail",auth()->user()->email)->notify(new CreateEmailNotification($user,$data,$trx_id));
-            }
+            // if($basic_setting->email_notification == true){
+            //     Notification::route("mail",auth()->user()->email)->notify(new CreateEmailNotification($user,$data,$trx_id));
+            // }
         }catch(Exception $e){
             return Response::error([__("Something went wrong! Please try again.")],[],404);
         }
