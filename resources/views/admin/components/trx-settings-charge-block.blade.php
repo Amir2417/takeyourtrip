@@ -59,26 +59,7 @@
                         </div>
                     </div>
                 </div>
-                @if( $item->slug == 'transfer')
-                <div class="col-xl-4 col-lg-4 mb-10">
-                    <div class="custom-inner-card">
-                        <div class="card-inner-header">
-                            <h5 class="title">{{ __("Limit") }}</h5>
-                        </div>
-                        <div class="card-inner-body">
-                            <div class="row">
-                                <div class="col-xl-12 col-lg-12 form-group">
-                                    <label>{{ __("Monthly Limit") }}</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form--control" value="{{ old($data->slug.'_monthly_limit',$data->monthly_limit) }}" name="{{$data->slug}}_monthly_limit">
-                                        <span class="input-group-text">{{ get_default_currency_code($default_currency) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
+                
                 @if( $item->agent_profit == true)
                 <div class="col-xl-4 col-lg-4 mb-10">
                     <div class="custom-inner-card">
@@ -106,6 +87,48 @@
                     </div>
                 </div>
                 @endif
+                
+            </div>
+            
+            <div class="row mb-10-none">
+                <div class="col-xl-12 col-lg-12 form-group">
+                    @include('admin.components.button.form-btn',[
+                        'text'          => "update",
+                        'class'         => "w-100 btn-loading",
+                        'permission'    => "admin.trx.settings.charges.update",
+                    ])
+                </div>
+            </div>
+        </form>
+        <br>
+
+        
+    </div>
+    
+</div>
+<div class="custom-card mb-10">
+    <div class="card-body">
+
+        @if( $item->slug == 'transfer')
+        <h6>User Monthly Limit : As a user i should received more than the below amount per month. Example in January 2024 i received 1000 USD. I can't received another 1000 USD until Feb 2024 and so on and on.</h6>
+        <form class="card-form" method="POST" action="{{ $route ?? "" }}">
+            <div class="col-xl-4 col-lg-4 mb-10">
+                <div class="custom-inner-card">
+                    <div class="card-inner-header">
+                        <h5 class="title">{{ __("Specify Monthly Limit for All USERS") }}</h5>
+                    </div>
+                    <div class="card-inner-body">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 form-group">
+                                <label>{{ __("Amount Limit") }}</label>
+                                <div class="input-group">
+                                    <input type="number" class="form--control" value="" name="">
+                                    <span class="input-group-text"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row mb-10-none">
                 <div class="col-xl-12 col-lg-12 form-group">
@@ -117,5 +140,7 @@
                 </div>
             </div>
         </form>
+        @endif
     </div>
 </div>
+
