@@ -53,20 +53,23 @@
                 @if ($data->status  == bank_account_const()::PENDING)
                     <div class="d-flex">
                         @include('admin.components.link.status-update',[
-                            'text'          => __("Approved"),
+                            'text'          => __("Approve"),
                             'href'          => "#confirm",
                             'class'         => "modal-btn",
                         ])
                         @include('admin.components.link.status-update',[
                             'text'          => __("Reject"),
                             'href'          => "#reject",
-                            'class'         => "modal-btn ms-1",
+                            'class'         => "modal-btn ms-1 btn--danger",
                         ])
                     </div>
                 @elseif($data->status  == bank_account_const()::APPROVED)
                     <button class="btn--base">{{ __("APPROVED") }}</button>
                 @elseif($data->status  == bank_account_const()::REJECTED)
-                    <button class="btn--base">{{ __("Rejected") }}</button>
+                    @include('admin.components.link.status-update',[
+                        'text'          => __("Rejected"),
+                        'class'         => "modal-btn ms-1 btn--danger",
+                    ])
                 @endif
                 
             </div>
@@ -102,7 +105,7 @@
             <form class="modal-form" method="POST" action="{{ setRoute('admin.bank.account.status.approve',$data->id) }}">
                 @csrf
                 <div class="row mb-10-none">
-                    <h6>{{ __("Are you sure to APPROVED this Bank?") }}</h6>
+                    <h6>{{ __("Are you sure to Approve this Bank Account?") }}</h6>
                     <input type="hidden" name="status" value="{{ bank_account_const()::APPROVED }}">
                     <div class="col-xl-12 col-lg-12 form-group d-flex align-items-center justify-content-between mt-4">
                         <button type="button" class="btn btn--danger modal-close">{{ __("Cancel") }}</button>

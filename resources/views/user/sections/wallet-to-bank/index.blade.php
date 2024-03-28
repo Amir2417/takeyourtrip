@@ -15,166 +15,179 @@
 
 @section('content')
 <div class="body-wrapper">
-    <div class="dashboard-area mt-10">
-        <div class="dashboard-header-wrapper">
-            <h3 class="title">{{__(@$page_title)}}</h3>
+    @if (isset($bank))
+        <div class="dashboard-area mt-10">
+            <div class="dashboard-header-wrapper">
+                <h3 class="title">{{__(@$page_title)}}</h3>
+            </div>
         </div>
-    </div>
-    <div class="row mb-30-none">
-        <div class="col-xl-6 mb-30">
-            <div class="dash-payment-item-wrapper">
-                <div class="dash-payment-item active">
-                    <div class="dash-payment-title-area">
-                        <span class="dash-payment-badge">!</span>
-                        <h5 class="title">{{ __(@$page_title) }}</h5>
-                    </div>
-                    <div class="dash-payment-body">
-                        <form class="card-form" action="{{ setRoute('user.wallet.to.bank.store') }}" method="POST">
-                            @csrf
-                            <div class="row">
-                                <div class="col-xl-12 col-lg-12 form-group text-center">
-                                    <div class="exchange-area" data-bank_data="{{ json_encode($bank) }}">
-                                        @if(isset($bank))
-                                        <label for="">{{ __("Bank Details") }}</label>
-                                        <div class="bank-list-area">
-                                            <div class="bank-list-wrapper">
-                                                <input type="hidden" name="bank_account" value="{{ $bank->id }}">
-                                                <div class="bank-list-thumb">
-                                                    <img class="image-resize" src="{{ get_image($bank->bank->image,'bank') }}" alt="">
-                                                </div>
-                                                <ul class="bank-account-list">
-                                                    @php
-                                                        $files      = [];
-                                                        $text       = [];
-                
-                                                        foreach ($bank->credentials ?? [] as $item) {
-                                                            if ($item->type == 'file') {
-                                                                $files[]      = $item;
-                                                            }else{
-                                                                $text[]         = $item;
+        <div class="row mb-30-none">
+            <div class="col-xl-6 mb-30">
+                <div class="dash-payment-item-wrapper">
+                    <div class="dash-payment-item active">
+                        <div class="dash-payment-title-area">
+                            <span class="dash-payment-badge">!</span>
+                            <h5 class="title">{{ __(@$page_title) }}</h5>
+                        </div>
+                        <div class="dash-payment-body">
+                            <form class="card-form" action="{{ setRoute('user.wallet.to.bank.store') }}" method="POST">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-12 form-group text-center">
+                                        <div class="" data-bank_data="{{ json_encode($bank) }}">
+                                            
+                                            <h6 class="mb-10">{{ __("Bank Details") }}</h6>
+                                            <div class="bank-list-area">
+                                                <div class="bank-list-wrapper">
+                                                    <input type="hidden" name="bank_account" value="{{ $bank->id }}">
+                                                    <div class="bank-list-thumb">
+                                                        <img class="image-resize" src="{{ get_image($bank->bank->image,'bank') }}" alt="">
+                                                    </div>
+                                                    <ul class="bank-account-list">
+                                                        @php
+                                                            $files      = [];
+                                                            $text       = [];
+                    
+                                                            foreach ($bank->credentials ?? [] as $item) {
+                                                                if ($item->type == 'file') {
+                                                                    $files[]      = $item;
+                                                                }else{
+                                                                    $text[]         = $item;
+                                                                }
                                                             }
-                                                        }
-                                                    @endphp
-                
-                                                    @foreach ($text ?? [] as $item)
-                                                        <li class="d-block">{{ $item->label }} : <span>{{ $item->value }}</span></li>
-                                                    @endforeach
-                                                    @foreach ($files ?? [] as $item)
-                                                        <li>{{ $item->label }} : <img class="image-resize" src="{{ get_image($item->value,'kyc-files') }}" alt=""></li>
-                                                    @endforeach
-                                                </ul>
+                                                            usort($text, function ($a, $b) {
+                                                                $order = ['full name in Emirates ID', 'IBAN', 'Swift Code'];
+                                                                return array_search($a->label, $order) - array_search($b->label, $order);
+                                                            });
+                                                        @endphp
+                    
+                                                        @foreach ($text ?? [] as $item)
+                                                            @if ($item->label == 'full name in Emirates ID')
+                                                                @php
+                                                                    $label = "Name";
+                                                                @endphp
+                                                                <li class="d-block"><span>{{ $label }}</span>: {{ $item->value }}</li>
+                                                            @elseif ($item->label == "IBAN" || $item->label == "Swift Code")
+                                                                <li class="d-block"><span>{{ $item->label }} ends with</span> : **{{ substr($item->value, -4) }}</li>
+                                                            @else
+                                                            <li class="d-block"><span>{{ $item->label }}</span> : {{ $item->value }}</li>
+                                                            @endif
+                                                        @endforeach
+                                                        @foreach ($files ?? [] as $item)
+                                                            <li>{{ $item->label }} : <img class="image-resize" src="{{ get_image($item->value,'kyc-files') }}" alt=""></li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
                                             </div>
+                                            
                                         </div>
-                                        @else
-                                            <p>{{ __("Your don't have any bank account, so you can not transfer.") }}</p>
-                                        
-                                        @endif
                                     </div>
-                                </div>
-                                <div class="col-xxl-12 col-xl-12 col-lg-12 form-group">
-                                    <label>{{ __("Amount") }}<span>*</span></label>
-                                    <div class="input-group">
-                                        <input type="text" class="form--control number-input amount" required placeholder="{{__('enter Amount')}}" name="amount" value="{{ old("amount") }}">
-                                        <select class="form--control nice-select currency" name="currency">
-                                            <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
-                                        </select>
+                                    <div class="col-xxl-12 col-xl-12 col-lg-12 form-group">
+                                        <label>{{ __("Amount") }}<span>*</span></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form--control number-input amount" required placeholder="{{__('enter Amount')}}" name="amount" value="{{ old("amount") }}">
+                                            
+                                            <select class="form--control nice-select currency" name="currency">
+                                                <option value="{{ get_default_currency_code() }}">{{ get_default_currency_code() }}</option>
+                                            </select>
+                                        </div>
+                                        <code class="d-block mt-10 text-end text--warning balance-show">{{ __("Available Balance") }} {{ authWalletBalance() }} {{ get_default_currency_code() }}</code>
+                                        <code class="d-block mt-10 text-end text--primary limit"></code>
                                     </div>
-                                    <code class="d-block mt-10 text-end text--warning balance-show">{{ __("Available Balance") }} {{ authWalletBalance() }} {{ get_default_currency_code() }}</code>
-                                    <code class="d-block mt-10 text-end text--primary limit"></code>
-                                </div>
 
-                                <div class="col-xl-12 col-lg-12">
-                                    <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
+                                    <div class="col-xl-12 col-lg-12">
+                                        <button type="submit" class="btn--base w-100 btn-loading transfer">{{ __("Confirm Send") }} <i class="fas fa-paper-plane ms-1"></i></i></button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-xl-6 mb-30">
-            <div class="dash-payment-item-wrapper">
-                <div class="dash-payment-item active">
-                    <div class="dash-payment-title-area">
-                        <span class="dash-payment-badge">!</span>
-                        <h5 class="title">{{__("Wallet To Bank Preview")}}</h5>
-                    </div>
-                    <div class="dash-payment-body">
-                        <div class="preview-list-wrapper">
+            <div class="col-xl-6 mb-30">
+                <div class="dash-payment-item-wrapper">
+                    <div class="dash-payment-item active">
+                        <div class="dash-payment-title-area">
+                            <span class="dash-payment-badge">!</span>
+                            <h5 class="title">{{__("Wallet To Bank Preview")}}</h5>
+                        </div>
+                        <div class="dash-payment-body">
+                            <div class="preview-list-wrapper">
 
-                            <div class="preview-list-item">
-                                <div class="preview-list-left">
-                                    <div class="preview-list-user-wrapper">
-                                        <div class="preview-list-user-icon">
-                                            <i class="las la-coins"></i>
-                                        </div>
-                                        <div class="preview-list-user-content">
-                                            <span>{{ __("Entered Amount") }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="preview-list-right">
-                                    <span class="fw-bold request-amount">--</span>
-                                </div>
-                            </div>
-                            <div class="preview-list-item">
-                                <div class="preview-list-left">
-                                    <div class="preview-list-user-wrapper">
-                                        <div class="preview-list-user-icon">
-                                            <i class="las la-battery-half"></i>
-                                        </div>
-                                        <div class="preview-list-user-content">
-                                            <span>{{ __("Transfer Fee") }}</span>
+                                <div class="preview-list-item">
+                                    <div class="preview-list-left">
+                                        <div class="preview-list-user-wrapper">
+                                            <div class="preview-list-user-icon">
+                                                <i class="las la-coins"></i>
+                                            </div>
+                                            <div class="preview-list-user-content">
+                                                <span>{{ __("Entered Amount") }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="preview-list-right">
-                                    <span class="fees">--</span>
-                                </div>
-                            </div>
-                            <div class="preview-list-item">
-                                <div class="preview-list-left">
-                                    <div class="preview-list-user-wrapper">
-                                        <div class="preview-list-user-icon">
-                                            <i class="las la-exchange-alt"></i>
-                                        </div>
-                                        <div class="preview-list-user-content">
-                                            <span>{{ __("Exchange Rate") }}</span>
-                                        </div>
+                                    <div class="preview-list-right">
+                                        <span class="fw-bold request-amount">--</span>
                                     </div>
                                 </div>
-                                <div class="preview-list-right">
-                                    <span class="exchange-rate">--</span>
-                                </div>
-                            </div>
-                            <div class="preview-list-item">
-                                <div class="preview-list-left">
-                                    <div class="preview-list-user-wrapper">
-                                        <div class="preview-list-user-icon">
-                                            <i class="las la-receipt"></i>
-                                        </div>
-                                        <div class="preview-list-user-content">
-                                            <span>{{ __("Recipient Received") }}</span>
+                                <div class="preview-list-item">
+                                    <div class="preview-list-left">
+                                        <div class="preview-list-user-wrapper">
+                                            <div class="preview-list-user-icon">
+                                                <i class="las la-battery-half"></i>
+                                            </div>
+                                            <div class="preview-list-user-content">
+                                                <span>{{ __("Transfer Fee") }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="preview-list-right">
-                                    <span class="recipient-get">--</span>
-                                </div>
-                            </div>
-                            <div class="preview-list-item">
-                                <div class="preview-list-left">
-                                    <div class="preview-list-user-wrapper">
-                                        <div class="preview-list-user-icon">
-                                            <i class="las la-money-check-alt"></i>
-                                        </div>
-                                        <div class="preview-list-user-content">
-                                            <span>{{__("Total Payable")}}</span>
-                                        </div>
+                                    <div class="preview-list-right">
+                                        <span class="fees">--</span>
                                     </div>
                                 </div>
-                                <div class="preview-list-right">
-                                    <span class="last payable-total text-warning">--</span>
+                                <div class="preview-list-item">
+                                    <div class="preview-list-left">
+                                        <div class="preview-list-user-wrapper">
+                                            <div class="preview-list-user-icon">
+                                                <i class="las la-exchange-alt"></i>
+                                            </div>
+                                            <div class="preview-list-user-content">
+                                                <span>{{ __("Exchange Rate") }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="preview-list-right">
+                                        <span class="exchange-rate">--</span>
+                                    </div>
+                                </div>
+                                <div class="preview-list-item">
+                                    <div class="preview-list-left">
+                                        <div class="preview-list-user-wrapper">
+                                            <div class="preview-list-user-icon">
+                                                <i class="las la-receipt"></i>
+                                            </div>
+                                            <div class="preview-list-user-content">
+                                                <span>{{ __("Recipient Received") }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="preview-list-right">
+                                        <span class="recipient-get">--</span>
+                                    </div>
+                                </div>
+                                <div class="preview-list-item">
+                                    <div class="preview-list-left">
+                                        <div class="preview-list-user-wrapper">
+                                            <div class="preview-list-user-icon">
+                                                <i class="las la-money-check-alt"></i>
+                                            </div>
+                                            <div class="preview-list-user-content">
+                                                <span>{{__("Total Payable")}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="preview-list-right">
+                                        <span class="last payable-total text-warning">--</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -182,22 +195,30 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="dashboard-list-area mt-20">
-        <div class="dashboard-header-wrapper">
-            <h4 class="title ">{{__("Wallet To Bank Transfer")}}</h4>
-            <div class="dashboard-btn-wrapper">
-                <div class="dashboard-btn mb-2">
-                    <a href="{{ setRoute('user.transactions.index','transfer-money') }}" class="btn--base">{{__("View More")}}</a>
+        <div class="dashboard-list-area mt-20">
+            <div class="dashboard-header-wrapper">
+                <h4 class="title ">{{__("Wallet To Bank Transfer")}}</h4>
+                <div class="dashboard-btn-wrapper">
+                    <div class="dashboard-btn mb-2">
+                        <a href="{{ setRoute('user.transactions.index','transfer-money') }}" class="btn--base">{{__("View More")}}</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="dashboard-list-wrapper">
-            @include('user.components.transaction-log',compact("transactions"))
+            <div class="dashboard-list-wrapper">
+                @include('user.components.transaction-log',compact("transactions"))
+            </div>
+        </div> 
+    @else
+    <div class="card-body">
+            <div class="d-flex align-items-center">
+                <h4 class="me-2 mb-0">{{ __("Your don't have any bank account, so you can not transfer.") }}</h4><a class="btn--base small" href="{{ setRoute('user.bank.account.index') }}">{{ __("Create Bank Account") }}</a>
+            </div>
         </div>
     </div>
+    @endif
+    
 </div>
-</div>
+
 
 @endsection
 

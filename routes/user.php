@@ -63,7 +63,6 @@ Route::prefix("user")->name("user.")->group(function(){
     //bank account
     Route::controller(BankAccountController::class)->prefix('bank-account')->name('bank.account.')->group(function(){
         Route::get('/','index')->name('index');
-        Route::get('create','create')->name('create');
         Route::post('store','store')->name('store');
         Route::post('delete/{id}','delete')->name('delete');
     });

@@ -1725,6 +1725,10 @@ html {
     font-weight: 700;
   }
 
+  .btn--base.small{
+    padding: 5px 20px;
+  }
+
   /*-------------------------------------------------
       [ ## Fields ]
   */
@@ -10732,16 +10736,13 @@ input[type=number] {
       font-weight: 600;
       padding: 15px 0;
     }
-
-    .bank-account-list-area{
-      text-align: center;
-    }
     .bank-account-list-wrapper{
       position: relative;
       text-align: left;
-      border: 1px solid var(--primary-color);
+      /* border: 1px solid var(--primary-color); */
+      border: 1px solid #ded7e9;
       background-color: #fff;
-      padding: 25px;
+      padding: 25px 25px 35px 25px;
       border-radius: 5px;
       display: inline-flex;
       align-items: center;
@@ -10763,6 +10764,10 @@ input[type=number] {
     background-color: transparent;
     padding: 0;
     font-size: 18px;
+    color: var(--primary-color);
+    transition: all 0.3s;
+  }
+  .bank-account-list-wrapper .remove-btn:hover{
     color: red;
   }
     .bank-list-area{
@@ -10771,7 +10776,7 @@ input[type=number] {
     .bank-list-wrapper{
       position: relative;
       text-align: left;
-      border: 1px solid var(--primary-color);
+      border: 1.5px solid #ded7e9;
       padding: 25px;
       border-radius: 5px;
       display: inline-flex;
@@ -10786,5 +10791,13 @@ input[type=number] {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .bank-account-list-wrapper .bank-account-list li span{
+      font-weight: 700;
+    }
+
+    .bank-list-wrapper .bank-account-list li span{
+      font-weight: 700;
     }
   
