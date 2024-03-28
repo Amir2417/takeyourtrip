@@ -82,6 +82,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::controller(TrxSettingsController::class)->prefix('trx-settings')->name('trx.settings.')->group(function () {
         Route::get('index', 'index')->name('index');
         Route::put('charges/update', 'trxChargeUpdate')->name('charges.update');
+        Route::put('monthly/limit/update', 'monthlylimitupdate')->name('monthly.limit.update');
     });
     // virtual card api
     Route::controller(VirtualCardController::class)->prefix('virtual-card')->name('virtual.card.')->group(function () {

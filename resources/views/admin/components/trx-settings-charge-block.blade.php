@@ -109,9 +109,13 @@
 <div class="custom-card mb-10">
     <div class="card-body">
 
-        @if( $item->slug == 'transfer')
-        <h6>User Monthly Limit : As a user i should received more than the below amount per month. Example in January 2024 i received 1000 USD. I can't received another 1000 USD until Feb 2024 and so on and on.</h6>
-        <form class="card-form" method="POST" action="{{ $route ?? "" }}">
+        @if($item->slug == 'transfer')
+        <h6>{{ __("User Monthly Limit : As a user i should received more than the below amount per month. Example in January 2024 i received 1000 USD. I can't received another 1000 USD until Feb 2024 and so on and on.") }}</h6>
+        <form class="card-form" method="POST" action="{{ setRoute('admin.trx.settings.monthly.limit.update') }}">
+            @csrf
+            @method("PUT")
+
+            <input type="hidden" value="{{ $item->slug }}" name="slug">
             <div class="col-xl-4 col-lg-4 mb-10">
                 <div class="custom-inner-card">
                     <div class="card-inner-header">
@@ -120,10 +124,10 @@
                     <div class="card-inner-body">
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 form-group">
-                                <label>{{ __("Amount Limit") }}</label>
+                                <label>{{ __("Amount Limit") }}*</label>
                                 <div class="input-group">
-                                    <input type="number" class="form--control" value="" name="">
-                                    <span class="input-group-text"></span>
+                                    <input type="number" class="form--control" value="{{ old($data->slug.'_monthly_limit',$data->monthly_limit) }}" name="{{$data->slug}}_monthly_limit">
+                                    <span class="input-group-text">{{ get_default_currency_code($default_currency) }}</span>
                                 </div>
                             </div>
                         </div>

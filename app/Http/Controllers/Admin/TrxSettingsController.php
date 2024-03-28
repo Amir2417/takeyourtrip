@@ -62,6 +62,30 @@ class TrxSettingsController extends Controller
         return back()->with(['success' => [__("Charge Updated Successfully!")]]);
 
     }
+    /**
+     * Update transaction charges
+     * @param Request closer
+     * @return back view
+     */
+    public function monthlylimitupdate(Request $request) {
+        $transaction_setting = TransactionSetting::where('slug',$request->slug)->first();
+        if(!$transaction_setting) return back()->with(['error' => [__("Transaction charge not found!")]]);
+       
+        $validator = Validator::make($request->all(),[
+            'slug'                                          => 'required|string',
+            $request->slug.'_monthly_limit'                 => 'required|numeric',
+        ]);
+        $validated = $validator->validate();
+        $validated = replace_array_key($validated,$request->slug."_");
+
+        try{
+            $transaction_setting->update($validated);
+        }catch(Exception $e) {
+            return back()->with(['error' => [__("Something went wrong! Please try again.")]]);
+        }
+        return back()->with(['success' => [__("Information Updated Successfully!")]]);
+
+    }
 
     /**
      * Show the form for creating a new resource.
