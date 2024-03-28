@@ -191,7 +191,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="field_type_input col-lg-4 col-xl-4">
+                                        <div class="col-lg-4 col-xl-4">
                                             @if ($item->type == "file")
                                                 <div class="row">
                                                     <div class="col-xl-6 col-lg-6 form-group">

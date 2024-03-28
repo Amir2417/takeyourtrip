@@ -103,7 +103,7 @@ class BankController extends Controller
         $page_title     = "Edit Bank Method";
         $bank           = Bank::where('slug',$slug)->first();
         if(!$bank) return back()->with(['error' => ['Sorry! Bank method not found.']]);
-
+     
         return view('admin.sections.bank.edit',compact(
             'page_title',
             'bank'
@@ -161,11 +161,10 @@ class BankController extends Controller
         if($request->hasFile('image')){
             $validated['image']  =  $this->imageValidate($request,"image",null);
         }
-
+        
         try{
             $data->update($validated);
         }catch(Exception $e){
-            dd($e->getMessage());
             return back()->with(['error' => ['Something went wrong! Please try again.']]);
         }
         return redirect()->route('admin.bank.index')->with(['success' => ['Bank method updated successfully.']]);
