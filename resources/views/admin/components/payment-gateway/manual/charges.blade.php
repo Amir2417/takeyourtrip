@@ -77,10 +77,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-12 col-xl-6 col-lg-6 form-group">
-                    <div class="form-group">
-                    </div>
-                </div>
             </div>
         </div>
     </div>
